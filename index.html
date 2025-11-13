@@ -14,12 +14,10 @@
 :root {
     --primary-blue: #1E90FF; /* Dodger Blue - a vibrant blue */
     --secondary-blue: #ADD8E6; /* Light Blue */
-    --background-white: #f7f9fc; /* Soft off-white background */
-    --surface-white: #FFFFFF; /* White for cards and forms */
-    --text-dark: #2c3e50; /* Darker, modern text color */
-    --border-light: #e0e6ed;
-    --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.08); /* Modern, soft shadow */
-    --font-sans: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern Font Stack */
+    --background-white: #FFFFFF;
+    --text-dark: #333333;
+    --border-light: #EEEEEE;
+    --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 * {
@@ -52,33 +50,27 @@ body {
 }
 
 .auth-container {
-    background-color: var(--surface-white);
+    background-color: var(--background-white);
     padding: 40px;
-    border-radius: 16px; 
-    box-shadow: var(--shadow-subtle);
-    transition: all 0.3s ease;
-}
-
-.auth-container:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .logo-box {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .logo-box svg {
     color: var(--primary-blue);
-    margin-right: 12px;
+    margin-right: 10px;
 }
 
 .logo-box h1 {
-    font-size: 2.2em;
+    font-size: 2em;
     color: var(--primary-blue);
-    font-weight: 700;
 }
 
 #login-form, #signup-form {
@@ -86,10 +78,9 @@ body {
 }
 
 h2 {
-    color: var(--text-dark);
+    color: var(--primary-blue);
     margin-bottom: 20px;
-    font-size: 1.6em;
-    font-weight: 600;
+    font-size: 1.5em;
 }
 
 input[type="email"], 
@@ -98,18 +89,11 @@ input[type="text"],
 input[type="number"],
 textarea {
     width: 100%;
-    padding: 14px; 
+    padding: 12px;
     margin-bottom: 15px;
     border: 1px solid var(--border-light);
-    border-radius: 10px;
+    border-radius: 8px;
     font-size: 1em;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-input:focus, textarea:focus {
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.2);
-    outline: none;
 }
 
 .password-wrapper {
@@ -129,37 +113,25 @@ input:focus, textarea:focus {
 
 button {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     background-color: var(--primary-blue);
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1.05em;
-    font-weight: 600;
-    transition: background-color 0.3s, transform 0.1s;
-    box-shadow: 0 4px 6px rgba(30, 144, 255, 0.3);
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s;
 }
 
 button:hover {
     background-color: #1A7DD5;
-    transform: translateY(-1px);
-}
-
-button:active {
-    transform: translateY(1px);
 }
 
 .auth-link {
     color: var(--primary-blue);
     cursor: pointer;
-    font-weight: 600;
-    transition: color 0.3s;
-}
-
-.auth-link:hover {
-    color: #007ACC;
-    text-decoration: underline;
+    font-weight: bold;
 }
 
 /* --- App Dashboard Styling --- */
@@ -168,26 +140,22 @@ button:active {
     width: 100vw;
     height: 100vh;
     max-width: none;
-    /* Starts hidden, revealed by JS after loading */
-    display: none; 
 }
 
 /* Sidebar */
 #sidebar {
-    width: 260px; 
+    width: 250px;
     background-color: var(--primary-blue);
     color: white;
-    padding: 25px 0;
+    padding: 20px 0;
     display: flex;
     flex-direction: column;
     position: relative;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 #sidebar .logo-box {
-    margin-bottom: 35px;
-    justify-content: start;
-    padding: 0 25px;
+    margin-bottom: 30px;
 }
 
 #sidebar .logo-box svg {
@@ -197,25 +165,19 @@ button:active {
 .nav-item {
     display: flex;
     align-items: center;
-    padding: 14px 25px;
+    padding: 15px 25px;
     text-decoration: none;
     color: white;
-    font-size: 1.05em;
-    transition: background-color 0.3s, border-left 0.3s;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
 }
 
-.nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.nav-item.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-left: 4px solid var(--secondary-blue);
-    font-weight: 600;
+.nav-item:hover, .nav-item.active {
+    background-color: #007ACC; /* Darker blue on hover/active */
 }
 
 .nav-item i {
-    margin-right: 15px; /* Increased margin for spacing fix */
+    margin-right: 10px;
     width: 20px;
     height: 20px;
 }
@@ -227,75 +189,58 @@ button:active {
 /* Main Content */
 #main-content {
     flex-grow: 1;
-    padding: 30px;
+    padding: 40px;
     overflow-y: auto;
-    background-color: var(--background-white);
 }
 
 .content-view {
-    max-width: 1000px;
+    max-width: 900px;
     margin: 0 auto;
-}
-
-.content-view h2 {
-    color: var(--text-dark);
-    margin-bottom: 30px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-light);
 }
 
 /* --- AI Helper View --- */
 #ai-helper {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 60px); 
+    height: calc(100vh - 80px); /* Adjust height for full-screen use */
 }
 
 #ai-chat-box {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 20px;
-    background-color: var(--surface-white);
+    padding: 10px;
+    background-color: var(--background-white);
     border: 1px solid var(--border-light);
-    border-radius: 12px;
+    border-radius: 8px;
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .ai-message, .user-message {
-    padding: 12px 18px;
-    margin-bottom: 15px;
-    border-radius: 20px;
-    max-width: 75%; 
-    line-height: 1.6;
-    font-size: 0.95em;
-    animation: fadeIn 0.3s ease-out;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 18px;
+    max-width: 80%;
+    line-height: 1.5;
 }
 
 .ai-message {
     align-self: flex-start;
     background-color: var(--secondary-blue);
     color: var(--text-dark);
-    border-bottom-left-radius: 4px;
+    border-bottom-left-radius: 2px;
 }
 
 .user-message {
     align-self: flex-end;
     background-color: var(--primary-blue);
     color: white;
-    border-bottom-right-radius: 4px;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    border-bottom-right-radius: 2px;
 }
 
 .ai-input-area {
     display: flex;
-    padding-bottom: 10px;
 }
 
 #ai-user-input {
@@ -307,35 +252,27 @@ button:active {
 .ai-input-area button {
     width: auto;
     padding: 12px 20px;
-    border-radius: 10px;
 }
 
 /* --- Notes & Flashcards View --- */
-.flashcard-controls {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
 .flashcard-controls button {
     width: auto;
-    padding: 10px 18px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    padding: 10px 15px;
     display: inline-flex;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .flashcard-controls button i {
-    margin-right: 8px;
+    margin-right: 5px;
 }
 
 #note-card-editor, #flashcard-editor {
-    padding: 25px;
-    background-color: var(--surface-white);
+    padding: 20px;
     border: 1px solid var(--border-light);
-    border-radius: 12px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    margin-bottom: 20px;
 }
 
 #note-content {
@@ -345,34 +282,30 @@ button:active {
 
 #user-content-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
-    margin-top: 20px;
 }
 
 .content-item {
-    padding: 20px;
-    border: 1px solid var(--border-light);
-    border-radius: 12px;
-    background-color: var(--surface-white);
+    padding: 15px;
+    border: 1px solid var(--secondary-blue);
+    border-radius: 8px;
+    background-color: #F8F8FF; /* Off-white for content boxes */
     cursor: pointer;
-    transition: box-shadow 0.3s, transform 0.2s;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s;
 }
 
 .content-item:hover {
-    box-shadow: 0 6px 15px rgba(30, 144, 255, 0.15);
-    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(30, 144, 255, 0.2);
 }
 
 .content-item h4 {
     color: var(--primary-blue);
-    margin-bottom: 8px;
-    font-size: 1.1em;
+    margin-bottom: 5px;
 }
 
 .content-item p {
-    font-size: 0.85em;
+    font-size: 0.9em;
     color: #666;
 }
 
@@ -386,25 +319,22 @@ button:active {
     flex-direction: column;
     gap: 15px;
     max-width: 500px;
-    padding: 30px;
-    background-color: var(--surface-white);
+    padding: 20px;
     border: 1px solid var(--border-light);
-    border-radius: 12px;
-    box-shadow: var(--shadow-subtle);
+    border-radius: 8px;
 }
 
 .settings-form label {
-    font-weight: 600;
+    font-weight: bold;
     margin-bottom: -10px;
-    color: var(--text-dark);
-    font-size: 0.9em;
+    color: var(--primary-blue);
 }
 
 .itemized-list {
     border: 1px solid var(--border-light);
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 10px;
-    min-height: 50px;
+    min-height: 40px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -414,8 +344,8 @@ button:active {
 .list-item {
     background-color: var(--secondary-blue);
     color: var(--text-dark);
-    padding: 6px 12px;
-    border-radius: 6px;
+    padding: 5px 10px;
+    border-radius: 5px;
     display: flex;
     align-items: center;
     font-size: 0.9em;
@@ -426,48 +356,6 @@ button:active {
     cursor: pointer;
     font-weight: bold;
     color: #CC0000;
-    transition: transform 0.2s;
-}
-
-.list-item-remove:hover {
-    transform: scale(1.2);
-}
-
-/* --- Admin Panel Styling --- */
-#admin-panel h3 {
-    margin-top: 20px;
-    color: var(--primary-blue);
-}
-
-.user-list-item {
-    background-color: var(--surface-white);
-    border: 1px solid var(--border-light);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.user-email {
-    font-weight: 600;
-}
-
-.user-status {
-    font-size: 0.8em;
-    padding: 4px 8px;
-    border-radius: 4px;
-    color: white;
-}
-
-.status-onboarded {
-    background-color: green;
-}
-
-.status-pending {
-    background-color: orange;
 }
     </style>
 </head>
@@ -512,7 +400,6 @@ button:active {
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-check">
                     <path d="M8 2h4l2 5h7V8"/><path d="M4 19.5V8a2 2 0 0 1 2-2h12.5C14 17 6.3 15.6 4 19.5"/><path d="M4 19.5 2.5 21l2-1.5 2 1.5V6a2 2 0 0 0-2 2v11.5Z"/><path d="m15 19 2 2 4-4"/>
                 </svg>
-                <span style="font-size: 1.2em; font-weight: 600; margin-left: 5px;">StudyHub</span>
             </div>
             <a href="#" class="nav-item active" data-view="ai-helper"><i data-lucide="bot"></i> AI Helper</a>
             <a href="#" class="nav-item" data-view="notes-flashcards"><i data-lucide="book-open"></i> Notes & Cards</a>
@@ -611,7 +498,7 @@ button:active {
             <div id="credits" class="content-view hidden">
                 <h2>🏆 Credits</h2>
                 <p class="credit-text">This StudyHub web application was built with core foundational code and architectural design provided by the developer.</p>
-                <p class="credit-text-main">Credits are gratefully given to <b>Nathan Koech</b>.</p>
+                <p class="credit-text-main">Credits are gratefully given to **Nathan Koech**.</p>
                 <style>
                     .credit-text-main {
                         font-size: 1.5em;
@@ -620,14 +507,6 @@ button:active {
                         font-weight: bold;
                     }
                 </style>
-            </div>
-
-            <div id="admin-panel" class="content-view hidden">
-                <h2>🔒 Admin Panel</h2>
-                <p>This panel allows management and oversight of user accounts.</p>
-                <h3>Registered Users</h3>
-                <div id="user-management-list">
-                    </div>
             </div>
             
         </div>
@@ -665,7 +544,6 @@ button:active {
         // Global state
         let currentUserData = {};
         let currentLessons = [];
-        const ADMIN_EMAIL = 'declanthebest01@gmail.com';
 
         // --- Authentication and Onboarding Functions ---
 
@@ -746,43 +624,42 @@ button:active {
         // Handle the user's authentication state
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // CRITICAL FIX: Ensure user data is fully loaded before modifying the view.
+                document.getElementById('auth-screen').classList.add('hidden');
                 await loadUserData(user.uid);
 
-                // Hide the auth screen completely and show the dashboard.
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('app-dashboard').classList.remove('hidden');
-
-                // Admin Panel Logic
-                const adminLinkPlaceholder = document.querySelector('.nav-item[data-view="credits"]');
-                let adminPanelLink = document.querySelector('.nav-item[data-view="admin-panel"]');
-
-                if (user.email === ADMIN_EMAIL) {
+                // Check for Admin status and conditionally show the Admin Panel link
+                const adminPanelLink = document.querySelector('.nav-item[data-view="admin-panel"]');
+                if (user.email === 'declanthebest01@gmail.com') {
                     if (!adminPanelLink) {
+                        // Dynamically create the admin link if it doesn't exist (for future implementation)
+                        const sidebar = document.getElementById('sidebar');
                         const adminLink = document.createElement('a');
                         adminLink.href = '#';
                         adminLink.className = 'nav-item';
                         adminLink.setAttribute('data-view', 'admin-panel');
                         adminLink.innerHTML = '<i data-lucide="lock"></i> Admin Panel';
-                        document.getElementById('sidebar').insertBefore(adminLink, adminLinkPlaceholder);
+                        // Find the credits tab or settings tab to insert before
+                        const creditsLink = document.querySelector('.nav-item[data-view="credits"]');
+                        sidebar.insertBefore(adminLink, creditsLink);
                         lucide.createIcons();
                     }
                 } else {
                     if (adminPanelLink) {
-                        adminPanelLink.remove(); 
+                        adminPanelLink.remove(); // Remove if user is not admin
                     }
                 }
 
-                // Check onboarding status and switch view accordingly
+
                 if (currentUserData.onboarded) {
                     document.getElementById('onboarding').classList.add('hidden');
+                    document.getElementById('app-dashboard').classList.remove('hidden');
+                    // Initial view is AI Helper
                     switchView('ai-helper'); 
                 } else {
+                    document.getElementById('app-dashboard').classList.remove('hidden');
                     document.getElementById('onboarding').classList.remove('hidden');
-                    switchView('onboarding'); // Force onboarding view
                 }
             } else {
-                // When logged out, show the auth screen and hide the dashboard.
                 document.getElementById('app-dashboard').classList.add('hidden');
                 document.getElementById('auth-screen').classList.remove('hidden');
                 showLogin();
@@ -797,16 +674,10 @@ button:active {
                     currentUserData = doc.data();
                     currentLessons = currentUserData.lessons || [];
                 } else {
-                    // This handles users created in Auth but without Firestore entry (shouldn't happen with our signup logic)
-                    currentUserData = { onboarded: false, lessons: [] };
-                    currentLessons = [];
-                    console.warn("User document missing. Forcing re-onboarding data structure.");
+                    console.error("No user data found in Firestore.");
                 }
             } catch (error) {
                 console.error("Error loading user data:", error);
-                // Gracefully handle failure: treat as non-onboarded
-                currentUserData = { onboarded: false, lessons: [] };
-                currentLessons = [];
             }
         }
 
@@ -842,7 +713,8 @@ button:active {
                 removeIcon.className = 'list-item-remove';
                 removeIcon.innerHTML = '&times;';
                 // Determine the correct list ID for removal handler
-                const targetListId = listId; 
+                const isSettings = listId === 'setting-lessons-list';
+                const targetListId = isSettings ? 'setting-lessons-list' : 'onboard-lessons-list'; 
                 removeIcon.onclick = () => removeLesson(lesson, targetListId);
                 item.appendChild(removeIcon);
                 listElement.appendChild(item);
@@ -897,7 +769,7 @@ button:active {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            document.querySelector(`.nav-item[data-view="${viewId}"]`)?.classList.add('active'); 
+            document.querySelector(`.nav-item[data-view="${viewId}"]`)?.classList.add('active'); // Use optional chaining for safety
 
             // Special initialization for specific views
             if (viewId === 'settings') {
@@ -905,13 +777,13 @@ button:active {
             } else if (viewId === 'notes-flashcards') {
                 loadUserContent();
             } else if (viewId === 'admin-panel') {
-                if (auth.currentUser.email !== ADMIN_EMAIL) {
-                    // This check is redundant due to dynamic link hiding, but kept as a fallback.
-                    alert('I don\'t know'); 
-                    switchView('ai-helper'); 
+                // Placeholder for Admin Panel functionality
+                if (auth.currentUser.email !== 'declanthebest01@gmail.com') {
+                    alert('Access Denied: You are not authorized to view the Admin Panel.');
+                    switchView('ai-helper'); // Redirect
                     return;
                 }
-                loadAdminPanel(); // Load admin data
+                // TODO: Load Admin Panel content
             }
         }
 
@@ -922,7 +794,7 @@ button:active {
                 e.preventDefault();
                 const viewId = navItem.getAttribute('data-view');
                 // Prevent logout link from trying to switch view
-                if (viewId && viewId !== 'logout') {
+                if (viewId) {
                     switchView(viewId);
                 }
             }
@@ -1016,7 +888,7 @@ button:active {
             }
 
             try {
-                await db.collection('content').doc().set({
+                await db.collection('content').add({
                     uid: user.uid,
                     type: 'note',
                     title: title,
@@ -1028,7 +900,7 @@ button:active {
                 loadUserContent(); // Refresh list
             } catch (error) {
                 console.error("Error saving note:", error);
-                alert(`Failed to save note. Please check your network connection or console for details. Error: ${error.message}`);
+                alert('Failed to save note.');
             }
         }
 
@@ -1044,7 +916,7 @@ button:active {
             }
 
             try {
-                await db.collection('content').doc().set({
+                await db.collection('content').add({
                     uid: user.uid,
                     type: 'flashcard',
                     front: front,
@@ -1056,7 +928,7 @@ button:active {
                 loadUserContent(); // Refresh list
             } catch (error) {
                 console.error("Error saving flashcard:", error);
-                alert(`Failed to save flashcard. Please check your network connection or console for details. Error: ${error.message}`);
+                alert('Failed to save flashcard.');
             }
         }
 
@@ -1084,26 +956,24 @@ button:active {
                     const item = document.createElement('div');
                     item.className = 'content-item';
                     
-                    const dateDisplay = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
-
                     if (data.type === 'note') {
                         item.innerHTML = `
                             <h4>📝 ${data.title}</h4>
-                            <p>Note created on: ${dateDisplay}</p>
+                            <p>Note created on: ${data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
                         `;
                         item.onclick = () => alert(`Note: ${data.title}\n\nContent:\n${data.content}`);
                     } else if (data.type === 'flashcard') {
                         item.innerHTML = `
                             <h4>🃏 ${data.front}</h4>
-                            <p>Card created on: ${dateDisplay}</p>
+                            <p>Click to see answer...</p>
                         `;
                         // Simple flip logic
                         item.onclick = () => {
                             if (item.classList.contains('card-flip')) {
-                                item.innerHTML = `<h4>🃏 ${data.front}</h4><p>Card created on: ${dateDisplay}</p>`;
+                                item.innerHTML = `<h4>🃏 ${data.front}</h4><p>Click to see answer...</p>`;
                                 item.classList.remove('card-flip');
                             } else {
-                                item.innerHTML = `<h4>💡 ${data.back}</h4><p>Card created on: ${dateDisplay}</p>`;
+                                item.innerHTML = `<h4>💡 ${data.back}</h4><p>Click to see question...</p>`;
                                 item.classList.add('card-flip');
                             }
                         };
@@ -1196,44 +1066,6 @@ button:active {
                 } else {
                     alert("Password reset failed: " + error.message);
                 }
-            }
-        }
-
-        // --- 4. Admin Panel Functionality ---
-
-        async function loadAdminPanel() {
-            const listElement = document.getElementById('user-management-list');
-            listElement.innerHTML = '<div>Loading user data...</div>';
-
-            try {
-                // Fetch all user documents
-                const snapshot = await db.collection('users').get();
-                
-                listElement.innerHTML = '';
-
-                if (snapshot.empty) {
-                    listElement.innerHTML = '<div>No registered users found.</div>';
-                    return;
-                }
-
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const item = document.createElement('div');
-                    item.className = 'user-list-item';
-                    
-                    const statusClass = data.onboarded ? 'status-onboarded' : 'status-pending';
-                    const statusText = data.onboarded ? 'Onboarded' : 'Pending Setup';
-
-                    item.innerHTML = `
-                        <span class="user-email">${data.email}</span>
-                        <span class="user-status ${statusClass}">${statusText}</span>
-                    `;
-                    listElement.appendChild(item);
-                });
-
-            } catch (error) {
-                console.error("Error loading admin panel data:", error);
-                listElement.innerHTML = '<div>Failed to load user data for admin panel. Check Firestore rules.</div>';
             }
         }
     </script>

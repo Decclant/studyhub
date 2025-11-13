@@ -62,7 +62,10 @@ auth.onAuthStateChanged(user => {
             // 2. Update UI
             userDisplay.textContent = `Welcome, ${user.email}!`;
             adminNavButton.style.display = isAdmin ? 'block' : 'none';
-            mainContent.style.display = 'flex';
+            
+            // FIX: Ensure main content is set to flex for visibility
+            mainContent.style.display = 'flex'; 
+            
             loadView('dashboard');
         });
 
@@ -72,13 +75,15 @@ auth.onAuthStateChanged(user => {
         authButton.style.display = 'inline';
         signOutButton.style.display = 'none';
         userDisplay.textContent = 'Please sign in.';
-        mainContent.style.display = 'none';
+        
+        // FIX: Ensure main content is correctly hidden on logout
+        mainContent.style.display = 'none'; 
+        
         adminNavButton.style.display = 'none';
         appView.innerHTML = `<h2>Please sign in to access StudyHub features.</h2>`;
     }
 });
 
-// ... (Login, Register, Sign Out logic remains unchanged) ...
 document.getElementById('login-button').addEventListener('click', () => {
     const email = document.getElementById('email-input').value;
     const password = document.getElementById('password-input').value;
@@ -113,6 +118,14 @@ function loadView(viewName) {
         chatUnsubscribe();
         chatUnsubscribe = null;
     }
+
+    // Update active state on sidebar buttons
+    document.querySelectorAll('.nav-button').forEach(btn => {
+        btn.classList.remove('active-view');
+        if (btn.dataset.view === viewName) {
+            btn.classList.add('active-view');
+        }
+    });
 
     if (viewName === 'admin-panel' && !isAdmin) {
         appView.innerHTML = `<h2>Access Denied</h2><p>You do not have administrative privileges.</p>`;
@@ -161,7 +174,6 @@ function loadView(viewName) {
                     <button id="send-chat-button" style="width: 100px; padding: 0.75rem 0;">Send</button>
                 </div>
             `;
-            // Initialize chat listeners and handlers
             setupChat();
             break;
 
@@ -278,7 +290,7 @@ function updateUserScore(userId) {
     });
 }
 
-// --- 7. CHAT FUNCTIONS (NEWLY IMPLEMENTED) ---
+// --- 7. CHAT FUNCTIONS ---
 
 function setupChat() {
     const chatInput = document.getElementById('chat-input');
@@ -292,7 +304,7 @@ function setupChat() {
             db.collection('chat').add({
                 text: messageText,
                 sender: currentUser.email.split('@')[0], // Use username part of email
-                timestamp: firebase.firestore.FieldValue.serverTimestamp() // Firestore's server timestamp
+                timestamp: firebase.firestore.FieldValue.serverTimestamp() 
             }).then(() => {
                 chatInput.value = ''; // Clear input
             }).catch(error => {
@@ -309,12 +321,11 @@ function setupChat() {
     });
 
     // 2. Real-time Listener (onSnapshot)
-    // Listens for new messages and updates the UI instantly
     chatUnsubscribe = db.collection('chat')
-        .orderBy('timestamp', 'asc') // Order messages correctly
-        .limit(50) // Limit to the last 50 messages
+        .orderBy('timestamp', 'asc') 
+        .limit(50) 
         .onSnapshot(snapshot => {
-            messagesDiv.innerHTML = ''; // Clear old messages
+            messagesDiv.innerHTML = ''; 
             snapshot.forEach(doc => {
                 const msg = doc.data();
                 const senderName = msg.sender || 'Anonymous';
@@ -331,7 +342,6 @@ function setupChat() {
                 `;
                 messagesDiv.appendChild(messageElement);
             });
-            // Scroll to the bottom of the chat box
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }, error => {
             console.error("Error setting up chat listener:", error);

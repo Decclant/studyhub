@@ -53,4 +53,8 @@ exports.callGemini = functions.https.onCall(async (data, context) => {
             error.message
         );
     }
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 36e32f197d7bf1c02d75f1b07939d066d2d59141

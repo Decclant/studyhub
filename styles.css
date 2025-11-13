@@ -79,6 +79,7 @@ button:active {
 }
 
 
+<<<<<<< HEAD
 /* Main Content Layout - Ensure Visibility and Flex Layout */
 #main-content {
     display: flex; 
@@ -90,6 +91,19 @@ button:active {
     overflow: hidden;
     background-color: white;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+=======
+/* Main Content Layout */
+#main-content {
+    display: flex;
+    flex-grow: 1; /* Take up remaining space */
+    width: 95%;
+    max-width: 1400px;
+    margin: 1.5rem auto; /* Centered with top margin */
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08); /* More pronounced shadow */
+>>>>>>> 36e32f197d7bf1c02d75f1b07939d066d2d59141
 }
 
 /* Navigation - FIXED and ENHANCED */
@@ -478,4 +492,8 @@ main p {
         width: 95%;
         margin: 5% auto;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 36e32f197d7bf1c02d75f1b07939d066d2d59141

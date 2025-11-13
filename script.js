@@ -347,4 +347,8 @@ function setupChat() {
             console.error("Error setting up chat listener:", error);
             messagesDiv.innerHTML = '<p style="color:red;">Failed to load messages.</p>';
         });
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 36e32f197d7bf1c02d75f1b07939d066d2d59141

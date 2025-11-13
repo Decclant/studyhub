@@ -44,7 +44,6 @@ body {
 }
 
 /* --- Authentication Screen Styling --- */
-/* FIX: Ensure auth-screen is not part of the layout flow when hidden. */
 #auth-screen {
     width: 100%;
     max-width: 400px;
@@ -169,7 +168,7 @@ button:active {
     width: 100vw;
     height: 100vh;
     max-width: none;
-    /* FIX: Ensure it starts hidden */
+    /* Starts hidden, revealed by JS after loading */
     display: none; 
 }
 
@@ -747,11 +746,12 @@ button:active {
         // Handle the user's authentication state
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // FIX 1: Hide the auth screen completely when logged in.
+                // CRITICAL FIX: Ensure user data is fully loaded before modifying the view.
+                await loadUserData(user.uid);
+
+                // Hide the auth screen completely and show the dashboard.
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('app-dashboard').classList.remove('hidden');
-
-                await loadUserData(user.uid);
 
                 // Admin Panel Logic
                 const adminLinkPlaceholder = document.querySelector('.nav-item[data-view="credits"]');
@@ -759,7 +759,6 @@ button:active {
 
                 if (user.email === ADMIN_EMAIL) {
                     if (!adminPanelLink) {
-                        // Dynamically create the admin link
                         const adminLink = document.createElement('a');
                         adminLink.href = '#';
                         adminLink.className = 'nav-item';
@@ -774,7 +773,7 @@ button:active {
                     }
                 }
 
-
+                // Check onboarding status and switch view accordingly
                 if (currentUserData.onboarded) {
                     document.getElementById('onboarding').classList.add('hidden');
                     switchView('ai-helper'); 
@@ -798,10 +797,16 @@ button:active {
                     currentUserData = doc.data();
                     currentLessons = currentUserData.lessons || [];
                 } else {
-                    console.error("No user data found in Firestore.");
+                    // This handles users created in Auth but without Firestore entry (shouldn't happen with our signup logic)
+                    currentUserData = { onboarded: false, lessons: [] };
+                    currentLessons = [];
+                    console.warn("User document missing. Forcing re-onboarding data structure.");
                 }
             } catch (error) {
                 console.error("Error loading user data:", error);
+                // Gracefully handle failure: treat as non-onboarded
+                currentUserData = { onboarded: false, lessons: [] };
+                currentLessons = [];
             }
         }
 
@@ -901,8 +906,9 @@ button:active {
                 loadUserContent();
             } else if (viewId === 'admin-panel') {
                 if (auth.currentUser.email !== ADMIN_EMAIL) {
-                    alert('Access Denied: You are not authorized to view the Admin Panel.');
-                    switchView('ai-helper'); // Redirect
+                    // This check is redundant due to dynamic link hiding, but kept as a fallback.
+                    alert('I don\'t know'); 
+                    switchView('ai-helper'); 
                     return;
                 }
                 loadAdminPanel(); // Load admin data
@@ -1010,7 +1016,6 @@ button:active {
             }
 
             try {
-                // FIX: Use the native Firebase timestamp FieldValue to avoid serialization errors.
                 await db.collection('content').doc().set({
                     uid: user.uid,
                     type: 'note',
@@ -1022,7 +1027,6 @@ button:active {
                 document.getElementById('note-card-editor').classList.add('hidden');
                 loadUserContent(); // Refresh list
             } catch (error) {
-                // Improved error logging for the user and console
                 console.error("Error saving note:", error);
                 alert(`Failed to save note. Please check your network connection or console for details. Error: ${error.message}`);
             }
@@ -1040,7 +1044,6 @@ button:active {
             }
 
             try {
-                // FIX: Use the native Firebase timestamp FieldValue to avoid serialization errors.
                 await db.collection('content').doc().set({
                     uid: user.uid,
                     type: 'flashcard',
@@ -1052,7 +1055,6 @@ button:active {
                 document.getElementById('flashcard-editor').classList.add('hidden');
                 loadUserContent(); // Refresh list
             } catch (error) {
-                // Improved error logging for the user and console
                 console.error("Error saving flashcard:", error);
                 alert(`Failed to save flashcard. Please check your network connection or console for details. Error: ${error.message}`);
             }

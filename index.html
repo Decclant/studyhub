@@ -14,10 +14,12 @@
 :root {
     --primary-blue: #1E90FF; /* Dodger Blue - a vibrant blue */
     --secondary-blue: #ADD8E6; /* Light Blue */
-    --background-white: #FFFFFF;
-    --text-dark: #333333;
-    --border-light: #EEEEEE;
-    --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --background-white: #f7f9fc; /* Soft off-white background */
+    --surface-white: #FFFFFF; /* White for cards and forms */
+    --text-dark: #2c3e50; /* Darker, modern text color */
+    --border-light: #e0e6ed;
+    --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.08); /* Modern, soft shadow */
+    --font-sans: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern Font Stack */
 }
 
 * {
@@ -50,27 +52,33 @@ body {
 }
 
 .auth-container {
-    background-color: var(--background-white);
+    background-color: var(--surface-white);
     padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 16px; /* Increased radius for modern look */
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.3s ease;
+}
+
+.auth-container:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .logo-box {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .logo-box svg {
     color: var(--primary-blue);
-    margin-right: 10px;
+    margin-right: 12px;
 }
 
 .logo-box h1 {
-    font-size: 2em;
+    font-size: 2.2em;
     color: var(--primary-blue);
+    font-weight: 700;
 }
 
 #login-form, #signup-form {
@@ -78,9 +86,10 @@ body {
 }
 
 h2 {
-    color: var(--primary-blue);
+    color: var(--text-dark);
     margin-bottom: 20px;
-    font-size: 1.5em;
+    font-size: 1.6em;
+    font-weight: 600;
 }
 
 input[type="email"], 
@@ -89,11 +98,18 @@ input[type="text"],
 input[type="number"],
 textarea {
     width: 100%;
-    padding: 12px;
+    padding: 14px; /* Slightly larger padding */
     margin-bottom: 15px;
     border: 1px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 1em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.2);
+    outline: none;
 }
 
 .password-wrapper {
@@ -113,25 +129,37 @@ textarea {
 
 button {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     background-color: var(--primary-blue);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    font-size: 1.05em;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 4px 6px rgba(30, 144, 255, 0.3);
 }
 
 button:hover {
     background-color: #1A7DD5;
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(1px);
 }
 
 .auth-link {
     color: var(--primary-blue);
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.auth-link:hover {
+    color: #007ACC;
+    text-decoration: underline;
 }
 
 /* --- App Dashboard Styling --- */
@@ -144,18 +172,20 @@ button:hover {
 
 /* Sidebar */
 #sidebar {
-    width: 250px;
+    width: 260px; /* Slightly wider */
     background-color: var(--primary-blue);
     color: white;
-    padding: 20px 0;
+    padding: 25px 0;
     display: flex;
     flex-direction: column;
     position: relative;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #sidebar .logo-box {
-    margin-bottom: 30px;
+    margin-bottom: 35px;
+    justify-content: start;
+    padding: 0 25px;
 }
 
 #sidebar .logo-box svg {
@@ -165,19 +195,25 @@ button:hover {
 .nav-item {
     display: flex;
     align-items: center;
-    padding: 15px 25px;
+    padding: 14px 25px;
     text-decoration: none;
     color: white;
-    font-size: 1.1em;
-    transition: background-color 0.3s;
+    font-size: 1.05em;
+    transition: background-color 0.3s, border-left 0.3s;
 }
 
-.nav-item:hover, .nav-item.active {
-    background-color: #007ACC; /* Darker blue on hover/active */
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-left: 4px solid var(--secondary-blue);
+    font-weight: 600;
 }
 
 .nav-item i {
-    margin-right: 10px;
+    margin-right: 15px; /* Increased margin for spacing fix */
     width: 20px;
     height: 20px;
 }
@@ -189,58 +225,75 @@ button:hover {
 /* Main Content */
 #main-content {
     flex-grow: 1;
-    padding: 40px;
+    padding: 30px;
     overflow-y: auto;
+    background-color: var(--background-white);
 }
 
 .content-view {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto;
+}
+
+.content-view h2 {
+    color: var(--text-dark);
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-light);
 }
 
 /* --- AI Helper View --- */
 #ai-helper {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 80px); /* Adjust height for full-screen use */
+    height: calc(100vh - 60px); 
 }
 
 #ai-chat-box {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 10px;
-    background-color: var(--background-white);
+    padding: 20px;
+    background-color: var(--surface-white);
     border: 1px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: 12px;
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .ai-message, .user-message {
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    border-radius: 18px;
-    max-width: 80%;
-    line-height: 1.5;
+    padding: 12px 18px;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    max-width: 75%; /* Slightly smaller max width */
+    line-height: 1.6;
+    font-size: 0.95em;
+    animation: fadeIn 0.3s ease-out;
 }
 
 .ai-message {
     align-self: flex-start;
     background-color: var(--secondary-blue);
     color: var(--text-dark);
-    border-bottom-left-radius: 2px;
+    border-bottom-left-radius: 4px;
 }
 
 .user-message {
     align-self: flex-end;
     background-color: var(--primary-blue);
     color: white;
-    border-bottom-right-radius: 2px;
+    border-bottom-right-radius: 4px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .ai-input-area {
     display: flex;
+    padding-bottom: 10px;
 }
 
 #ai-user-input {
@@ -252,27 +305,35 @@ button:hover {
 .ai-input-area button {
     width: auto;
     padding: 12px 20px;
+    border-radius: 10px;
 }
 
 /* --- Notes & Flashcards View --- */
+.flashcard-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
 .flashcard-controls button {
     width: auto;
-    margin-right: 10px;
-    margin-bottom: 20px;
-    padding: 10px 15px;
+    padding: 10px 18px;
     display: inline-flex;
     align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .flashcard-controls button i {
-    margin-right: 5px;
+    margin-right: 8px;
 }
 
 #note-card-editor, #flashcard-editor {
-    padding: 20px;
+    padding: 25px;
+    background-color: var(--surface-white);
     border: 1px solid var(--border-light);
-    border-radius: 8px;
-    margin-bottom: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 #note-content {
@@ -282,30 +343,34 @@ button:hover {
 
 #user-content-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
+    margin-top: 20px;
 }
 
 .content-item {
-    padding: 15px;
-    border: 1px solid var(--secondary-blue);
-    border-radius: 8px;
-    background-color: #F8F8FF; /* Off-white for content boxes */
+    padding: 20px;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    background-color: var(--surface-white);
     cursor: pointer;
-    transition: box-shadow 0.3s;
+    transition: box-shadow 0.3s, transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .content-item:hover {
-    box-shadow: 0 4px 10px rgba(30, 144, 255, 0.2);
+    box-shadow: 0 6px 15px rgba(30, 144, 255, 0.15);
+    transform: translateY(-2px);
 }
 
 .content-item h4 {
     color: var(--primary-blue);
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    font-size: 1.1em;
 }
 
 .content-item p {
-    font-size: 0.9em;
+    font-size: 0.85em;
     color: #666;
 }
 
@@ -319,22 +384,25 @@ button:hover {
     flex-direction: column;
     gap: 15px;
     max-width: 500px;
-    padding: 20px;
+    padding: 30px;
+    background-color: var(--surface-white);
     border: 1px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-subtle);
 }
 
 .settings-form label {
-    font-weight: bold;
+    font-weight: 600;
     margin-bottom: -10px;
-    color: var(--primary-blue);
+    color: var(--text-dark);
+    font-size: 0.9em;
 }
 
 .itemized-list {
     border: 1px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 10px;
-    min-height: 40px;
+    min-height: 50px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -344,8 +412,8 @@ button:hover {
 .list-item {
     background-color: var(--secondary-blue);
     color: var(--text-dark);
-    padding: 5px 10px;
-    border-radius: 5px;
+    padding: 6px 12px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     font-size: 0.9em;
@@ -356,6 +424,48 @@ button:hover {
     cursor: pointer;
     font-weight: bold;
     color: #CC0000;
+    transition: transform 0.2s;
+}
+
+.list-item-remove:hover {
+    transform: scale(1.2);
+}
+
+/* --- Admin Panel Styling --- */
+#admin-panel h3 {
+    margin-top: 20px;
+    color: var(--primary-blue);
+}
+
+.user-list-item {
+    background-color: var(--surface-white);
+    border: 1px solid var(--border-light);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-email {
+    font-weight: 600;
+}
+
+.user-status {
+    font-size: 0.8em;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: white;
+}
+
+.status-onboarded {
+    background-color: green;
+}
+
+.status-pending {
+    background-color: orange;
 }
     </style>
 </head>
@@ -400,6 +510,7 @@ button:hover {
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-check">
                     <path d="M8 2h4l2 5h7V8"/><path d="M4 19.5V8a2 2 0 0 1 2-2h12.5C14 17 6.3 15.6 4 19.5"/><path d="M4 19.5 2.5 21l2-1.5 2 1.5V6a2 2 0 0 0-2 2v11.5Z"/><path d="m15 19 2 2 4-4"/>
                 </svg>
+                <span style="font-size: 1.2em; font-weight: 600; margin-left: 5px;">StudyHub</span>
             </div>
             <a href="#" class="nav-item active" data-view="ai-helper"><i data-lucide="bot"></i> AI Helper</a>
             <a href="#" class="nav-item" data-view="notes-flashcards"><i data-lucide="book-open"></i> Notes & Cards</a>
@@ -508,6 +619,14 @@ button:hover {
                     }
                 </style>
             </div>
+
+            <div id="admin-panel" class="content-view hidden">
+                <h2>🔒 Admin Panel</h2>
+                <p>This panel allows management and oversight of user accounts.</p>
+                <h3>Registered Users</h3>
+                <div id="user-management-list">
+                    </div>
+            </div>
             
         </div>
     </div>
@@ -544,6 +663,7 @@ button:hover {
         // Global state
         let currentUserData = {};
         let currentLessons = [];
+        const ADMIN_EMAIL = 'declanthebest01@gmail.com';
 
         // --- Authentication and Onboarding Functions ---
 
@@ -627,25 +747,24 @@ button:hover {
                 document.getElementById('auth-screen').classList.add('hidden');
                 await loadUserData(user.uid);
 
-                // Check for Admin status and conditionally show the Admin Panel link
-                const adminPanelLink = document.querySelector('.nav-item[data-view="admin-panel"]');
-                if (user.email === 'declanthebest01@gmail.com') {
+                // Admin Panel Logic
+                const adminLinkPlaceholder = document.querySelector('.nav-item[data-view="credits"]');
+                let adminPanelLink = document.querySelector('.nav-item[data-view="admin-panel"]');
+
+                if (user.email === ADMIN_EMAIL) {
                     if (!adminPanelLink) {
-                        // Dynamically create the admin link if it doesn't exist (for future implementation)
-                        const sidebar = document.getElementById('sidebar');
+                        // Dynamically create the admin link
                         const adminLink = document.createElement('a');
                         adminLink.href = '#';
                         adminLink.className = 'nav-item';
                         adminLink.setAttribute('data-view', 'admin-panel');
                         adminLink.innerHTML = '<i data-lucide="lock"></i> Admin Panel';
-                        // Find the credits tab or settings tab to insert before
-                        const creditsLink = document.querySelector('.nav-item[data-view="credits"]');
-                        sidebar.insertBefore(adminLink, creditsLink);
+                        document.getElementById('sidebar').insertBefore(adminLink, adminLinkPlaceholder);
                         lucide.createIcons();
                     }
                 } else {
                     if (adminPanelLink) {
-                        adminPanelLink.remove(); // Remove if user is not admin
+                        adminPanelLink.remove(); 
                     }
                 }
 
@@ -658,6 +777,7 @@ button:hover {
                 } else {
                     document.getElementById('app-dashboard').classList.remove('hidden');
                     document.getElementById('onboarding').classList.remove('hidden');
+                    switchView('onboarding'); // Force onboarding view
                 }
             } else {
                 document.getElementById('app-dashboard').classList.add('hidden');
@@ -713,8 +833,7 @@ button:hover {
                 removeIcon.className = 'list-item-remove';
                 removeIcon.innerHTML = '&times;';
                 // Determine the correct list ID for removal handler
-                const isSettings = listId === 'setting-lessons-list';
-                const targetListId = isSettings ? 'setting-lessons-list' : 'onboard-lessons-list'; 
+                const targetListId = listId; 
                 removeIcon.onclick = () => removeLesson(lesson, targetListId);
                 item.appendChild(removeIcon);
                 listElement.appendChild(item);
@@ -769,7 +888,7 @@ button:hover {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            document.querySelector(`.nav-item[data-view="${viewId}"]`)?.classList.add('active'); // Use optional chaining for safety
+            document.querySelector(`.nav-item[data-view="${viewId}"]`)?.classList.add('active'); 
 
             // Special initialization for specific views
             if (viewId === 'settings') {
@@ -777,13 +896,12 @@ button:hover {
             } else if (viewId === 'notes-flashcards') {
                 loadUserContent();
             } else if (viewId === 'admin-panel') {
-                // Placeholder for Admin Panel functionality
-                if (auth.currentUser.email !== 'declanthebest01@gmail.com') {
+                if (auth.currentUser.email !== ADMIN_EMAIL) {
                     alert('Access Denied: You are not authorized to view the Admin Panel.');
                     switchView('ai-helper'); // Redirect
                     return;
                 }
-                // TODO: Load Admin Panel content
+                loadAdminPanel(); // Load admin data
             }
         }
 
@@ -794,7 +912,7 @@ button:hover {
                 e.preventDefault();
                 const viewId = navItem.getAttribute('data-view');
                 // Prevent logout link from trying to switch view
-                if (viewId) {
+                if (viewId && viewId !== 'logout') {
                     switchView(viewId);
                 }
             }
@@ -888,7 +1006,8 @@ button:hover {
             }
 
             try {
-                await db.collection('content').add({
+                // FIXED: Using set with a generated ID and merging timestamp handling
+                await db.collection('content').doc().set({
                     uid: user.uid,
                     type: 'note',
                     title: title,
@@ -899,8 +1018,9 @@ button:hover {
                 document.getElementById('note-card-editor').classList.add('hidden');
                 loadUserContent(); // Refresh list
             } catch (error) {
+                // Improved error logging for the user
                 console.error("Error saving note:", error);
-                alert('Failed to save note.');
+                alert(`Failed to save note. Please check your network connection. Error: ${error.message}`);
             }
         }
 
@@ -916,7 +1036,8 @@ button:hover {
             }
 
             try {
-                await db.collection('content').add({
+                // FIXED: Using set with a generated ID and merging timestamp handling
+                await db.collection('content').doc().set({
                     uid: user.uid,
                     type: 'flashcard',
                     front: front,
@@ -927,8 +1048,9 @@ button:hover {
                 document.getElementById('flashcard-editor').classList.add('hidden');
                 loadUserContent(); // Refresh list
             } catch (error) {
+                // Improved error logging for the user
                 console.error("Error saving flashcard:", error);
-                alert('Failed to save flashcard.');
+                alert(`Failed to save flashcard. Please check your network connection. Error: ${error.message}`);
             }
         }
 
@@ -956,24 +1078,26 @@ button:hover {
                     const item = document.createElement('div');
                     item.className = 'content-item';
                     
+                    const dateDisplay = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+
                     if (data.type === 'note') {
                         item.innerHTML = `
                             <h4>📝 ${data.title}</h4>
-                            <p>Note created on: ${data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                            <p>Note created on: ${dateDisplay}</p>
                         `;
                         item.onclick = () => alert(`Note: ${data.title}\n\nContent:\n${data.content}`);
                     } else if (data.type === 'flashcard') {
                         item.innerHTML = `
                             <h4>🃏 ${data.front}</h4>
-                            <p>Click to see answer...</p>
+                            <p>Card created on: ${dateDisplay}</p>
                         `;
                         // Simple flip logic
                         item.onclick = () => {
                             if (item.classList.contains('card-flip')) {
-                                item.innerHTML = `<h4>🃏 ${data.front}</h4><p>Click to see answer...</p>`;
+                                item.innerHTML = `<h4>🃏 ${data.front}</h4><p>Card created on: ${dateDisplay}</p>`;
                                 item.classList.remove('card-flip');
                             } else {
-                                item.innerHTML = `<h4>💡 ${data.back}</h4><p>Click to see question...</p>`;
+                                item.innerHTML = `<h4>💡 ${data.back}</h4><p>Card created on: ${dateDisplay}</p>`;
                                 item.classList.add('card-flip');
                             }
                         };
@@ -1066,6 +1190,44 @@ button:hover {
                 } else {
                     alert("Password reset failed: " + error.message);
                 }
+            }
+        }
+
+        // --- 4. Admin Panel Functionality ---
+
+        async function loadAdminPanel() {
+            const listElement = document.getElementById('user-management-list');
+            listElement.innerHTML = '<div>Loading user data...</div>';
+
+            try {
+                // Fetch all user documents
+                const snapshot = await db.collection('users').get();
+                
+                listElement.innerHTML = '';
+
+                if (snapshot.empty) {
+                    listElement.innerHTML = '<div>No registered users found.</div>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const item = document.createElement('div');
+                    item.className = 'user-list-item';
+                    
+                    const statusClass = data.onboarded ? 'status-onboarded' : 'status-pending';
+                    const statusText = data.onboarded ? 'Onboarded' : 'Pending Setup';
+
+                    item.innerHTML = `
+                        <span class="user-email">${data.email}</span>
+                        <span class="user-status ${statusClass}">${statusText}</span>
+                    `;
+                    listElement.appendChild(item);
+                });
+
+            } catch (error) {
+                console.error("Error loading admin panel data:", error);
+                listElement.innerHTML = '<div>Failed to load user data for admin panel. Check Firestore rules.</div>';
             }
         }
     </script>

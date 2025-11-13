@@ -1,5 +1,7 @@
+// Made by Nathan
 // Firebase Configuration
 const firebaseConfig = {
+    // IMPORTANT: Replace these with your actual Firebase project credentials
     apiKey: "AIzaSyCAJ5kM37MKyq2UGUw1dHF8EEskdKWU5f4",
     authDomain: "studyhubon.firebaseapp.com",
     projectId: "studyhubon",
@@ -56,6 +58,7 @@ auth.onAuthStateChanged(async (user) => {
             document.getElementById('onboarding-modal').classList.add('hidden');
         } else {
             // New user, trigger onboarding
+            document.getElementById('app-container').classList.add('hidden'); // Hide app if no profile
             document.getElementById('onboarding-modal').classList.remove('hidden');
         }
     } else {
@@ -134,7 +137,6 @@ function togglePasswordVisibility(id, iconElement) {
 }
 
 async function signup() {
-    // ... (Error checks for email/password) ...
     const email = document.getElementById('signup-email').value;
     const password = document.getElementById('signup-password').value;
     const errorElement = document.getElementById('signup-error');
@@ -148,7 +150,7 @@ async function signup() {
 
     try {
         await auth.createUserWithEmailAndPassword(email, password);
-        // OnAuthStateChanged handles the rest
+        // OnAuthStateChanged handles the rest, triggering onboarding
     } catch (error) {
         errorElement.textContent = `Sign Up Error: ${error.message}`;
         errorElement.classList.remove('hidden');
@@ -204,7 +206,6 @@ function displayLessons(listID, arrayRef, inputID) {
     arrayRef.forEach((lesson, index) => {
         const item = document.createElement('div');
         item.className = 'list-item';
-        // Use a generic name for the contributor
         item.innerHTML = `${lesson} <span class="remove-lesson" data-index="${index}">x</span> Made by Nathan`;
         listElement.appendChild(item);
     });
@@ -309,7 +310,7 @@ async function sendPasswordReset() {
 
 // --- AI Help Functions (SECURELY implemented via Cloud Function) ---
 
-const callGemini = functions.httpsCallable('callGemini');
+const callGemini = functions.https.callable('callGemini');
 
 async function sendAIQuery() {
     const promptInput = document.getElementById('ai-prompt');
@@ -366,7 +367,6 @@ async function saveFlashcard() {
                 front: front,
                 back: back,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                // Add lesson tagging if needed
             });
             hideCreateFlashcardModal();
         } catch (error) {
@@ -415,7 +415,7 @@ async function generateAIFlashcards() {
     const topic = prompt("Enter a topic (e.g., 'The three laws of thermodynamics') for the AI to create flashcards:");
     if (!topic) return;
 
-    alert(`Generating 5 flashcards on "${topic}". Please wait...`);
+    alert(`Generating flashcards on "${topic}". Please wait...`);
     
     try {
         const response = await callGemini({ 

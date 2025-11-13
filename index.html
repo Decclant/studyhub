@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyHub - AI Powered Learning</title>
+    <link rel="stylesheet" href="styles.css"> 
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-functions.js"></script>
+</head>
+<body>
+    <header>
+        <h1>StudyHub</h1>
+        <div id="auth-ui">
+            <button id="auth-button">Sign In / Register</button>
+            <span id="user-display"></span>
+            <button id="sign-out-button" style="display:none;">Sign Out</button>
+        </div>
+    </header>
+
+    <div id="main-content" style="display:none;">
+        <nav>
+            <button class="nav-button" data-view="dashboard">Dashboard</button>
+            <button class="nav-button" data-view="flashcards">Flashcards</button>
+            <button class="nav-button" data-view="chat">Year Group Chat</button>
+            <button class="nav-button" data-view="leaderboard">Leaderboard</button>
+            <button class="nav-button" data-view="ai-help">AI Study Help</button>
+            <button class="nav-button" data-view="admin-panel" id="admin-nav-button" style="display:none;">Admin Panel</button>
+        </nav>
+
+        <main id="app-view">
+            <h2>Welcome to StudyHub!</h2>
+            <p>Select a tab to begin.</p>
+        </main>
+    </div>
+
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3>Sign In / Register</h3>
+            <input type="email" id="email-input" placeholder="Email">
+            <input type="password" id="password-input" placeholder="Password">
+            <div class="modal-buttons">
+                <button id="login-button">Sign In</button>
+                <button id="register-button">Register</button>
+            </div>
+            <p id="auth-message" style="color:red;"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

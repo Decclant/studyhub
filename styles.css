@@ -79,17 +79,17 @@ button:active {
 }
 
 
-/* Main Content Layout */
+/* Main Content Layout - Ensure Visibility and Flex Layout */
 #main-content {
-    display: flex;
-    flex-grow: 1; /* Take up remaining space */
+    display: flex; 
+    flex-grow: 1; /* Take up remaining vertical space */
     width: 95%;
     max-width: 1400px;
-    margin: 1.5rem auto; /* Centered with top margin */
+    margin: 1.5rem auto; 
     border-radius: 0.75rem;
     overflow: hidden;
     background-color: white;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08); /* More pronounced shadow */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* Navigation - FIXED and ENHANCED */

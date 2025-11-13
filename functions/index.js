@@ -3,6 +3,7 @@ const functions = require('firebase-functions');
 const { GoogleGenAI } = require('@google/genai');
 
 // Load API key securely from environment variables
+// IMPORTANT: You must run 'firebase functions:config:set gemini.key="YOUR_API_KEY"'
 const geminiApiKey = functions.config().gemini.key;
 if (!geminiApiKey) {
     throw new Error('Gemini API key not configured. Run: firebase functions:config:set gemini.key="..."');

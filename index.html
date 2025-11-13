@@ -4,11 +4,360 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyHub - Learn Smarter</title>
-    <link rel="stylesheet" href="styles.css"> 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <style>
+/* Made by Nathan */
+:root {
+    --primary-blue: #1E90FF; /* Dodger Blue - a vibrant blue */
+    --secondary-blue: #ADD8E6; /* Light Blue */
+    --background-white: #FFFFFF;
+    --text-dark: #333333;
+    --border-light: #EEEEEE;
+    --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+}
+
+body {
+    background-color: var(--background-white);
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* --- Authentication Screen Styling --- */
+#auth-screen {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    text-align: center;
+}
+
+.auth-container {
+    background-color: var(--background-white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.logo-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logo-box svg {
+    color: var(--primary-blue);
+    margin-right: 10px;
+}
+
+.logo-box h1 {
+    font-size: 2em;
+    color: var(--primary-blue);
+}
+
+#login-form, #signup-form {
+    margin-top: 20px;
+}
+
+h2 {
+    color: var(--primary-blue);
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+input[type="email"], 
+input[type="password"],
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    font-size: 1em;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.view-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+    width: 20px;
+    height: 20px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #1A7DD5;
+}
+
+.auth-link {
+    color: var(--primary-blue);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* --- App Dashboard Styling --- */
+#app-dashboard {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+}
+
+/* Sidebar */
+#sidebar {
+    width: 250px;
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#sidebar .logo-box {
+    margin-bottom: 30px;
+}
+
+#sidebar .logo-box svg {
+    color: white;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    text-decoration: none;
+    color: white;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
+}
+
+.nav-item:hover, .nav-item.active {
+    background-color: #007ACC; /* Darker blue on hover/active */
+}
+
+.nav-item i {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+.bottom-nav {
+    margin-top: auto;
+}
+
+/* Main Content */
+#main-content {
+    flex-grow: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.content-view {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* --- AI Helper View --- */
+#ai-helper {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 80px); /* Adjust height for full-screen use */
+}
+
+#ai-chat-box {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: var(--background-white);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-message, .user-message {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 18px;
+    max-width: 80%;
+    line-height: 1.5;
+}
+
+.ai-message {
+    align-self: flex-start;
+    background-color: var(--secondary-blue);
+    color: var(--text-dark);
+    border-bottom-left-radius: 2px;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: var(--primary-blue);
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+.ai-input-area {
+    display: flex;
+}
+
+#ai-user-input {
+    flex-grow: 1;
+    margin-bottom: 0;
+    margin-right: 10px;
+}
+
+.ai-input-area button {
+    width: auto;
+    padding: 12px 20px;
+}
+
+/* --- Notes & Flashcards View --- */
+.flashcard-controls button {
+    width: auto;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.flashcard-controls button i {
+    margin-right: 5px;
+}
+
+#note-card-editor, #flashcard-editor {
+    padding: 20px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+#note-content {
+    min-height: 150px;
+    resize: vertical;
+}
+
+#user-content-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.content-item {
+    padding: 15px;
+    border: 1px solid var(--secondary-blue);
+    border-radius: 8px;
+    background-color: #F8F8FF; /* Off-white for content boxes */
+    cursor: pointer;
+    transition: box-shadow 0.3s;
+}
+
+.content-item:hover {
+    box-shadow: 0 4px 10px rgba(30, 144, 255, 0.2);
+}
+
+.content-item h4 {
+    color: var(--primary-blue);
+    margin-bottom: 5px;
+}
+
+.content-item p {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.card-flip {
+    transform: rotateY(180deg);
+}
+
+/* --- Settings & Onboarding View --- */
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 500px;
+    padding: 20px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+}
+
+.settings-form label {
+    font-weight: bold;
+    margin-bottom: -10px;
+    color: var(--primary-blue);
+}
+
+.itemized-list {
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 10px;
+    min-height: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    background-color: var(--background-white);
+}
+
+.list-item {
+    background-color: var(--secondary-blue);
+    color: var(--text-dark);
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+}
+
+.list-item-remove {
+    margin-left: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #CC0000;
+}
+    </style>
 </head>
 <body>
 
@@ -164,9 +513,561 @@
     </div>
 
     <script>
+        /* Made by Nathan */
         // Calls the Lucide library to render the icons
         lucide.createIcons();
+
+        // --- Configuration and Initialization ---
+
+        // Firebase Config provided by the user
+        const firebaseConfig = {
+            apiKey: "AIzaSyCAJ5kM37MKyq2UGUw1dHF8EEskdKWU5f4",
+            authDomain: "studyhubon.firebaseapp.com",
+            projectId: "studyhubon",
+            storageBucket: "studyhubon.firebasestorage.app",
+            messagingSenderId: "137164743903",
+            appId: "1:137164743903:web:9ffa7d3f8e67d9b349f56a",
+            measurementId: "G-6SPKY9LQ0S"
+        };
+
+        // Gemini API Key provided by the user
+        const GEMINI_API_KEY = "AIzaSyAsXY-tMiXaC2CX3VlWJa8NtOWb6pp4cFc";
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // AI Initialization (using a simple fetch wrapper for the API)
+        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;
+
+        // Global state
+        let currentUserData = {};
+        let currentLessons = [];
+
+        // --- Authentication and Onboarding Functions ---
+
+        function showLogin() {
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+        }
+
+        function showSignup() {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('signup-form').classList.remove('hidden');
+        }
+
+        function togglePasswordVisibility(id) {
+            const input = document.getElementById(id);
+            const icon = input.nextElementSibling; // The eye icon is the next sibling
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons(); // Re-render the icon
+        }
+
+        async function signupUser() {
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            if (!email || !password) {
+                alert("Please enter both email and password.");
+                return;
+            }
+
+            try {
+                // 1. Create user in Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // 2. Initial user data for Firestore
+                await db.collection('users').doc(user.uid).set({
+                    email: user.email,
+                    onboarded: false,
+                    name: '',
+                    age: null,
+                    yearGroup: '',
+                    institution: '',
+                    lessons: []
+                });
+
+                alert("Sign Up successful! Please complete the onboarding process.");
+            } catch (error) {
+                alert("Sign Up Failed: " + error.message);
+            }
+        }
+
+        async function loginUser() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                alert("Please enter both email and password.");
+                return;
+            }
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                alert("Login Failed: " + error.message);
+            }
+        }
+
+        function logoutUser() {
+            auth.signOut();
+        }
+
+        // Handle the user's authentication state
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                document.getElementById('auth-screen').classList.add('hidden');
+                await loadUserData(user.uid);
+
+                // Check for Admin status and conditionally show the Admin Panel link
+                const adminPanelLink = document.querySelector('.nav-item[data-view="admin-panel"]');
+                if (user.email === 'declanthebest01@gmail.com') {
+                    if (!adminPanelLink) {
+                        // Dynamically create the admin link if it doesn't exist (for future implementation)
+                        const sidebar = document.getElementById('sidebar');
+                        const adminLink = document.createElement('a');
+                        adminLink.href = '#';
+                        adminLink.className = 'nav-item';
+                        adminLink.setAttribute('data-view', 'admin-panel');
+                        adminLink.innerHTML = '<i data-lucide="lock"></i> Admin Panel';
+                        // Find the credits tab or settings tab to insert before
+                        const creditsLink = document.querySelector('.nav-item[data-view="credits"]');
+                        sidebar.insertBefore(adminLink, creditsLink);
+                        lucide.createIcons();
+                    }
+                } else {
+                    if (adminPanelLink) {
+                        adminPanelLink.remove(); // Remove if user is not admin
+                    }
+                }
+
+
+                if (currentUserData.onboarded) {
+                    document.getElementById('onboarding').classList.add('hidden');
+                    document.getElementById('app-dashboard').classList.remove('hidden');
+                    // Initial view is AI Helper
+                    switchView('ai-helper'); 
+                } else {
+                    document.getElementById('app-dashboard').classList.remove('hidden');
+                    document.getElementById('onboarding').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('app-dashboard').classList.add('hidden');
+                document.getElementById('auth-screen').classList.remove('hidden');
+                showLogin();
+            }
+        });
+
+        // Load user data from Firestore
+        async function loadUserData(uid) {
+            try {
+                const doc = await db.collection('users').doc(uid).get();
+                if (doc.exists) {
+                    currentUserData = doc.data();
+                    currentLessons = currentUserData.lessons || [];
+                } else {
+                    console.error("No user data found in Firestore.");
+                }
+            } catch (error) {
+                console.error("Error loading user data:", error);
+            }
+        }
+
+        // Onboarding logic
+        document.getElementById('onboard-lessons-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addLesson(this.value.trim(), 'onboard-lessons-list');
+                this.value = '';
+            }
+        });
+
+        function addLesson(lesson, listId) {
+            if (lesson && !currentLessons.includes(lesson)) {
+                currentLessons.push(lesson);
+                renderLessonsList(listId);
+            }
+        }
+
+        function removeLesson(lesson, listId) {
+            currentLessons = currentLessons.filter(l => l !== lesson);
+            renderLessonsList(listId);
+        }
+
+        function renderLessonsList(listId) {
+            const listElement = document.getElementById(listId);
+            listElement.innerHTML = '';
+            currentLessons.forEach(lesson => {
+                const item = document.createElement('span');
+                item.className = 'list-item';
+                item.textContent = lesson;
+                const removeIcon = document.createElement('span');
+                removeIcon.className = 'list-item-remove';
+                removeIcon.innerHTML = '&times;';
+                // Determine the correct list ID for removal handler
+                const isSettings = listId === 'setting-lessons-list';
+                const targetListId = isSettings ? 'setting-lessons-list' : 'onboard-lessons-list'; 
+                removeIcon.onclick = () => removeLesson(lesson, targetListId);
+                item.appendChild(removeIcon);
+                listElement.appendChild(item);
+            });
+        }
+
+        async function completeOnboarding() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const name = document.getElementById('onboard-name').value;
+            const age = parseInt(document.getElementById('onboard-age').value);
+            const yearGroup = document.getElementById('onboard-year-group').value;
+            const institution = document.getElementById('onboard-institution').value;
+
+            if (!name || !age || !yearGroup || !institution || currentLessons.length === 0) {
+                alert("Please fill in all onboarding fields and add at least one lesson.");
+                return;
+            }
+
+            try {
+                await db.collection('users').doc(user.uid).update({
+                    onboarded: true,
+                    name,
+                    age,
+                    yearGroup,
+                    institution,
+                    lessons: currentLessons
+                });
+                
+                currentUserData = { ...currentUserData, onboarded: true, name, age, yearGroup, institution, lessons: currentLessons };
+                alert("Onboarding complete! Welcome to StudyHub.");
+                document.getElementById('onboarding').classList.add('hidden');
+                switchView('ai-helper');
+            } catch (error) {
+                alert("Failed to complete onboarding: " + error.message);
+            }
+        }
+
+
+        // --- Sidebar and View Management ---
+
+        function switchView(viewId) {
+            // Hide all content views
+            document.querySelectorAll('.content-view').forEach(view => {
+                view.classList.add('hidden');
+            });
+            // Show the requested view
+            document.getElementById(viewId).classList.remove('hidden');
+
+            // Update active state in sidebar
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`.nav-item[data-view="${viewId}"]`)?.classList.add('active'); // Use optional chaining for safety
+
+            // Special initialization for specific views
+            if (viewId === 'settings') {
+                loadSettings();
+            } else if (viewId === 'notes-flashcards') {
+                loadUserContent();
+            } else if (viewId === 'admin-panel') {
+                // Placeholder for Admin Panel functionality
+                if (auth.currentUser.email !== 'declanthebest01@gmail.com') {
+                    alert('Access Denied: You are not authorized to view the Admin Panel.');
+                    switchView('ai-helper'); // Redirect
+                    return;
+                }
+                // TODO: Load Admin Panel content
+            }
+        }
+
+        // Attach event listeners to sidebar items
+        document.getElementById('sidebar').addEventListener('click', (e) => {
+            const navItem = e.target.closest('.nav-item');
+            if (navItem) {
+                e.preventDefault();
+                const viewId = navItem.getAttribute('data-view');
+                // Prevent logout link from trying to switch view
+                if (viewId) {
+                    switchView(viewId);
+                }
+            }
+        });
+
+
+        // --- 1. AI Study Helper Functionality ---
+
+        async function sendAIChat() {
+            const inputElement = document.getElementById('ai-user-input');
+            const chatBox = document.getElementById('ai-chat-box');
+            const userPrompt = inputElement.value.trim();
+
+            if (!userPrompt) return;
+
+            // Display user message
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'user-message';
+            userMessageDiv.textContent = userPrompt;
+            chatBox.appendChild(userMessageDiv);
+
+            // Clear input and show a placeholder AI message
+            inputElement.value = '';
+            const aiMessageDiv = document.createElement('div');
+            aiMessageDiv.className = 'ai-message';
+            aiMessageDiv.innerHTML = '<span class="loading">... Thinking ...</span>';
+            chatBox.appendChild(aiMessageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Construct the context for the AI
+            const context = `You are a helpful study assistant named StudyHub AI, designed to help students, especially those in Cambridge curriculum. The user's profile is: Name: ${currentUserData.name || 'Student'}, Year Group: ${currentUserData.yearGroup || 'N/A'}, Lessons: ${currentUserData.lessons ? currentUserData.lessons.join(', ') : 'None'}. Provide concise, accurate, and encouraging study help.`;
+
+            const payload = {
+                contents: [
+                    { role: "user", parts: [{ text: context + "\n\nUser Question: " + userPrompt }] }
+                ]
+            };
+
+            try {
+                const response = await fetch(GEMINI_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const aiResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm experiencing a high volume of requests. Please try again in a moment.";
+
+                // Update the placeholder message with the actual response
+                aiMessageDiv.innerHTML = aiResponseText.replace(/\n/g, '<br>'); // Basic formatting for newlines
+                
+            } catch (error) {
+                console.error("AI Chat Error:", error);
+                aiMessageDiv.textContent = "Sorry, I couldn't connect to the AI service. " + error.message;
+            } finally {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+
+        // --- 2. Notes & Flashcards Functionality ---
+
+        function showCreateNote() {
+            document.getElementById('note-card-editor').classList.remove('hidden');
+            document.getElementById('flashcard-editor').classList.add('hidden');
+            document.querySelector('#note-card-editor h3').textContent = 'Create Note';
+            document.getElementById('note-title').value = '';
+            document.getElementById('note-content').value = '';
+        }
+
+        function showCreateFlashcard() {
+            document.getElementById('note-card-editor').classList.add('hidden');
+            document.getElementById('flashcard-editor').classList.remove('hidden');
+            document.getElementById('card-front').value = '';
+            document.getElementById('card-back').value = '';
+        }
+
+        async function saveNote() {
+            const user = auth.currentUser;
+            if (!user) return;
+            const title = document.getElementById('note-title').value.trim();
+            const content = document.getElementById('note-content').value.trim();
+
+            if (!title || !content) {
+                alert("Please enter a title and content for your note.");
+                return;
+            }
+
+            try {
+                await db.collection('content').add({
+                    uid: user.uid,
+                    type: 'note',
+                    title: title,
+                    content: content,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert('Note saved successfully!');
+                document.getElementById('note-card-editor').classList.add('hidden');
+                loadUserContent(); // Refresh list
+            } catch (error) {
+                console.error("Error saving note:", error);
+                alert('Failed to save note.');
+            }
+        }
+
+        async function saveFlashcard() {
+            const user = auth.currentUser;
+            if (!user) return;
+            const front = document.getElementById('card-front').value.trim();
+            const back = document.getElementById('card-back').value.trim();
+
+            if (!front || !back) {
+                alert("Please enter a question/term for the front and an answer/definition for the back.");
+                return;
+            }
+
+            try {
+                await db.collection('content').add({
+                    uid: user.uid,
+                    type: 'flashcard',
+                    front: front,
+                    back: back,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert('Flashcard saved successfully!');
+                document.getElementById('flashcard-editor').classList.add('hidden');
+                loadUserContent(); // Refresh list
+            } catch (error) {
+                console.error("Error saving flashcard:", error);
+                alert('Failed to save flashcard.');
+            }
+        }
+
+        async function loadUserContent() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const listElement = document.getElementById('user-content-list');
+            listElement.innerHTML = '<div>Loading content...</div>';
+
+            try {
+                const snapshot = await db.collection('content')
+                                        .where('uid', '==', user.uid)
+                                        .orderBy('createdAt', 'desc')
+                                        .get();
+
+                listElement.innerHTML = '';
+                if (snapshot.empty) {
+                    listElement.innerHTML = '<div>You have no saved notes or flashcards. Start creating!</div>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const item = document.createElement('div');
+                    item.className = 'content-item';
+                    
+                    if (data.type === 'note') {
+                        item.innerHTML = `
+                            <h4>📝 ${data.title}</h4>
+                            <p>Note created on: ${data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                        `;
+                        item.onclick = () => alert(`Note: ${data.title}\n\nContent:\n${data.content}`);
+                    } else if (data.type === 'flashcard') {
+                        item.innerHTML = `
+                            <h4>🃏 ${data.front}</h4>
+                            <p>Click to see answer...</p>
+                        `;
+                        // Simple flip logic
+                        item.onclick = () => {
+                            if (item.classList.contains('card-flip')) {
+                                item.innerHTML = `<h4>🃏 ${data.front}</h4><p>Click to see answer...</p>`;
+                                item.classList.remove('card-flip');
+                            } else {
+                                item.innerHTML = `<h4>💡 ${data.back}</h4><p>Click to see question...</p>`;
+                                item.classList.add('card-flip');
+                            }
+                        };
+                    }
+                    listElement.appendChild(item);
+                });
+
+            } catch (error) {
+                console.error("Error loading content:", error);
+                listElement.innerHTML = '<div>Failed to load your content.</div>';
+            }
+        }
+
+
+        function createFlashcardsFromNote() {
+            alert("AI Flashcard generation is currently handled via the AI Helper chat. Please copy your note content, go to the AI Helper, and ask it to 'generate 5 flashcards from the following text'.");
+        }
+
+
+        // --- 3. Settings Functionality ---
+
+        document.getElementById('setting-lessons-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addLesson(this.value.trim(), 'setting-lessons-list');
+                this.value = '';
+            }
+        });
+
+        function loadSettings() {
+            // Populate the form with current user data
+            document.getElementById('setting-name').value = currentUserData.name || '';
+            document.getElementById('setting-age').value = currentUserData.age || '';
+            document.getElementById('setting-year-group').value = currentUserData.yearGroup || '';
+            document.getElementById('setting-institution').value = currentUserData.institution || '';
+            
+            // Set up the lessons list. Re-fetch currentLessons from global state.
+            currentLessons = [...(currentUserData.lessons || [])]; 
+            renderLessonsList('setting-lessons-list');
+        }
+
+        async function saveSettings() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const name = document.getElementById('setting-name').value;
+            const age = parseInt(document.getElementById('setting-age').value);
+            const yearGroup = document.getElementById('setting-year-group').value;
+            const institution = document.getElementById('setting-institution').value;
+            
+            try {
+                await db.collection('users').doc(user.uid).update({
+                    name,
+                    age,
+                    yearGroup,
+                    institution,
+                    lessons: currentLessons
+                });
+                
+                // Update global state
+                currentUserData = { ...currentUserData, name, age, yearGroup, institution, lessons: currentLessons };
+                alert("Settings saved successfully!");
+
+            } catch (error) {
+                alert("Failed to save settings: " + error.message);
+            }
+        }
+
+        async function resetPassword() {
+            const newPassword = document.getElementById('setting-new-password').value;
+            const user = auth.currentUser;
+
+            if (!user) {
+                alert("You must be logged in to reset your password.");
+                return;
+            }
+
+            if (!newPassword || newPassword.length < 6) {
+                alert("Password must be at least 6 characters long.");
+                return;
+            }
+
+            try {
+                await user.updatePassword(newPassword);
+                alert("Password reset successfully!");
+                document.getElementById('setting-new-password').value = ''; // Clear the field
+            } catch (error) {
+                if (error.code === 'auth/requires-recent-login') {
+                    alert("Error: For security, please log out and log in again immediately before attempting to change your password.");
+                } else {
+                    alert("Password reset failed: " + error.message);
+                }
+            }
+        }
     </script>
-    <script src="script.js"></script>
 </body>
 </html>

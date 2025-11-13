@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyHub - Your AI-Powered Learning Platform</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-functions-compat.js"></script>
+</head>
+<body>
+
+    <div id="auth-container" class="auth-container">
+        <div class="logo-area">
+            <i data-lucide="book-open" class="logo-icon blue-text"></i>
+            <h1>StudyHub</h1>
+        </div>
+        
+        <div id="login-form" class="auth-form">
+            <h2>Log In</h2>
+            <div id="login-error" class="error-message hidden"></div>
+            <div class="input-group">
+                <input type="email" id="login-email" placeholder="Email" required>
+            </div>
+            <div class="input-group password-group">
+                <input type="password" id="login-password" placeholder="Password" required>
+                <i data-lucide="eye" class="password-toggle" onclick="togglePasswordVisibility('login-password', this)"></i>
+            </div>
+            <button onclick="login()">Log In</button>
+            <p>Don't have an account? <a href="#" onclick="showSignup()">Sign Up</a></p>
+        </div>
+
+        <div id="signup-form" class="auth-form hidden">
+            <h2>Sign Up</h2>
+            <div id="signup-error" class="error-message hidden"></div>
+            <div class="input-group">
+                <input type="email" id="signup-email" placeholder="Email" required>
+            </div>
+            <div class="input-group password-group">
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <i data-lucide="eye" class="password-toggle" onclick="togglePasswordVisibility('signup-password', this)"></i>
+            </div>
+            <button onclick="signup()">Sign Up</button>
+            <p>Already have an account? <a href="#" onclick="showLogin()">Log In</a></p>
+        </div>
+    </div>
+
+    <div id="onboarding-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Welcome! Tell us about your studies.</h2>
+            <div id="onboarding-error" class="error-message hidden"></div>
+            <div class="input-group"><input type="text" id="onboard-name" placeholder="Full Name" required></div>
+            <div class="input-group"><input type="number" id="onboard-age" placeholder="Age" required min="5"></div>
+            <div class="input-group"><input type="text" id="onboard-year" placeholder="Year Group (e.g., 10th Grade, Year 12)" required></div>
+            <div class="input-group"><input type="text" id="onboard-institution" placeholder="Institution of Learning" required></div>
+            <div class="input-group">
+                <input type="text" id="lesson-input" placeholder="Type a lesson/subject and press Enter">
+                <div id="lessons-list" class="itemized-list"></div>
+            </div>
+            <button onclick="completeOnboarding()">Start Learning</button>
+        </div>
+    </div>
+
+    <div id="app-container" class="app-container hidden">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i data-lucide="book-open" class="logo-icon white-text"></i>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-tab="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="#" class="nav-item" data-tab="ai-help"><i data-lucide="brain"></i> AI Help</a>
+                <a href="#" class="nav-item" data-tab="flashcards"><i data-lucide="layers"></i> Flashcards</a>
+                <a href="#" class="nav-item" data-tab="quizzes"><i data-lucide="help-circle"></i> Quizzes</a>
+                <a href="#" class="nav-item" data-tab="chat"><i data-lucide="messages-square"></i> Chat</a>
+                <a href="#" class="nav-item" data-tab="leaderboard"><i data-lucide="trophy"></i> Leaderboard</a>
+                <a href="#" class="nav-item" data-tab="settings"><i data-lucide="settings"></i> Settings</a>
+                <a href="#" class="nav-item hidden" id="admin-panel-nav" data-tab="admin-panel"><i data-lucide="user-cog"></i> Admin Panel</a>
+                <a href="#" class="nav-item" data-tab="credits"><i data-lucide="info"></i> Credits</a>
+            </nav>
+            <button onclick="logout()" class="logout-btn"><i data-lucide="log-out"></i> Log Out</button>
+        </aside>
+
+        <main class="main-content">
+            <div id="dashboard" class="tab-content active-tab">
+                <h2 id="dashboard-greeting">👋 Welcome Back!</h2>
+                <p>Use the sidebar to access your learning tools.</p>
+            </div>
+
+            <div id="ai-help" class="tab-content hidden">
+                <h2>🧠 AI Study Assistant</h2>
+                <div class="chat-window">
+                    <div id="ai-messages" class="chat-messages">
+                        <div class="message system">Hello! I'm your AI Study Assistant. Ask me anything about your lessons.</div>
+                    </div>
+                </div>
+                <div class="chat-input-group">
+                    <input type="text" id="ai-prompt" placeholder="Ask your AI study assistant..." onkeypress="if(event.key==='Enter') sendAIQuery()">
+                    <button onclick="sendAIQuery()">Send</button>
+                </div>
+            </div>
+
+            <div id="flashcards" class="tab-content hidden">
+                <h2>🗂️ Flashcards & Notes</h2>
+                <button onclick="showCreateFlashcardModal()">+ Create Flashcard/Note</button>
+                <button onclick="generateAIFlashcards()">✨ Generate with AI</button>
+                <div id="flashcard-list" class="list-container"></div>
+                <div id="create-flashcard-modal" class="modal hidden">
+                    <div class="modal-content">
+                        <h3>Create New Flashcard/Note</h3>
+                        <div class="input-group"><input type="text" id="flashcard-front" placeholder="Title/Term (e.g., Photosynthesis)" required></div>
+                        <div class="input-group"><textarea id="flashcard-back" placeholder="Content/Definition (Acts as Note or Answer)" required></textarea></div>
+                        <button onclick="saveFlashcard()">Save Item</button>
+                        <button onclick="hideCreateFlashcardModal()" style="background-color: #ccc;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="quizzes" class="tab-content hidden">
+                <h2>📝 Quizzes</h2>
+                <button onclick="generateQuizFromFlashcards()">Generate from Saved Items</button>
+                <button onclick="generateAIQuiz()">✨ Generate with AI</button>
+                <div id="quiz-list" class="list-container"></div>
+            </div>
+            
+            <div id="chat" class="tab-content hidden">
+                <h2>💬 Chat</h2>
+                <div class="chat-controls">
+                    <button id="show-global-chat" class="active-chat-btn" onclick="switchChat('global')">Global Chat</button>
+                    <button id="show-year-chat" onclick="switchChat('year')">Year Group Chat</button>
+                </div>
+                <div id="chat-window" class="chat-window"></div>
+                <div class="chat-input-group">
+                    <input type="text" id="chat-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+                    <button onclick="sendChatMessage()">Send</button>
+                </div>
+            </div>
+
+            <div id="leaderboard" class="tab-content hidden">
+                <h2>🏆 Leaderboard</h2>
+                <div class="chat-controls">
+                    <button id="show-global-ranking" class="active-chat-btn" onclick="loadLeaderboard('global')">Overall Ranking</button>
+                    <button id="show-year-ranking" onclick="loadLeaderboard('year')">Year Group Ranking</button>
+                </div>
+                <table id="leaderboard-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style="background-color: var(--light-blue);"><th style="padding: 10px; text-align: left;">Rank</th><th style="text-align: left;">Name</th><th style="text-align: left;">Year Group</th><th style="text-align: left;">Score</th></tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        </tbody>
+                </table>
+            </div>
+
+            <div id="settings" class="tab-content hidden">
+                <h2>⚙️ Settings</h2>
+                <div id="settings-message" style="margin-bottom: 10px;"></div>
+                <div class="settings-form">
+                    <div class="input-group"><label>Name</label><input type="text" id="setting-name"></div>
+                    <div class="input-group"><label>Email (Read-Only)</label><input type="email" id="setting-email" disabled></div>
+                    <div class="input-group"><label>Age</label><input type="number" id="setting-age"></div>
+                    <div class="input-group"><label>Year Group</label><input type="text" id="setting-year"></div>
+                    <div class="input-group"><label>Institution</label><input type="text" id="setting-institution"></div>
+                    
+                    <label style="display: block; margin-bottom: 5px;">Lessons/Subjects</label>
+                    <div class="input-group">
+                        <input type="text" id="setting-lesson-input" placeholder="Add/Remove lessons">
+                        <div id="setting-lessons-list" class="itemized-list"></div>
+                    </div>
+
+                    <button onclick="updateUserProfile()">Save Profile Changes</button>
+                    <button onclick="showResetPasswordModal()">Reset Password</button>
+                </div>
+                
+                <div id="reset-password-modal" class="modal hidden">
+                    <div class="modal-content">
+                        <h3>Reset Password</h3>
+                        <div id="reset-password-message" style="margin-bottom: 10px;"></div>
+                        <p>A password reset link will be sent to your email (<span id="reset-email-display"></span>).</p>
+                        <button onclick="sendPasswordReset()">Send Reset Link</button>
+                        <button onclick="hideResetPasswordModal()" style="background-color: #ccc;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-panel" class="tab-content hidden">
+                <h2>👑 Admin Panel</h2>
+                <p>Welcome, Admin! This section is restricted to **declanthebest01@gmail.com**.</p>
+                <div id="admin-content">
+                    <p>Admin features: View User List, Edit User Scores, Content Moderation (Requires backend logic).</p>
+                </div>
+            </div>
+            
+            <div id="credits" class="tab-content hidden">
+                <h2>⭐ Credits</h2>
+                <p>Development and Implementation by: **Nathan Koech**</p>
+                <p>Powered by **Gemini API** via secured **Firebase Cloud Functions** and **Firebase Firestore/Auth**.</p>
+                <p>Icons provided by **Lucide**.</p>
+            </div>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

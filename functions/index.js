@@ -1,50 +1,56 @@
-/** Made by Nathan */
+// Made by Nathan
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 const { GoogleGenAI } = require('@google/genai');
 
-// Load API key securely from environment variables
-// IMPORTANT: You must run 'firebase functions:config:set gemini.key="YOUR_API_KEY"'
-const geminiApiKey = functions.config().gemini.key;
-if (!geminiApiKey) {
-    throw new Error('Gemini API key not configured. Run: firebase functions:config:set gemini.key="..."');
-}
+admin.initializeApp();
 
-const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+const GEMINI_API_KEY = functions.config().gemini.key;
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+const model = 'gemini-2.5-flash';
 
-// --- Gemini Cloud Function ---
 exports.callGemini = functions.https.onCall(async (data, context) => {
-    // 1. Authentication Check: Ensure the call is made by a logged-in user
+
+    if (!data.prompt || typeof data.prompt !== 'string' || data.prompt.length === 0) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'The prompt must be a non-empty string.'
+        );
+    }
+
+    /*
     if (!context.auth) {
-        throw new functions.https.HttpsError('unauthenticated', 'The request must be authenticated.');
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'Authentication is required to call this function.'
+        );
     }
+    const userId = context.auth.uid;
+    console.log(`User ${userId} is requesting AI help.`);
+    */
 
-    const prompt = data.prompt;
-    const mode = data.mode || 'text'; // 'text' or 'json'
-
-    if (!prompt) {
-        throw new functions.https.HttpsError('invalid-argument', 'The prompt is required.');
-    }
+    const userPrompt = data.prompt;
 
     try {
-        // Set configuration based on the requested mode
-        const config = {
-            temperature: 0.7,
-            responseMimeType: mode === 'json' ? "application/json" : "text/plain",
-        };
-
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: [{ parts: [{ text: prompt }] }],
-            config: config,
+            model,
+            contents: userPrompt,
+            config: {
+                temperature: 0.3,
+            },
         });
 
-        const text = response.text;
-        
-        // Return the response text securely
-        return { text: text };
+        return {
+            responseText: response.text,
+        };
 
     } catch (error) {
-        console.error("Gemini API Error:", error);
-        throw new functions.https.HttpsError('internal', 'Failed to get response from AI.', error.message);
+        console.error('Gemini API Error:', error);
+
+        throw new functions.https.HttpsError(
+            'internal',
+            'An error occurred while communicating with the AI service.',
+            error.message
+        );
     }
 });

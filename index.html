@@ -3,58 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyHub - AI Powered Learning</title>
+    <title>StudyHub - Learn Smarter</title>
     <link rel="stylesheet" href="styles.css"> 
-    
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-functions.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <header>
-        <h1>StudyHub</h1>
-        <div id="auth-ui">
-            <button id="auth-button">Sign In / Register</button>
-            <span id="user-display"></span>
-            <button id="sign-out-button" style="display:none;">Sign Out</button>
-        </div>
-    </header>
 
-    <div id="main-content" style="display:none;">
-        <nav>
-            <button class="nav-button" data-view="dashboard">Dashboard</button>
-            <button class="nav-button" data-view="flashcards">Flashcards</button>
-            <button class="nav-button" data-view="chat">Year Group Chat</button>
-            <button class="nav-button" data-view="leaderboard">Leaderboard</button>
-            <button class="nav-button" data-view="ai-help">AI Study Help</button>
-            <button class="nav-button" data-view="admin-panel" id="admin-nav-button" style="display:none;">Admin Panel</button>
-        </nav>
-
-        <main id="app-view">
-            <h2>Welcome to StudyHub!</h2>
-            <p>Select a tab to begin.</p>
-        </main>
-    </div>
-
-    <div id="auth-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h3>Sign In / Register</h3>
-            <input type="email" id="email-input" placeholder="Email">
-            <input type="password" id="password-input" placeholder="Password">
-            <div class="modal-buttons">
-                <button id="login-button">Sign In</button>
-                <button id="register-button">Register</button>
+    <div id="auth-screen">
+        <div class="auth-container">
+            <div class="logo-box">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-check">
+                    <path d="M8 2h4l2 5h7V8"/><path d="M4 19.5V8a2 2 0 0 1 2-2h12.5C14 17 6.3 15.6 4 19.5"/><path d="M4 19.5 2.5 21l2-1.5 2 1.5V6a2 2 0 0 0-2 2v11.5Z"/><path d="m15 19 2 2 4-4"/>
+                </svg>
+                <h1>StudyHub</h1>
             </div>
-            <p id="auth-message" style="color:red;"></p>
+            <div id="login-form">
+                <h2>Login</h2>
+                <input type="email" id="login-email" placeholder="Email" required>
+                <div class="password-wrapper">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <i data-lucide="eye" class="view-password" onclick="togglePasswordVisibility('login-password')"></i>
+                </div>
+                <button onclick="loginUser()">Login</button>
+                <p>Need an account? <span class="auth-link" onclick="showSignup()">Sign Up</span></p>
+            </div>
+
+            <div id="signup-form" class="hidden">
+                <h2>Sign Up</h2>
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <div class="password-wrapper">
+                    <input type="password" id="signup-password" placeholder="Password" required>
+                    <i data-lucide="eye" class="view-password" onclick="togglePasswordVisibility('signup-password')"></i>
+                </div>
+                <button onclick="signupUser()">Sign Up</button>
+                <p>Already have an account? <span class="auth-link" onclick="showLogin()">Login</span></p>
+            </div>
         </div>
     </div>
 
+    <div id="app-dashboard" class="hidden">
+        
+        <div id="sidebar">
+            <div class="logo-box">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-check">
+                    <path d="M8 2h4l2 5h7V8"/><path d="M4 19.5V8a2 2 0 0 1 2-2h12.5C14 17 6.3 15.6 4 19.5"/><path d="M4 19.5 2.5 21l2-1.5 2 1.5V6a2 2 0 0 0-2 2v11.5Z"/><path d="m15 19 2 2 4-4"/>
+                </svg>
+            </div>
+            <a href="#" class="nav-item active" data-view="ai-helper"><i data-lucide="bot"></i> AI Helper</a>
+            <a href="#" class="nav-item" data-view="notes-flashcards"><i data-lucide="book-open"></i> Notes & Cards</a>
+            <a href="#" class="nav-item" data-view="credits"><i data-lucide="award"></i> Credits</a>
+            <a href="#" class="nav-item bottom-nav" data-view="settings"><i data-lucide="settings"></i> Settings</a>
+            <a href="#" class="nav-item bottom-nav" onclick="logoutUser()"><i data-lucide="log-out"></i> Logout</a>
+        </div>
+
+        <div id="main-content">
+            
+            <div id="ai-helper" class="content-view">
+                <h2>🤖 AI Study Helper</h2>
+                <div id="ai-chat-box">
+                    <div class="ai-message">Hello! I'm your AI Study Helper. How can I assist you with your studies today?</div>
+                </div>
+                <div class="ai-input-area">
+                    <input type="text" id="ai-user-input" placeholder="Ask me about Cambridge IGCSE Physics, Math, or anything else...">
+                    <button onclick="sendAIChat()"><i data-lucide="send"></i></button>
+                </div>
+            </div>
+
+            <div id="notes-flashcards" class="content-view hidden">
+                <h2>📝 Notes & Flashcards</h2>
+                <div class="flashcard-controls">
+                    <button onclick="showCreateNote()"><i data-lucide="file-plus"></i> Create Note</button>
+                    <button onclick="showCreateFlashcard()"><i data-lucide="layers"></i> Create Flashcard</button>
+                    <button onclick="createFlashcardsFromNote()"><i data-lucide="bot"></i> AI Generate Cards</button>
+                </div>
+
+                <div id="note-card-editor" class="hidden">
+                    <h3>Create Note</h3>
+                    <input type="text" id="note-title" placeholder="Note Title (e.g., Photosynthesis)">
+                    <textarea id="note-content" placeholder="Type your detailed notes here..."></textarea>
+                    <button onclick="saveNote()">Save Note</button>
+                </div>
+
+                <div id="flashcard-editor" class="hidden">
+                    <h3>Create Flashcard</h3>
+                    <input type="text" id="card-front" placeholder="Card Front (Question or Term)">
+                    <input type="text" id="card-back" placeholder="Card Back (Answer or Definition)">
+                    <button onclick="saveFlashcard()">Save Flashcard</button>
+                </div>
+
+                <h3>Your Saved Content</h3>
+                <div id="user-content-list">
+                    </div>
+            </div>
+
+            <div id="settings" class="content-view hidden">
+                <h2>⚙️ Settings</h2>
+                <div class="settings-form">
+                    <label for="setting-name">Name:</label>
+                    <input type="text" id="setting-name">
+
+                    <label for="setting-age">Age:</label>
+                    <input type="number" id="setting-age" min="5" max="100">
+
+                    <label for="setting-year-group">Year Group:</label>
+                    <input type="text" id="setting-year-group">
+
+                    <label for="setting-institution">Institution of Learning:</label>
+                    <input type="text" id="setting-institution">
+                    
+                    <label for="setting-lessons">Lessons (Type, press Enter to add):</label>
+                    <input type="text" id="setting-lessons-input" placeholder="e.g., Mathematics, Physics, History">
+                    <div id="setting-lessons-list" class="itemized-list"></div>
+                    
+                    <button onclick="saveSettings()">Save Changes</button>
+                    
+                    <br>
+                    <h3>Account Security</h3>
+                    <label for="setting-new-password">Reset Password:</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="setting-new-password" placeholder="Enter new password">
+                        <i data-lucide="eye" class="view-password" onclick="togglePasswordVisibility('setting-new-password')"></i>
+                    </div>
+                    <button onclick="resetPassword()">Reset Password</button>
+                </div>
+            </div>
+
+            <div id="onboarding" class="content-view hidden">
+                <h2>👋 Welcome to StudyHub!</h2>
+                <p>Complete your profile to get personalized AI assistance.</p>
+                <input type="text" id="onboard-name" placeholder="Name" required>
+                <input type="number" id="onboard-age" placeholder="Age" min="5" max="100" required>
+                <input type="text" id="onboard-year-group" placeholder="Year Group (e.g., IGCSE Year 10)" required>
+                <input type="text" id="onboard-institution" placeholder="Institution of Learning" required>
+                
+                <label for="onboard-lessons-input">Lessons (Type, press Enter to add):</label>
+                <input type="text" id="onboard-lessons-input" placeholder="e.g., Mathematics, Physics, History" required>
+                <div id="onboard-lessons-list" class="itemized-list"></div>
+
+                <button onclick="completeOnboarding()">Complete Setup</button>
+            </div>
+
+            <div id="credits" class="content-view hidden">
+                <h2>🏆 Credits</h2>
+                <p class="credit-text">This StudyHub web application was built with core foundational code and architectural design provided by the developer.</p>
+                <p class="credit-text-main">Credits are gratefully given to **Nathan Koech**.</p>
+                <style>
+                    .credit-text-main {
+                        font-size: 1.5em;
+                        color: var(--primary-blue);
+                        margin-top: 20px;
+                        font-weight: bold;
+                    }
+                </style>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // Calls the Lucide library to render the icons
+        lucide.createIcons();
+    </script>
     <script src="script.js"></script>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> 36e32f197d7bf1c02d75f1b07939d066d2d59141

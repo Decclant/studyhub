@@ -310,6 +310,81 @@
             font-weight: bold;
         }
         
+        /* Modal Styles */
+        #flashcard-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            animation: slideIn 0.3s ease-out;
+            position: relative;
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 10px;
+        }
+
+        .modal-card-display {
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: var(--light-blue);
+        }
+
+        .modal-card-display p {
+            margin: 10px 0;
+            font-size: 16px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        .modal-card-display strong {
+            display: block;
+            color: #004080;
+            margin-bottom: 5px;
+        }
+
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover, .close-btn:focus {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
     </style>
 </head>
 <body>
@@ -459,12 +534,26 @@
                 <div style="background: var(--light-blue); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 5px solid var(--primary-blue);">
                     <p style="font-size: 18px; font-weight: bold;">Development & Implementation: <b>Made by Nathan</b></p>
                 </div>
-                <p style="margin-top: 20px;">Technology used: Firebase, Gemini API, Lucide Icons.</p>
+                <p style="margin-top: 20px;">Technology used: Firebase (Authentication & Data), Gemini API (AI Helper), HTML/CSS/JS, Lucide Icons.</p>
             </section>
 
             <section id="admin-panel" class="tab-content"><h2><i data-lucide="shield"></i> Admin Panel</h2><p>Welcome, Admin! This panel is restricted to declanthebest01@gmail.com.</p></section>
 
         </main>
+    </div>
+
+    <div id="flashcard-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="document.getElementById('flashcard-modal').style.display = 'none';">&times;</span>
+            <h3>Flashcard Details</h3>
+            <div class="modal-card-display">
+                <p><strong>Front (Question/Term):</strong> <span id="modal-front"></span></p>
+                <p><strong>Back (Answer/Definition):</strong> <span id="modal-back"></span></p>
+                <p><strong>Saved Date:</strong> <span id="modal-date"></span></p>
+                <p><strong>Source:</strong> <span id="modal-source"></span></p>
+            </div>
+            <button onclick="document.getElementById('flashcard-modal').style.display = 'none';">Close</button>
+        </div>
     </div>
 
     <script>
@@ -482,7 +571,8 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // NOTE: Please replace this with a newly generated, valid API key.
+        // NOTE: If you are still getting a 400 Bad Request, the key is invalid. 
+        // Please replace this with a newly generated, valid API key from Google AI Studio.
         const GEMINI_API_KEY = "AIzaSyCEBSFL8fLH02VdggHMA1mB13xvg9wkdLo"; 
         const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;
 
@@ -629,7 +719,7 @@
                         errorMessage = 'This email is already registered.';
                         break;
                     case 'auth/weak-password':
-                        errorMessage = 'Password must be at least 6 characters.';
+                        errorMessage = 'Password must be at least 8 characters long.';
                         break;
                     case 'auth/invalid-email':
                         errorMessage = 'The email address is not valid.';
@@ -708,7 +798,6 @@
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
 
-            // Load flashcards only when the user navigates to the flashcards tab
             if (tabId === 'flashcards' && auth.currentUser) {
                 window.loadFlashcards(auth.currentUser.uid);
             }
@@ -774,11 +863,15 @@
                 currentUserData.flashcards = flashcards;
                 userFlashcardsList.innerHTML = '';
                 
-                if (flashcards.length === 0) {
-                    noCardsMsg.style.display = 'block';
-                    return;
+                // Safety check for null before accessing style
+                if (noCardsMsg) {
+                    if (flashcards.length === 0) {
+                        noCardsMsg.style.display = 'block';
+                        return;
+                    }
+                    noCardsMsg.style.display = 'none';
                 }
-                noCardsMsg.style.display = 'none';
+
 
                 flashcards.forEach((card, index) => {
                     userFlashcardsList.appendChild(createFlashcardElement(card, index));
@@ -794,6 +887,7 @@
             cardElement.className = 'flashcard-card';
             cardElement.setAttribute('data-index', index);
             
+            // Display only the front content initially
             cardElement.innerHTML = `
                 <div class="flashcard-inner">
                     <div class="flashcard-front">
@@ -804,12 +898,36 @@
                 </div>
             `;
             
+            // Change click handler to open the modal
             cardElement.onclick = () => {
-                cardElement.classList.toggle('flipped');
+                window.viewFlashcardDetails(index);
             };
             
             setTimeout(() => lucide.createIcons(), 0);
             return cardElement;
+        }
+
+        window.viewFlashcardDetails = (index) => {
+            const card = currentUserData.flashcards[index];
+            if (!card) return;
+
+            // Format timestamp (Firestore Timestamp object)
+            let dateString = "N/A";
+            if (card.timestamp && card.timestamp.toDate) {
+                dateString = card.timestamp.toDate().toLocaleDateString("en-US", {
+                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+            } else if (card.timestamp) {
+                 // Handle cases where it might be a raw Date or string (less likely with the fix)
+                 dateString = new Date(card.timestamp).toLocaleDateString("en-US");
+            }
+
+            document.getElementById('modal-front').textContent = card.front;
+            document.getElementById('modal-back').textContent = card.back;
+            document.getElementById('modal-date').textContent = dateString;
+            document.getElementById('modal-source').textContent = card.source;
+
+            document.getElementById('flashcard-modal').style.display = 'flex';
         }
 
         window.createFlashcard = async () => {
@@ -837,8 +955,8 @@
                     flashcards: firebase.firestore.FieldValue.arrayUnion(newCard)
                 });
                 
-                currentUserData.flashcards.push(newCard);
-                loadFlashcards(auth.currentUser.uid);
+                // Optimization: fetch the updated data after successful write
+                await loadFlashcards(auth.currentUser.uid); // <--- Reloads flashcards after save
 
                 document.getElementById('fc-front').value = '';
                 document.getElementById('fc-back').value = '';
@@ -868,7 +986,7 @@
                 });
 
                 currentUserData.flashcards.splice(index, 1);
-                loadFlashcards(auth.currentUser.uid);
+                await loadFlashcards(auth.currentUser.uid); // <--- Reloads flashcards after delete
             } catch (e) {
                 alert('Failed to delete flashcard: ' + e.message);
                 console.error(e);
@@ -928,7 +1046,7 @@
                     });
                     
                     currentUserData.flashcards.push(...cardsToSave);
-                    loadFlashcards(auth.currentUser.uid);
+                    await loadFlashcards(auth.currentUser.uid);
                     
                     statusElement.textContent = `Successfully generated and added ${cardsToSave.length} flashcards!`;
                     statusElement.style.color = 'var(--chat-ai)';
@@ -1010,8 +1128,8 @@
             }
             
             if (newPassword) {
-                if (newPassword.length < 6) {
-                    passwordStatus.textContent = 'Password must be at least 6 characters.';
+                if (newPassword.length < 8) {
+                    passwordStatus.textContent = 'Password must be at least 8 characters long.';
                     passwordStatus.style.display = 'block';
                     return;
                 }

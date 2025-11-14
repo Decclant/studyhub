@@ -63,6 +63,11 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.2s;
+            /* Centering all block buttons */
+            display: block; 
+            max-width: 300px; 
+            width: 100%; 
+            margin: 15px auto; 
         }
 
         button:hover {
@@ -133,12 +138,25 @@
 
         .password-toggle {
             position: absolute;
-            right: 10px;
-            top: 50%;
+            right: 11px;
+            top: 10px;
             transform: translateY(-50%);
             cursor: pointer;
             color: #888;
         }
+        
+        /* Fix for vertical centering issue in some browsers */
+        .password-container input[type="password"],
+        .password-container input[type="text"] {
+             padding-right: 40px; 
+             line-height: normal;
+        }
+        
+        .password-toggle {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
 
         /* --- Lesson Input --- */
         #lessons-input-container {
@@ -408,9 +426,10 @@
                 <div id="ai-chat-box">
                     <div class="ai-message">Hello! I am your AI Study Helper. How can I assist you with your lessons today?</div>
                 </div>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="ai-input" placeholder="Ask a question about your lessons..." style="flex-grow:1;">
-                    <button onclick="sendAIRequest()">Send</button>
+                <!-- AI Input/Button: Need specific inline styles to override global centering -->
+                <div style="display:flex; gap:10px; align-items:flex-start;">
+                    <input type="text" id="ai-input" placeholder="Ask a question about your lessons..." style="flex-grow:1; margin-bottom: 0;">
+                    <button onclick="sendAIRequest()" style="display:inline-block; max-width:150px; width:auto; margin:0; flex-shrink: 0;">Send</button>
                 </div>
             </section>
             
@@ -744,6 +763,7 @@
         
         async function checkOnboardingStatus(uid, email) {
             try {
+                // This read is likely failing due to security rules
                 const doc = await db.collection('users').doc(uid).get();
                 if (doc.exists && doc.data().onboarded) {
                     currentUserData = doc.data(); // Cache data
@@ -758,7 +778,7 @@
                 }
             } catch (error) {
                 console.error("Error checking onboarding status:", error);
-                // Default to onboarding if check fails
+                // Default to onboarding if check fails or if permission is denied (which blocks the app)
                 showView('onboarding-view'); 
             }
         }
@@ -786,7 +806,7 @@
             if (auth.currentUser && auth.currentUser.email === 'declanthebest01@gmail.com') {
                 if (!adminPanelListItem || !document.getElementById('admin-panel')) {
                     // Only add if it doesn't exist
-                    if (document.querySelector('.sidebar-nav li a[onclick="logoutUser()"]').parentElement) {
+                    if (document.querySelector('.sidebar-nav li:last-child')) {
                         const li = document.createElement('li');
                         li.innerHTML = `<a href="#" onclick="showSection('admin-panel', this)"><i data-lucide="shield-check"></i> Admin Panel</a>`;
                         // Insert before Log Out
@@ -955,7 +975,8 @@
 
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Delete';
-                deleteButton.style.cssText = 'background-color: #ff4d4d; margin-top: 10px; padding: 5px 10px; font-size: 0.8em;';
+                // Inline styles to override global centering for the small button inside the card
+                deleteButton.style.cssText = 'background-color: #ff4d4d; margin-top: 10px; padding: 5px 10px; font-size: 0.8em; display: inline-block; max-width: none; width: auto;';
                 deleteButton.onclick = deleteHandler;
                 
                 const cardInner = document.createElement('div');
@@ -980,7 +1001,7 @@
         
         async function addNote() {
             if (!currentLesson) {
-                alert('Please select a lesson first.');
+                prompt('Please select a lesson first.');
                 return;
             }
             
@@ -989,7 +1010,7 @@
             const user = firebase.auth().currentUser;
 
             if (!front || !back || !user) {
-                alert('Both the front and back content are required, and you must be logged in.');
+                prompt('Both the front and back content are required, and you must be logged in.');
                 return;
             }
             
@@ -1015,7 +1036,7 @@
 
             } catch (error) {
                 console.error("Error saving flashcard to Firestore:", error);
-                alert('Error saving flashcard. Please try again.');
+                prompt('Error saving flashcard. Please try again.');
             }
         }
         
@@ -1044,7 +1065,7 @@
 
             } catch (error) {
                 console.error("Error deleting flashcard from Firestore:", error);
-                alert('Error deleting flashcard. Please try again.');
+                prompt('Error deleting flashcard. Please try again.');
             }
         }
 

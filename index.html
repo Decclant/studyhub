@@ -838,15 +838,27 @@
                 : 'General Knowledge';
             const userYearGroup = currentUserData.yearGroup || 'High School';
             
+            // *** THE CRITICAL FIX: Define System Instruction as a Content Part ***
+            const systemInstructionContent = {
+                role: "system",
+                parts: [{ 
+                    text: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.` 
+                }]
+            };
+            
+            // Define the user's current message
+            const userMessageContent = {
+                role: "user",
+                parts: [{ text: userMessage }]
+            };
+
             const payload = {
-                // CORRECT STRUCTURE: contents is top-level
-                contents: [{ role: "user", parts: [{ text: userMessage }] }],
+                // ** CONTENTS ARRAY NOW STARTS WITH THE SYSTEM MESSAGE **
+                contents: [systemInstructionContent, userMessageContent],
                 
-                // CRITICAL FIX: Moving system_instruction inside generationConfig 
+                // generationConfig ONLY contains generation parameters (like temperature)
                 generationConfig: {
-                    temperature: 0.5,
-                    // Placing the instruction here as required by the REST endpoint
-                    system_instruction: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`,
+                    temperature: 0.5
                 }
             };
             
@@ -1040,8 +1052,6 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        // CORRECT STRUCTURE - System instruction is not needed for this single-turn prompt 
-                        // and is better omitted than misformatted.
                         contents: [{ role: "user", parts: [{ text: prompt }] }],
                         generationConfig: { 
                             temperature: 0.7 

@@ -803,6 +803,7 @@
             }
         }
 
+        // Made by Nathan
         window.sendAiMessage = async () => {
             const input = document.getElementById('ai-input');
             const chatBox = document.getElementById('ai-chat-box');
@@ -823,7 +824,6 @@
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Made by Nathan
             // Defensive coding for systemInstruction arguments
             const userLessons = currentUserData.lessons && currentUserData.lessons.length > 0 
                 ? currentUserData.lessons.join(', ') 
@@ -835,14 +835,15 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        // CORRECT STRUCTURE: contents is top-level
                         contents: [{ role: "user", parts: [{ text: userMessage }] }],
-                        // UPDATED SYSTEM INSTRUCTION
+                        
+                        // CORRECT STRUCTURE: systemInstruction is top-level (sibling to contents)
                         systemInstruction: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`,
-                        config: {
-                            // GENERATION PARAMETERS MOVED INSIDE generationConfig
-                            generationConfig: {
-                                temperature: 0.5
-                            }
+                        
+                        // FIX APPLIED: Using generationConfig as a top-level property instead of 'config' wrapper
+                        generationConfig: { 
+                            temperature: 0.5
                         }
                     })
                 });
@@ -1006,6 +1007,7 @@
             }
         }
         
+        // Made by Nathan
         window.generateFlashcardsWithAI = async (button) => {
             const topic = document.getElementById('ai-fc-topic').value.trim();
             const statusElement = document.getElementById('ai-fc-status');
@@ -1026,11 +1028,10 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        // CORRECT STRUCTURE
                         contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        config: { 
-                            generationConfig: { 
-                                temperature: 0.7 
-                            } 
+                        generationConfig: { 
+                            temperature: 0.7 
                         }
                     })
                 });

@@ -1,11 +1,24 @@
 rules_version = '2';
 service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow create: if request.auth != null;
+match /databases/{database}/documents {
 
-      allow read, update: if request.auth != null && request.auth.uid == userId;
+// Core User Profile Security: Self-Only Access
+match /users/{userId} {
+  // Allow an authenticated user to READ or UPDATE their document ONLY if 
+  // the document ID ({userId}) matches their authenticated UID (request.auth.uid).
+  allow read, update: if request.auth != null && request.auth.uid == userId;
 
-    }
-  }
+  // Allow an authenticated user to CREATE a document (onboarding). 
+  // The application code uses doc(user.uid).set(), which ensures the document ID 
+  // matches the user's UID for subsequent reads/updates.
+  allow create: if request.auth != null;
+}
+
+// Default rule to deny all access to any other collection/document path
+match /{document=**} {
+  allow read, write: if false;
+}
+
+
+}
 }

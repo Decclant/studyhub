@@ -500,7 +500,9 @@
 
             <section id="settings" class="tab-content">
                 <h2><i data-lucide="settings"></i> Account Settings</h2>
-                <form id="settings-form">
+                
+                <form id="profile-settings-form">
+                    <h3><b>👤</b> Profile Details</h3>
                     <label for="setting-name">Name:</label>
                     <input type="text" id="setting-name" required>
 
@@ -517,16 +519,22 @@
                     <input type="text" id="setting-lessons-input" placeholder="Type a Lesson and Press Enter">
                     <ul id="setting-lessons-list"></ul>
                     
-                    <p id="settings-save-status" style="color: var(--primary-blue); margin-top: 15px; display: none; font-weight: bold;">Changes saved successfully!</p>
+                    <p id="profile-save-status" style="color: var(--primary-blue); margin-top: 15px; display: none; font-weight: bold;">Changes saved successfully!</p>
+                    
+                    <button type="submit" style="margin-top: 20px;">Save Profile Details</button>
+                </form>
 
+                <form id="password-reset-form">
                     <h3 style="margin-top: 30px;"><b>🔐</b> Password Reset</h3>
                     <div class="password-input-group">
                         <input type="password" id="setting-new-password" placeholder="New Password (min 6 characters)">
                         <i data-lucide="eye" class="toggle-password" id="toggle-setting-password"></i>
                     </div>
-                    <button type="submit" style="margin-top: 20px;">Save Changes</button>
+                    
+                    <p id="password-reset-status" style="color: red; margin-top: 10px; display: none;"></p>
+                    <button type="submit" style="margin-top: 20px; background-color: #dc3545;">Reset Password</button>
                 </form>
-                <p id="password-reset-status" style="color: red; margin-top: 10px; display: none;"></p>
+
             </section>
 
             <section id="credits" class="tab-content">
@@ -829,23 +837,28 @@
                 ? currentUserData.lessons.join(', ') 
                 : 'General Knowledge';
             const userYearGroup = currentUserData.yearGroup || 'High School';
+            
+            const payload = {
+                // CORRECT STRUCTURE: contents is top-level
+                contents: [{ role: "user", parts: [{ text: userMessage }] }],
+                
+                // CRITICAL CONFIRMATION: systemInstruction MUST be a top-level string property (using camelCase)
+                systemInstruction: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`,
+                
+                // CORRECT STRUCTURE: generationConfig is a top-level property
+                generationConfig: {
+                    temperature: 0.5
+                }
+            };
+            
+            const jsonBody = JSON.stringify(payload);
+            console.log('FINAL JSON PAYLOAD BEING SENT:', jsonBody); // <-- CRITICAL DEBUGGING LINE
 
             try {
                 const response = await fetch(GEMINI_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        // CORRECT STRUCTURE: contents is top-level
-                        contents: [{ role: "user", parts: [{ text: userMessage }] }],
-                        
-                        // CRITICAL FIX CONFIRMATION: systemInstruction MUST be a top-level string property (using camelCase)
-                        systemInstruction: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`,
-                        
-                        // CORRECT STRUCTURE: generationConfig is a top-level property
-                        generationConfig: {
-                            temperature: 0.5
-                        }
-                    })
+                    body: jsonBody
                 });
 
                 if (!response.ok) {
@@ -1105,20 +1118,18 @@
         }
         
         setupPasswordToggle('setting-new-password', 'toggle-setting-password');
-
-        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+        
+        // Made by Nathan: New event listener for Profile Settings Form
+        document.getElementById('profile-settings-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = auth.currentUser;
-            const status = document.getElementById('settings-save-status');
-            const passwordStatus = document.getElementById('password-reset-status');
+            const status = document.getElementById('profile-save-status');
             status.style.display = 'none';
-            passwordStatus.style.display = 'none';
 
             const newName = document.getElementById('setting-name').value.trim();
             const newAge = document.getElementById('setting-age').value;
             const newYearGroup = document.getElementById('setting-yeargroup').value.trim();
             const newInstitution = document.getElementById('setting-institution').value.trim();
-            const newPassword = document.getElementById('setting-new-password').value;
 
             try {
                 const updatedData = {
@@ -1144,28 +1155,44 @@
                 status.textContent = 'Failed to save profile changes: ' + error.message;
                 status.style.color = 'red';
                 status.style.display = 'block';
+            }
+        });
+
+        // Made by Nathan: New event listener for Password Reset Form
+        document.getElementById('password-reset-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            const passwordStatus = document.getElementById('password-reset-status');
+            passwordStatus.style.display = 'none';
+
+            const newPassword = document.getElementById('setting-new-password').value;
+
+            if (!newPassword) {
+                passwordStatus.textContent = 'Please enter a new password.';
+                passwordStatus.style.color = 'red';
+                passwordStatus.style.display = 'block';
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                passwordStatus.textContent = 'Password must be at least 6 characters.';
+                passwordStatus.style.color = 'red';
+                passwordStatus.style.display = 'block';
                 return;
             }
             
-            if (newPassword) {
-                if (newPassword.length < 6) {
-                    passwordStatus.textContent = 'Password must be at least 6 characters.';
-                    passwordStatus.style.display = 'block';
-                    return;
-                }
-                
-                try {
-                    await user.updatePassword(newPassword);
-                    document.getElementById('setting-new-password').value = '';
-                    passwordStatus.textContent = 'Password reset successfully! You may need to log in again soon.';
-                    passwordStatus.style.color = 'var(--chat-ai)';
-                    passwordStatus.style.display = 'block';
-                    setTimeout(() => passwordStatus.style.display = 'none', 5000);
-                } catch (error) {
-                    passwordStatus.textContent = 'Failed to reset password. Please log out and log in again to perform this action.';
-                    passwordStatus.style.color = 'red';
-                    passwordStatus.style.display = 'block';
-                }
+            try {
+                await user.updatePassword(newPassword);
+                document.getElementById('setting-new-password').value = '';
+                passwordStatus.textContent = 'Password reset successfully! You may need to log in again soon.';
+                passwordStatus.style.color = 'var(--chat-ai)';
+                passwordStatus.style.display = 'block';
+                setTimeout(() => passwordStatus.style.display = 'none', 5000);
+            } catch (error) {
+                // If updatePassword fails due to 'auth/requires-recent-login', show specific error.
+                passwordStatus.textContent = 'I don\'t know. Failed to reset password. Please log out and log in again to perform this action.';
+                passwordStatus.style.color = 'red';
+                passwordStatus.style.display = 'block';
             }
         });
         

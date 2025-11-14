@@ -1268,56 +1268,75 @@
             window.updateMassDeleteCount();
         };
 
-        window.performMassDelete = async () => {
-            if (selectedFlashcards.size === 0) {
-                alert('Please select at least one flashcard to delete.');
-                return;
-            }
+// Made by Nathan
+window.performMassDelete = async () => {
+    if (selectedFlashcards.size === 0) {
+        alert('Please select at least one flashcard to delete.');
+        return;
+    }
 
-            const deleteModal = document.getElementById('mass-delete-modal');
-            
-            // Made by Nathan: Hide the mass delete modal before showing the confirmation
-            deleteModal.style.display = 'none'; 
+    const deleteModal = document.getElementById('mass-delete-modal');
+    
+    // Hide the mass delete modal before showing the confirmation
+    deleteModal.style.display = 'none'; 
 
-            const message = `You are about to permanently delete ${selectedFlashcards.size} flashcards. This action cannot be undone. Do you wish to proceed?`;
-            const isConfirmed = await window.showConfirmModal("Confirm Mass Deletion", message);
+    const message = `You are about to permanently delete ${selectedFlashcards.size} flashcards. This action cannot be undone. Do you wish to proceed?`;
+    const isConfirmed = await window.showConfirmModal("Confirm Mass Deletion", message);
 
-            if (!isConfirmed) {
-                // If canceled, re-show the mass delete modal
-                deleteModal.style.display = 'flex'; 
-                return;
-            }
+    if (!isConfirmed) {
+        // If canceled, re-show the mass delete modal
+        deleteModal.style.display = 'flex'; 
+        return;
+    }
 
-            const cardsToDelete = Array.from(selectedFlashcards)
-                .map(index => currentUserData.flashcards[index])
-                .filter(card => card);
+    const cardsToDelete = Array.from(selectedFlashcards)
+        .map(index => currentUserData.flashcards[index])
+        .filter(card => card);
 
-            if (cardsToDelete.length === 0) {
-                 alert('No valid flashcards found to delete.');
-                 return;
-            }
+    if (cardsToDelete.length === 0) {
+         // Should not happen if selectedFlashcards.size > 0, but safe guard is fine.
+         alert('No valid flashcards found to delete.');
+         return;
+    }
 
-            try {
-                const userDocRef = db.collection('users').doc(auth.currentUser.uid);
-                
-                // Loop through the selected cards and remove them one by one
-                for (const card of cardsToDelete) {
-                    await userDocRef.update({
-                        flashcards: firebase.firestore.FieldValue.arrayRemove(card)
-                    });
-                }
-                
-                // Confirmation modal is already hidden by resolveConfirm(true)
-                await loadFlashcards(auth.currentUser.uid); 
-                selectedFlashcards.clear(); // Clear selection after successful deletion
-                alert(`Successfully deleted ${cardsToDelete.length} flashcards.`);
+    // --- New Status Setup (using AI Status element temporarily) ---
+    const statusElement = document.getElementById('ai-fc-status');
+    statusElement.style.color = '#dc3545'; // Red color for deletion
+    statusElement.innerHTML = `<i data-lucide="loader" class="spinner-icon"></i> Deleting ${cardsToDelete.length} flashcards...`;
+    lucide.createIcons();
+    statusElement.style.display = 'block';
+    // --- End Status Setup ---
 
-            } catch (e) {
-                alert('I don\'t know. Failed to perform mass delete: ' + e.message);
-                console.error(e);
-                deleteModal.style.display = 'flex'; // Re-show on failure so user can try again
-            }
-        };
+    try {
+        const userDocRef = db.collection('users').doc(auth.currentUser.uid);
+        
+        // Loop through the selected cards and remove them one by one
+        for (const card of cardsToDelete) {
+            await userDocRef.update({
+                flashcards: firebase.firestore.FieldValue.arrayRemove(card)
+            });
+        }
+        
+        await loadFlashcards(auth.currentUser.uid); 
+        selectedFlashcards.clear();
+
+        // --- CHANGE: Replaced alert() with temporary status message ---
+        statusElement.innerHTML = `<i data-lucide="trash-2" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;"></i> Successfully deleted ${cardsToDelete.length} flashcards.`;
+        lucide.createIcons();
+        setTimeout(() => statusElement.style.display = 'none', 4000); 
+        // --- End of CHANGE ---
+
+    } catch (e) {
+        // Retaining this alert for CRITICAL feedback upon database failure.
+        alert('I don\'t know. Failed to perform mass delete: ' + e.message); 
+        console.error(e);
+        // Update error status message instead of success one
+        statusElement.innerHTML = `<i data-lucide="alert-triangle" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;"></i> Error deleting cards. See console.`;
+        lucide.createIcons();
+        statusElement.style.color = 'red';
+        deleteModal.style.display = 'flex'; // Re-show on failure so user can try again
+    }
+};
 
 
         window.generateFlashcardsWithAI = async (button) => {

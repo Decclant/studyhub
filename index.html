@@ -838,23 +838,14 @@
                 : 'General Knowledge';
             const userYearGroup = currentUserData.yearGroup || 'High School';
             
-            // *** THE CRITICAL FIX: Define System Instruction as a Content Part ***
-            const systemInstructionContent = {
-                role: "system",
-                parts: [{ 
-                    text: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.` 
-                }]
-            };
+            const systemInstructionText = `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`;
             
-            // Define the user's current message
-            const userMessageContent = {
-                role: "user",
-                parts: [{ text: userMessage }]
-            };
-
             const payload = {
-                // ** CONTENTS ARRAY NOW STARTS WITH THE SYSTEM MESSAGE **
-                contents: [systemInstructionContent, userMessageContent],
+                // CORRECT CONTENTS: Only user and model roles allowed for this API.
+                contents: [{ role: "user", parts: [{ text: userMessage }] }],
+                
+                // ** CRITICAL FIX: Use 'system_instruction' (snake_case) at the top level **
+                system_instruction: systemInstructionText,
                 
                 // generationConfig ONLY contains generation parameters (like temperature)
                 generationConfig: {

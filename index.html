@@ -8,6 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
     <style>
         /* Made by Nathan Koech */
         :root {
@@ -66,7 +67,7 @@
             background-color: #1c7ed6;
         }
 
-        input[type="email"], input[type="password"], input[type="text"], select {
+        input[type="email"], input[type="password"], input[type="text"], input[type="number"], select {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -308,6 +309,7 @@
 
         .flashcard-back {
             transform: rotateY(180deg);
+            padding: 10px; /* Reduced padding for back content */
         }
 
         .flashcard h3 {
@@ -317,6 +319,7 @@
         
         .flashcard p {
             margin-bottom: 0;
+            font-size: 0.9em;
         }
         
         /* --- Settings Styles --- */
@@ -346,6 +349,15 @@
 
         #credits-section p {
             font-size: 1.1em;
+        }
+        
+        .animate-spin {
+             animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -396,14 +408,14 @@
                 
                 <hr style="border: 0; height: 1px; background: #ccc; margin: 20px 0;">
 
-                <h3>Create Note/Flashcard</h3>
+                <h3>Create Note/Flashcard (Lesson: <span id="current-lesson-name-display"></span>)</h3>
                 <input type="text" id="note-front" placeholder="Front/Title (e.g., Photosynthesis Definition)">
                 <input type="text" id="note-back" placeholder="Back/Content (e.g., The process by which plants...)">
                 <button onclick="addNote()">Save Note/Flashcard</button>
 
                 <hr style="border: 0; height: 1px; background: #ccc; margin: 20px 0;">
 
-                <h3>Your Flashcards (<span id="current-lesson-name"></span>)</h3>
+                <h3>Your Flashcards</h3>
                 <div class="card-container" id="flashcard-list">
                     </div>
             </section>
@@ -458,7 +470,7 @@
 
             <section id="admin-panel" class="content-section">
                 <h2>Admin Panel (Restricted)</h2>
-                <p>Welcome, Administrator. This section is currently restricted to **declanthebest01@gmail.com**.</p>
+                <p>Welcome, Administrator. This section is restricted to **declanthebest01@gmail.com**.</p>
                 </section>
         </div>
     </div>
@@ -532,6 +544,8 @@
 
         let isLoginMode = true;
         let lessonsArray = []; // Stores lessons during onboarding/settings
+        let currentLesson = null; // Currently selected lesson in Notes tab
+        let currentUserData = {}; // Cache for user profile and notes
 
         // --- Core Application Logic ---
 
@@ -615,6 +629,7 @@
         function logoutUser() {
             auth.signOut();
             lessonsArray = []; // Clear state upon logout
+            currentUserData = {};
             showView('auth-view');
         }
 
@@ -668,8 +683,7 @@
             }
 
             try {
-                // Save user profile to Firestore
-                await db.collection('users').doc(user.uid).set({
+                const userDataToSave = {
                     email: user.email,
                     name: name,
                     age: age,
@@ -677,9 +691,16 @@
                     institution: institution,
                     lessons: lessonsArray,
                     onboarded: true,
+                    notes: {}, // Initialize notes map
                     // Check for admin status
                     isAdmin: user.email === 'declanthebest01@gmail.com'
-                });
+                };
+                
+                // Save user profile to Firestore
+                await db.collection('users').doc(user.uid).set(userDataToSave);
+
+                // Cache the data
+                currentUserData = userDataToSave;
 
                 // Move to the main app
                 showView('app');
@@ -695,8 +716,9 @@
             try {
                 const doc = await db.collection('users').doc(uid).get();
                 if (doc.exists && doc.data().onboarded) {
+                    currentUserData = doc.data(); // Cache data
                     showView('app');
-                    loadUserData({ uid, email, ...doc.data() });
+                    loadUserData({ uid, email, ...currentUserData });
                 } else {
                     // Set email/password, but require onboarding data
                     showView('onboarding-view');
@@ -727,31 +749,52 @@
                 populateNotesLessons();
             }
             
-            // Hide/Show Admin Panel option in sidebar based on user
-            const adminPanelLink = document.querySelector('a[href*="admin-panel"]');
+            // Handle Admin Panel link visibility
+            const adminPanelLink = document.querySelector('.sidebar-nav a[href*="admin-panel"]');
+            const adminPanelListItem = adminPanelLink ? adminPanelLink.parentElement : null;
+
             if (auth.currentUser && auth.currentUser.email === 'declanthebest01@gmail.com') {
-                if (!adminPanelLink) {
+                if (!adminPanelListItem) {
                     const li = document.createElement('li');
-                    li.innerHTML = `<li><a href="#" onclick="showSection('admin-panel', this)"><i data-lucide="shield-check"></i> Admin Panel</a></li>`;
-                    document.querySelector('.sidebar-nav').insertBefore(li, document.querySelector('.sidebar-nav li:nth-child(4)'));
+                    li.innerHTML = `<a href="#" onclick="showSection('admin-panel', this)"><i data-lucide="shield-check"></i> Admin Panel</a>`;
+                    // Insert before Log Out
+                    document.querySelector('.sidebar-nav li:last-child').before(li); 
                     lucide.createIcons();
                 }
-            } else if (adminPanelLink) {
-                 adminPanelLink.parentElement.remove();
+            } else if (adminPanelListItem) {
+                 adminPanelListItem.remove();
             }
         }
         
         // Load initial data and set up dashboard
         async function loadUserData(user) {
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            const userData = userDoc.data();
+            await loadUserDataFromFirestore(); // Ensure the cache is fresh
             
-            document.getElementById('dashboard-user-email').textContent = userData.email || user.email;
-            document.getElementById('dashboard-year-group').textContent = userData.yearGroup || 'N/A';
+            document.getElementById('dashboard-user-email').textContent = currentUserData.email || user.email;
+            document.getElementById('dashboard-year-group').textContent = currentUserData.yearGroup || 'N/A';
             
             // Initial view load
             showSection('dashboard', document.querySelector('.sidebar-nav li:first-child a'));
         }
+        
+        // Helper function to fetch user data and notes
+        async function loadUserDataFromFirestore() {
+            const user = firebase.auth().currentUser;
+            if (!user) return;
+            
+            try {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists) {
+                    currentUserData = doc.data();
+                    lessonsArray = currentUserData.lessons || []; // Refresh lessons array
+                    return currentUserData;
+                }
+            } catch (error) {
+                console.error("Error loading user data:", error);
+            }
+            return null;
+        }
+
 
         // --- AI Helper Functions ---
 
@@ -781,12 +824,9 @@
             inputElement.disabled = true;
 
             try {
-                // Fetch user data for context
-                const uid = auth.currentUser.uid;
-                const userDoc = await db.collection('users').doc(uid).get();
-                const userData = userDoc.data();
+                await loadUserDataFromFirestore(); // Ensure data is current
                 
-                const systemPrompt = `You are an AI Study Helper for a student named ${userData.name}. The student is in Year Group ${userData.yearGroup} at ${userData.institution}. Their lessons are: ${userData.lessons.join(', ')}. Keep your answers concise, academic, and relevant to the student's study level.`;
+                const systemPrompt = `You are an AI Study Helper for a student named ${currentUserData.name}. The student is in Year Group ${currentUserData.yearGroup} at ${currentUserData.institution}. Their lessons are: ${currentUserData.lessons.join(', ')}. Keep your answers concise, academic, and relevant to the student's study level.`;
 
                 const response = await fetch(GEMINI_API_URL, {
                     method: 'POST',
@@ -814,20 +854,16 @@
             }
         }
         
-        // --- Notes/Flashcards Functions ---
-        
-        let currentLesson = null;
+        // --- Notes/Flashcards Functions (Using Firestore) ---
         
         async function populateNotesLessons() {
-            const uid = auth.currentUser.uid;
-            const userDoc = await db.collection('users').doc(uid).get();
-            const userData = userDoc.data();
+            await loadUserDataFromFirestore();
             
             const select = document.getElementById('notes-lessons-select');
             select.innerHTML = '';
             
-            if (userData && userData.lessons && userData.lessons.length > 0) {
-                userData.lessons.forEach(lesson => {
+            if (lessonsArray && lessonsArray.length > 0) {
+                lessonsArray.forEach(lesson => {
                     const option = document.createElement('option');
                     option.value = lesson;
                     option.textContent = lesson;
@@ -835,21 +871,34 @@
                 });
                 
                 // Load data for the first lesson by default
-                currentLesson = userData.lessons[0];
+                currentLesson = lessonsArray[0];
                 loadLessonData();
             } else {
                 select.innerHTML = '<option value="">No Lessons Added</option>';
+                document.getElementById('current-lesson-name-display').textContent = 'N/A';
+                renderFlashcards([]);
             }
         }
 
-        function loadLessonData() {
+        async function loadLessonData() {
             currentLesson = document.getElementById('notes-lessons-select').value;
-            document.getElementById('current-lesson-name').textContent = currentLesson;
+            document.getElementById('current-lesson-name-display').textContent = currentLesson;
+
+            if (!currentLesson) {
+                renderFlashcards([]);
+                return;
+            }
+
+            // Always fetch the latest data from Firestore
+            const userData = await loadUserDataFromFirestore();
             
-            // For now, notes/flashcards are stored in localStorage for simplicity
-            // In a full app, this would use Firestore under a 'notes' collection.
-            const storedNotes = JSON.parse(localStorage.getItem(`notes_${auth.currentUser.uid}_${currentLesson}`)) || [];
-            renderFlashcards(storedNotes);
+            if (userData && userData.notes) {
+                // Retrieve the specific lesson's notes array, or an empty array if none exist
+                const storedNotes = userData.notes[currentLesson] || [];
+                renderFlashcards(storedNotes);
+            } else {
+                renderFlashcards([]);
+            }
         }
 
         function renderFlashcards(notes) {
@@ -876,7 +925,7 @@
             });
         }
         
-        function addNote() {
+        async function addNote() {
             if (!currentLesson) {
                 alert('Please select a lesson first.');
                 return;
@@ -884,63 +933,108 @@
             
             const front = document.getElementById('note-front').value.trim();
             const back = document.getElementById('note-back').value.trim();
+            const user = firebase.auth().currentUser;
 
-            if (!front || !back) {
-                alert('Both the front and back content are required for a note/flashcard.');
+            if (!front || !back || !user) {
+                alert('Both the front and back content are required, and you must be logged in.');
                 return;
             }
             
-            const newNote = { front, back, lesson: currentLesson };
+            const newNote = { front, back, lesson: currentLesson, timestamp: firebase.firestore.FieldValue.serverTimestamp() };
             
-            const storedNotes = JSON.parse(localStorage.getItem(`notes_${auth.currentUser.uid}_${currentLesson}`)) || [];
-            storedNotes.push(newNote);
-            localStorage.setItem(`notes_${auth.currentUser.uid}_${currentLesson}`, JSON.stringify(storedNotes));
+            try {
+                await loadUserDataFromFirestore(); // Ensure current data is loaded
+                
+                // Initialize or retrieve the existing notes map
+                const notesMap = currentUserData.notes || {};
+                
+                // Initialize or retrieve the lesson's note array
+                const lessonNotes = notesMap[currentLesson] || [];
+                lessonNotes.push(newNote); // Add the new note
+                
+                // Update the notes map with the modified lesson array
+                notesMap[currentLesson] = lessonNotes;
 
-            document.getElementById('note-front').value = '';
-            document.getElementById('note-back').value = '';
-            
-            loadLessonData(); // Refresh list
+                // Update the Firestore document with the new notes map
+                await db.collection('users').doc(user.uid).update({
+                    notes: notesMap
+                });
+
+                document.getElementById('note-front').value = '';
+                document.getElementById('note-back').value = '';
+                
+                // Refresh the list from the database
+                await loadLessonData(); 
+                // No alert needed, successful update is implied by refresh
+
+            } catch (error) {
+                console.error("Error saving flashcard to Firestore:", error);
+                alert('Error saving flashcard. Please try again.');
+            }
         }
         
-        function deleteNote(front) {
-            if (!confirm(`Are you sure you want to delete the flashcard/note: "${front}"?`)) return;
+        async function deleteNote(frontToDelete) {
+            if (!confirm(`Are you sure you want to delete the flashcard/note: "${frontToDelete}"?`)) return;
             
-            const storedNotes = JSON.parse(localStorage.getItem(`notes_${auth.currentUser.uid}_${currentLesson}`)) || [];
-            const updatedNotes = storedNotes.filter(n => n.front !== front);
-            localStorage.setItem(`notes_${auth.currentUser.uid}_${currentLesson}`, JSON.stringify(updatedNotes));
+            const user = firebase.auth().currentUser;
+            if (!user || !currentLesson) return;
             
-            loadLessonData(); // Refresh list
+            try {
+                await loadUserDataFromFirestore(); // Ensure current data is loaded
+                
+                const notesMap = currentUserData.notes || {};
+                const storedNotes = notesMap[currentLesson] || [];
+                
+                // Filter out the note to delete
+                const updatedNotes = storedNotes.filter(n => n.front !== frontToDelete);
+                
+                // Update the notes map and push to Firestore
+                notesMap[currentLesson] = updatedNotes;
+
+                await db.collection('users').doc(user.uid).update({
+                    notes: notesMap
+                });
+                
+                await loadLessonData(); // Refresh list
+                // No alert needed, successful update is implied by refresh
+
+            } catch (error) {
+                console.error("Error deleting flashcard from Firestore:", error);
+                alert('Error deleting flashcard. Please try again.');
+            }
         }
+
 
         // --- Settings Functions ---
 
         async function populateSettings() {
-            const uid = auth.currentUser.uid;
-            const userDoc = await db.collection('users').doc(uid).get();
-            const userData = userDoc.data();
+            await loadUserDataFromFirestore();
             
-            if (userData) {
-                document.getElementById('settings-name').value = userData.name || '';
-                document.getElementById('settings-age').value = userData.age || '';
-                document.getElementById('settings-year-group').value = userData.yearGroup || '';
-                document.getElementById('settings-institution').value = userData.institution || '';
+            if (currentUserData) {
+                document.getElementById('settings-name').value = currentUserData.name || '';
+                document.getElementById('settings-age').value = currentUserData.age || '';
+                document.getElementById('settings-year-group').value = currentUserData.yearGroup || '';
+                document.getElementById('settings-institution').value = currentUserData.institution || '';
                 
                 // Lessons setup
-                lessonsArray = userData.lessons || [];
+                lessonsArray = currentUserData.lessons || [];
                 renderSettingsLessons();
 
-                document.getElementById('settings-new-lesson-input').addEventListener('keydown', function(event) {
+                // Remove existing listener before adding a new one to prevent multiple calls
+                const lessonInput = document.getElementById('settings-new-lesson-input');
+                lessonInput.onkeydown = function(event) {
                     if (event.key === 'Enter' && this.value.trim() !== '') {
                         event.preventDefault();
-                        if (!lessonsArray.includes(this.value.trim())) {
-                             lessonsArray.push(this.value.trim());
+                        const newLesson = this.value.trim();
+                        if (!lessonsArray.includes(newLesson)) {
+                             lessonsArray.push(newLesson);
                              renderSettingsLessons();
                              this.value = '';
                         } else {
                             alert('Lesson already added.');
                         }
                     }
-                });
+                };
             }
         }
         
@@ -979,6 +1073,7 @@
             }
 
             try {
+                // Update Firestore
                 await db.collection('users').doc(user.uid).update({
                     name: name,
                     age: age,
@@ -986,6 +1081,13 @@
                     institution: institution,
                     lessons: lessonsArray // Use the updated array
                 });
+                
+                // Update local cache
+                currentUserData.name = name;
+                currentUserData.age = age;
+                currentUserData.yearGroup = yearGroup;
+                currentUserData.institution = institution;
+                currentUserData.lessons = lessonsArray;
                 
                 alert('Settings updated successfully!');
                 // Reload dashboard data
@@ -1015,15 +1117,14 @@
                 // Force logout to enforce re-login with new password
                 logoutUser();
             } catch (error) {
-                // Handle re-authentication requirement if session is old
+                // This typically happens if the user's session is old (requires re-authentication)
                 errorElement.textContent = 'Error resetting password. You may need to log out and log back in to re-authenticate before changing your password.';
                 errorElement.style.display = 'block';
                 console.error("Password reset error:", error);
             }
         }
         
-        // Initial setup for the first view when the script runs
-        // This is handled by auth.onAuthStateChanged
+        // Initial setup for the first view when the script runs is handled by auth.onAuthStateChanged
     </script>
 
 </body>

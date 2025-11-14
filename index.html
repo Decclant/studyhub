@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyHub - Your AI Learning Companion</title>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     
     <style>
-        /* Made by Nathan Koech */
+        /* Made by Nathan */
         :root {
             --primary-blue: #1E90FF; /* Dodger Blue */
             --secondary-white: #FFFFFF;
@@ -82,21 +84,27 @@
             text-align: center;
         }
 
-        /* --- Auth/Onboarding View --- */
+        /* --- Auth/Onboarding View (CRITICAL CENTERING) --- */
 
         .auth-container, .onboarding-container {
             width: 100%;
+            /* Force full screen height */
+            min-height: 100vh; 
+            /* Center content horizontally and vertically */
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: center; 
             background-color: var(--background-light);
+            padding: 20px; /* Add padding for small screens */
+            box-sizing: border-box;
         }
 
         .auth-box, .onboarding-box {
             background-color: var(--secondary-white);
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* Modern shadow for lift */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
             width: 100%;
             max-width: 400px;
         }
@@ -309,7 +317,7 @@
 
         .flashcard-back {
             transform: rotateY(180deg);
-            padding: 10px; /* Reduced padding for back content */
+            padding: 10px;
         }
 
         .flashcard h3 {
@@ -363,8 +371,10 @@
 </head>
 <body>
 
+    <!-- Main Application container -->
     <div id="app" class="container" style="display:none;">
         
+        <!-- Sidebar -->
         <div class="sidebar">
             <div class="header-logo">
                 <i data-lucide="book-open" class="blue-book-icon"></i>
@@ -376,12 +386,15 @@
                 <li><a href="#" onclick="showSection('notes-flashcards', this)"><i data-lucide="sticky-note"></i> Notes & Flashcards</a></li>
                 <li><a href="#" onclick="showSection('settings', this)"><i data-lucide="settings"></i> Settings</a></li>
                 <li><a href="#" onclick="showSection('credits', this)"><i data-lucide="info"></i> Credits</a></li>
+                <!-- Admin Panel link inserted dynamically by JS if user is declanthebest01@gmail.com -->
                 <li><a href="#" onclick="logoutUser()"><i data-lucide="log-out"></i> Log Out</a></li>
             </ul>
         </div>
 
+        <!-- Main Content Area -->
         <div class="main-content">
             
+            <!-- Dashboard Section (Placeholder) -->
             <section id="dashboard" class="content-section active">
                 <h2>Welcome to StudyHub!</h2>
                 <p>Use the sidebar to access your study tools.</p>
@@ -389,6 +402,7 @@
                 <p>Year Group: <strong id="dashboard-year-group"></strong></p>
             </section>
 
+            <!-- AI Helper Section -->
             <section id="ai-helper" class="content-section">
                 <h2>AI Study Helper</h2>
                 <div id="ai-chat-box">
@@ -400,6 +414,7 @@
                 </div>
             </section>
             
+            <!-- Notes & Flashcards Section -->
             <section id="notes-flashcards" class="content-section">
                 <h2>Notes & Flashcards</h2>
                 
@@ -417,9 +432,11 @@
 
                 <h3>Your Flashcards</h3>
                 <div class="card-container" id="flashcard-list">
-                    </div>
+                    <!-- Flashcards will be dynamically inserted here -->
+                </div>
             </section>
 
+            <!-- Settings Section -->
             <section id="settings" class="content-section">
                 <h2>Settings</h2>
                 <p class="error-message" id="settings-error" style="display:none;"></p>
@@ -459,6 +476,7 @@
                 <button onclick="resetPassword()">Reset Password</button>
             </section>
 
+            <!-- Credits Section -->
             <section id="credits" class="content-section">
                 <h2>Credits</h2>
                 <div id="credits-section">
@@ -468,13 +486,16 @@
                 </div>
             </section>
 
+            <!-- Admin Panel (Restricted) -->
             <section id="admin-panel" class="content-section">
                 <h2>Admin Panel (Restricted)</h2>
                 <p>Welcome, Administrator. This section is restricted to **declanthebest01@gmail.com**.</p>
-                </section>
+                <!-- Admin-specific controls will go here later -->
+            </section>
         </div>
     </div>
 
+    <!-- Auth/Sign Up View -->
     <div id="auth-view" class="auth-container">
         <div class="auth-box">
             <div class="header-logo" style="background-color: transparent; color: var(--primary-blue); padding: 0; margin-bottom: 20px;">
@@ -500,6 +521,7 @@
         </div>
     </div>
 
+    <!-- Onboarding View -->
     <div id="onboarding-view" class="onboarding-container" style="display:none;">
         <div class="onboarding-box">
             <h2>Complete Your Profile</h2>
@@ -514,7 +536,8 @@
             <div id="lessons-input-container">
                 <input type="text" id="onboarding-lesson-input" placeholder="Maths, Science, etc.">
                 <ul id="lessons-list">
-                    </ul>
+                    <!-- Lesson tags will appear here -->
+                </ul>
             </div>
 
             <button onclick="completeOnboarding()">Finish Setup</button>
@@ -522,10 +545,11 @@
     </div>
 
     <script>
-        // Made by Nathan Koech
+        /* Made by Nathan */
         // --- Configuration and Initialization ---
 
         const FIREBASE_CONFIG = {
+            // NOTE: Replace with your actual Firebase configuration details
             apiKey: "AIzaSyCAJ5kM37MKyq2UGUw1dHF8EEskdKWU5f4",
             authDomain: "studyhubon.firebaseapp.com",
             projectId: "studyhubon",
@@ -567,7 +591,10 @@
 
             const view = document.getElementById(viewId);
             if (view) {
-                view.style.display = 'flex';
+                // Ensure auth and onboarding containers use flex for centering
+                view.style.display = (viewId === 'auth-view' || viewId === 'onboarding-view') ? 'flex' : 'block';
+                document.getElementById('app').style.display = (viewId === 'app') ? 'flex' : 'none';
+
                 // Re-render icons for dynamic content
                 lucide.createIcons();
             }
@@ -617,7 +644,7 @@
                     // Sign Up
                     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                     // Automatically move to onboarding after sign-up
-                    showView('onboarding-view');
+                    // The auth state listener will handle the checkOnboardingStatus
                 }
             } catch (error) {
                 const message = error.message.replace('Firebase:', '').trim() || 'An unknown authentication error occurred.';
@@ -691,12 +718,13 @@
                     institution: institution,
                     lessons: lessonsArray,
                     onboarded: true,
-                    notes: {}, // Initialize notes map
+                    notes: {}, // Initialize notes map for Firestore
                     // Check for admin status
                     isAdmin: user.email === 'declanthebest01@gmail.com'
                 };
                 
                 // Save user profile to Firestore
+                // This is a 'create' operation, protected by the new security rules.
                 await db.collection('users').doc(user.uid).set(userDataToSave);
 
                 // Cache the data
@@ -707,8 +735,10 @@
                 loadUserData(user);
 
             } catch (error) {
+                // This catch block is where the 'Missing or insufficient permissions' error occurs if rules are wrong.
                 errorElement.textContent = 'Error saving profile: ' + error.message;
                 errorElement.style.display = 'block';
+                console.error("Onboarding Error:", error);
             }
         }
         
@@ -754,12 +784,15 @@
             const adminPanelListItem = adminPanelLink ? adminPanelLink.parentElement : null;
 
             if (auth.currentUser && auth.currentUser.email === 'declanthebest01@gmail.com') {
-                if (!adminPanelListItem) {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<a href="#" onclick="showSection('admin-panel', this)"><i data-lucide="shield-check"></i> Admin Panel</a>`;
-                    // Insert before Log Out
-                    document.querySelector('.sidebar-nav li:last-child').before(li); 
-                    lucide.createIcons();
+                if (!adminPanelListItem || !document.getElementById('admin-panel')) {
+                    // Only add if it doesn't exist
+                    if (document.querySelector('.sidebar-nav li a[onclick="logoutUser()"]').parentElement) {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a href="#" onclick="showSection('admin-panel', this)"><i data-lucide="shield-check"></i> Admin Panel</a>`;
+                        // Insert before Log Out
+                        document.querySelector('.sidebar-nav li:last-child').before(li); 
+                        lucide.createIcons();
+                    }
                 }
             } else if (adminPanelListItem) {
                  adminPanelListItem.remove();
@@ -783,6 +816,7 @@
             if (!user) return;
             
             try {
+                // This is a 'read' operation, protected by the new security rules.
                 const doc = await db.collection('users').doc(user.uid).get();
                 if (doc.exists) {
                     currentUserData = doc.data();
@@ -910,17 +944,36 @@
                 card.className = 'flashcard';
                 card.onclick = function() { this.classList.toggle('flipped'); };
                 
-                card.innerHTML = `
-                    <div class="flashcard-inner">
-                        <div class="flashcard-front">
-                            <h3>${note.front}</h3>
-                            <button onclick="event.stopPropagation(); deleteNote('${note.front}');" style="background-color: #ff4d4d; margin-top: 10px;">Delete</button>
-                        </div>
-                        <div class="flashcard-back">
-                            <p>${note.back}</p>
-                        </div>
-                    </div>
-                `;
+                // Use a custom modal or simple confirmation since alert is forbidden
+                const deleteHandler = (e) => {
+                    e.stopPropagation();
+                    const confirmDelete = prompt(`Type 'DELETE' to confirm removing the flashcard: "${note.front}"`);
+                    if (confirmDelete === 'DELETE') {
+                        deleteNote(note.front);
+                    }
+                };
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.style.cssText = 'background-color: #ff4d4d; margin-top: 10px; padding: 5px 10px; font-size: 0.8em;';
+                deleteButton.onclick = deleteHandler;
+                
+                const cardInner = document.createElement('div');
+                cardInner.className = 'flashcard-inner';
+                
+                const cardFront = document.createElement('div');
+                cardFront.className = 'flashcard-front';
+                cardFront.innerHTML = `<h3>${note.front}</h3>`;
+                cardFront.appendChild(deleteButton); // Attach delete button to front
+
+                const cardBack = document.createElement('div');
+                cardBack.className = 'flashcard-back';
+                cardBack.innerHTML = `<p>${note.back}</p>`;
+
+                cardInner.appendChild(cardFront);
+                cardInner.appendChild(cardBack);
+                card.appendChild(cardInner);
+                
                 list.appendChild(card);
             });
         }
@@ -945,17 +998,12 @@
             try {
                 await loadUserDataFromFirestore(); // Ensure current data is loaded
                 
-                // Initialize or retrieve the existing notes map
                 const notesMap = currentUserData.notes || {};
-                
-                // Initialize or retrieve the lesson's note array
                 const lessonNotes = notesMap[currentLesson] || [];
-                lessonNotes.push(newNote); // Add the new note
-                
-                // Update the notes map with the modified lesson array
+                lessonNotes.push(newNote); 
                 notesMap[currentLesson] = lessonNotes;
 
-                // Update the Firestore document with the new notes map
+                // This is an 'update' operation, protected by the new security rules.
                 await db.collection('users').doc(user.uid).update({
                     notes: notesMap
                 });
@@ -963,9 +1011,7 @@
                 document.getElementById('note-front').value = '';
                 document.getElementById('note-back').value = '';
                 
-                // Refresh the list from the database
                 await loadLessonData(); 
-                // No alert needed, successful update is implied by refresh
 
             } catch (error) {
                 console.error("Error saving flashcard to Firestore:", error);
@@ -974,29 +1020,27 @@
         }
         
         async function deleteNote(frontToDelete) {
-            if (!confirm(`Are you sure you want to delete the flashcard/note: "${frontToDelete}"?`)) return;
-            
             const user = firebase.auth().currentUser;
             if (!user || !currentLesson) return;
             
             try {
-                await loadUserDataFromFirestore(); // Ensure current data is loaded
+                await loadUserDataFromFirestore(); 
                 
                 const notesMap = currentUserData.notes || {};
                 const storedNotes = notesMap[currentLesson] || [];
                 
-                // Filter out the note to delete
+                // Filter out the note to delete based on the front text
                 const updatedNotes = storedNotes.filter(n => n.front !== frontToDelete);
                 
                 // Update the notes map and push to Firestore
                 notesMap[currentLesson] = updatedNotes;
 
+                // This is an 'update' operation, protected by the new security rules.
                 await db.collection('users').doc(user.uid).update({
                     notes: notesMap
                 });
                 
                 await loadLessonData(); // Refresh list
-                // No alert needed, successful update is implied by refresh
 
             } catch (error) {
                 console.error("Error deleting flashcard from Firestore:", error);
@@ -1020,7 +1064,7 @@
                 lessonsArray = currentUserData.lessons || [];
                 renderSettingsLessons();
 
-                // Remove existing listener before adding a new one to prevent multiple calls
+                // Set up lesson input listener
                 const lessonInput = document.getElementById('settings-new-lesson-input');
                 lessonInput.onkeydown = function(event) {
                     if (event.key === 'Enter' && this.value.trim() !== '') {
@@ -1031,7 +1075,8 @@
                              renderSettingsLessons();
                              this.value = '';
                         } else {
-                            alert('Lesson already added.');
+                             // Use prompt/modal instead of alert
+                             prompt('Lesson already added.');
                         }
                     }
                 };
@@ -1073,7 +1118,7 @@
             }
 
             try {
-                // Update Firestore
+                // This is an 'update' operation, protected by the new security rules.
                 await db.collection('users').doc(user.uid).update({
                     name: name,
                     age: age,
@@ -1089,7 +1134,7 @@
                 currentUserData.institution = institution;
                 currentUserData.lessons = lessonsArray;
                 
-                alert('Settings updated successfully!');
+                prompt('Settings updated successfully!'); // Use prompt for simple message
                 // Reload dashboard data
                 loadUserData(user); 
 
@@ -1113,7 +1158,7 @@
             try {
                 await auth.currentUser.updatePassword(newPassword);
                 document.getElementById('settings-new-password').value = '';
-                alert('Password reset successfully! You will need to log in again with the new password.');
+                prompt('Password reset successfully! You will need to log in again with the new password.');
                 // Force logout to enforce re-login with new password
                 logoutUser();
             } catch (error) {

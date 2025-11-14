@@ -2,23 +2,31 @@ rules_version = '2';
 service cloud.firestore {
 match /databases/{database}/documents {
 
-// Core User Profile Security: Self-Only Access
 match /users/{userId} {
-  // Allow an authenticated user to READ or UPDATE their document ONLY if 
-  // the document ID ({userId}) matches their authenticated UID (request.auth.uid).
-  allow read, update: if request.auth != null && request.auth.uid == userId;
-
-  // Allow an authenticated user to CREATE a document (onboarding). 
-  // The application code uses doc(user.uid).set(), which ensures the document ID 
-  // matches the user's UID for subsequent reads/updates.
-  allow create: if request.auth != null;
+allow read, update: if request.auth != null && request.auth.uid == userId;
+allow create: if request.auth != null;
 }
 
-// Default rule to deny all access to any other collection/document path
+match /users/{userId}/flashcards/{cardId} {
+allow read, write: if request.auth != null && request.auth.uid == userId;
+}
+
+match /artifacts/{appId}/public/data/flashcards/{cardId} {
+allow read: if request.auth != null;
+
+allow update: if request.auth != null && request.auth.uid == resource.data.authorId &&
+request.resource.data.authorId == resource.data.authorId;
+
+allow create, delete: if request.auth != null && request.auth.uid == request.resource.data.authorId;
+}
+
+match /adminLogs/{logId} {
+allow read, write: if request.auth.uid == 'admin-123';
+}
+
 match /{document=**} {
-  allow read, write: if false;
+allow read, write: if false;
 }
-
 
 }
 }

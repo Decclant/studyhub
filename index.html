@@ -3,1233 +3,1391 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyHub - Learn Smarter</title>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-
+    <title>StudyHub - Secure Login and Onboarding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-/* Made by Nathan */
-:root {
-    --primary-blue: #1E90FF; /* Dodger Blue - a vibrant blue */
-    --secondary-blue: #ADD8E6; /* Light Blue */
-    --background-white: #f7f9fc; /* Soft off-white background */
-    --surface-white: #FFFFFF; /* White for cards and forms */
-    --text-dark: #2c3e50; /* Darker, modern text color */
-    --border-light: #e0e6ed;
-    --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.08); /* Modern, soft shadow */
-    --font-sans: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern Font Stack */
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-sans);
-}
-
-body {
-    background-color: var(--background-white);
-    color: var(--text-dark);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-/* Utility Classes */
-.hidden {
-    display: none !important;
-}
-
-/* --- Authentication Screen Styling --- */
-#auth-screen {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    text-align: center;
-}
-
-.auth-container {
-    background-color: var(--surface-white);
-    padding: 40px;
-    border-radius: 16px; /* Increased radius for modern look */
-    box-shadow: var(--shadow-subtle);
-    transition: all 0.3s ease;
-}
-
-.auth-container:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.logo-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 25px;
-}
-
-.logo-box svg {
-    color: var(--primary-blue);
-    margin-right: 12px;
-}
-
-.logo-box h1 {
-    font-size: 2.2em;
-    color: var(--primary-blue);
-    font-weight: 700;
-}
-
-#login-form, #signup-form {
-    margin-top: 20px;
-}
-
-h2 {
-    color: var(--text-dark);
-    margin-bottom: 20px;
-    font-size: 1.6em;
-    font-weight: 600;
-}
-
-input[type="email"], 
-input[type="password"],
-input[type="text"],
-input[type="number"],
-textarea {
-    width: 100%;
-    padding: 14px; /* Slightly larger padding */
-    margin-bottom: 15px;
-    border: 1px solid var(--border-light);
-    border-radius: 10px;
-    font-size: 1em;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-input:focus, textarea:focus {
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.2);
-    outline: none;
-}
-
-.password-wrapper {
-    position: relative;
-}
-
-.view-password {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #999;
-    width: 20px;
-    height: 20px;
-}
-
-button {
-    width: 100%;
-    padding: 14px;
-    background-color: var(--primary-blue);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 1.05em;
-    font-weight: 600;
-    transition: background-color 0.3s, transform 0.1s;
-    box-shadow: 0 4px 6px rgba(30, 144, 255, 0.3);
-}
-
-button:hover {
-    background-color: #1A7DD5;
-    transform: translateY(-1px);
-}
-
-button:active {
-    transform: translateY(1px);
-}
-
-.auth-link {
-    color: var(--primary-blue);
-    cursor: pointer;
-    font-weight: 600;
-    transition: color 0.3s;
-}
-
-.auth-link:hover {
-    color: #007ACC;
-    text-decoration: underline;
-}
-
-/* --- App Dashboard Styling --- */
-#app-dashboard {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    max-width: none;
-}
-
-/* Sidebar */
-#sidebar {
-    width: 260px; /* Slightly wider */
-    background-color: var(--primary-blue);
-    color: white;
-    padding: 25px 0;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-}
-
-#sidebar .logo-box {
-    margin-bottom: 35px;
-    justify-content: start;
-    padding: 0 25px;
-}
-
-#sidebar .logo-box svg {
-    color: white;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    padding: 14px 25px;
-    text-decoration: none;
-    color: white;
-    font-size: 1.05em;
-    transition: background-color 0.3s, border-left 0.3s;
-}
-
-.nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.nav-item.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-left: 4px solid var(--secondary-blue);
-    font-weight: 600;
-}
-
-.nav-item i {
-    margin-right: 15px; /* Increased margin for spacing fix */
-    width: 20px;
-    height: 20px;
-}
-
-.bottom-nav {
-    margin-top: auto;
-}
-
-/* Main Content */
-#main-content {
-    flex-grow: 1;
-    padding: 30px;
-    overflow-y: auto;
-    background-color: var(--background-white);
-}
-
-.content-view {
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.content-view h2 {
-    color: var(--text-dark);
-    margin-bottom: 30px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-light);
-}
-
-/* --- AI Helper View --- */
-#ai-helper {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 60px); 
-}
-
-#ai-chat-box {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 20px;
-    background-color: var(--surface-white);
-    border: 1px solid var(--border-light);
-    border-radius: 12px;
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.ai-message, .user-message {
-    padding: 12px 18px;
-    margin-bottom: 15px;
-    border-radius: 20px;
-    max-width: 75%; /* Slightly smaller max width */
-    line-height: 1.6;
-    font-size: 0.95em;
-    animation: fadeIn 0.3s ease-out;
-}
-
-.ai-message {
-    align-self: flex-start;
-    background-color: var(--secondary-blue);
-    color: var(--text-dark);
-    border-bottom-left-radius: 4px;
-}
-
-.user-message {
-    align-self: flex-end;
-    background-color: var(--primary-blue);
-    color: white;
-    border-bottom-right-radius: 4px;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.ai-input-area {
-    display: flex;
-    padding-bottom: 10px;
-}
-
-#ai-user-input {
-    flex-grow: 1;
-    margin-bottom: 0;
-    margin-right: 10px;
-}
-
-.ai-input-area button {
-    width: auto;
-    padding: 12px 20px;
-    border-radius: 10px;
-}
-
-/* --- Notes & Flashcards View --- */
-.flashcard-controls {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.flashcard-controls button {
-    width: auto;
-    padding: 10px 18px;
-    display: inline-flex;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.flashcard-controls button i {
-    margin-right: 8px;
-}
-
-#note-card-editor, #flashcard-editor {
-    padding: 25px;
-    background-color: var(--surface-white);
-    border: 1px solid var(--border-light);
-    border-radius: 12px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-#note-content {
-    min-height: 150px;
-    resize: vertical;
-}
-
-#user-content-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.content-item {
-    padding: 20px;
-    border: 1px solid var(--border-light);
-    border-radius: 12px;
-    background-color: var(--surface-white);
-    cursor: pointer;
-    transition: box-shadow 0.3s, transform 0.2s;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.content-item:hover {
-    box-shadow: 0 6px 15px rgba(30, 144, 255, 0.15);
-    transform: translateY(-2px);
-}
-
-.content-item h4 {
-    color: var(--primary-blue);
-    margin-bottom: 8px;
-    font-size: 1.1em;
-}
-
-.content-item p {
-    font-size: 0.85em;
-    color: #666;
-}
-
-.card-flip {
-    transform: rotateY(180deg);
-}
-
-/* --- Settings & Onboarding View --- */
-.settings-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 500px;
-    padding: 30px;
-    background-color: var(--surface-white);
-    border: 1px solid var(--border-light);
-    border-radius: 12px;
-    box-shadow: var(--shadow-subtle);
-}
-
-.settings-form label {
-    font-weight: 600;
-    margin-bottom: -10px;
-    color: var(--text-dark);
-    font-size: 0.9em;
-}
-
-.itemized-list {
-    border: 1px solid var(--border-light);
-    border-radius: 10px;
-    padding: 10px;
-    min-height: 50px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    background-color: var(--background-white);
-}
-
-.list-item {
-    background-color: var(--secondary-blue);
-    color: var(--text-dark);
-    padding: 6px 12px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    font-size: 0.9em;
-}
-
-.list-item-remove {
-    margin-left: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #CC0000;
-    transition: transform 0.2s;
-}
-
-.list-item-remove:hover {
-    transform: scale(1.2);
-}
-
-/* --- Admin Panel Styling --- */
-#admin-panel h3 {
-    margin-top: 20px;
-    color: var(--primary-blue);
-}
-
-.user-list-item {
-    background-color: var(--surface-white);
-    border: 1px solid var(--border-light);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.user-email {
-    font-weight: 600;
-}
-
-.user-status {
-    font-size: 0.8em;
-    padding: 4px 8px;
-    border-radius: 4px;
-    color: white;
-}
-
-.status-onboarded {
-    background-color: green;
-}
-
-.status-pending {
-    background-color: orange;
-}
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #9ca3af;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background-color: #f3f4f6;
+        }
+        @media (max-width: 768px) {
+            #sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                z-index: 1000;
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+            #content-overlay {
+                display: none;
+            }
+            #content-overlay.open {
+                display: block;
+            }
+        }
+        .markdown-response p, .markdown-response ul, .markdown-response ol {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-response ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+        }
+        .markdown-response ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+        }
+        .markdown-response h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        #app-view {
+            min-height: 100vh;
+        }
+        
+        .flashcard {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+            position: relative;
+        }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .flashcard-front {
+            background-color: #ffffff;
+            border: 2px solid #4f46e5;
+        }
+        .flashcard-back {
+            background-color: #4f46e5;
+            color: white;
+            transform: rotateY(180deg);
+        }
+        .flashcard-container {
+            min-height: 150px;
+        }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen font-sans antialiased">
 
-    <div id="auth-screen">
-        <div class="auth-container">
-            <div class="logo-box">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-check">
-                    <path d="M8 2h4l2 5h7V8"/><path d="M4 19.5V8a2 2 0 0 1 2-2h12.5C14 17 6.3 15.6 4 19.5"/><path d="M4 19.5 2.5 21l2-1.5 2 1.5V6a2 2 0 0 0-2 2v11.5Z"/><path d="m15 19 2 2 4-4"/>
-                </svg>
-                <h1>StudyHub</h1>
-            </div>
-            <div id="login-form">
-                <h2>Login</h2>
-                <input type="email" id="login-email" placeholder="Email" required>
-                <div class="password-wrapper">
-                    <input type="password" id="login-password" placeholder="Password" required>
-                    <i data-lucide="eye" class="view-password" onclick="togglePasswordVisibility('login-password')"></i>
-                </div>
-                <button onclick="loginUser()">Login</button>
-                <p>Need an account? <span class="auth-link" onclick="showSignup()">Sign Up</span></p>
-            </div>
+    <button id="mobile-menu-btn" class="md:hidden fixed top-4 left-4 p-2 bg-indigo-600 text-white rounded-lg shadow-lg z-1010 hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <div id="content-overlay" class="fixed inset-0 bg-black opacity-50 z-1000 md:hidden hidden"></div>
 
-            <div id="signup-form" class="hidden">
-                <h2>Sign Up</h2>
-                <input type="email" id="signup-email" placeholder="Email" required>
-                <div class="password-wrapper">
-                    <input type="password" id="signup-password" placeholder="Password" required>
-                    <i data-lucide="eye" class="view-password" onclick="togglePasswordVisibility('signup-password')"></i>
+    <div id="loading-view" class="fixed inset-0 flex items-center justify-center bg-indigo-50 text-indigo-700 transition-opacity duration-300">
+        <div id="loading-spinner" class="flex flex-col items-center">
+            <svg class="animate-spin h-10 w-10 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-lg font-semibold">Connecting to platform...</p>
+            <p id="auth-status" class="text-sm text-gray-500 mt-2">Initializing Firebase.</p>
+        </div>
+    </div>
+    
+    <div id="auth-view" class="fixed inset-0 hidden items-center justify-center bg-indigo-50 p-4 overflow-y-auto">
+        <div class="w-full max-w-md p-8 bg-white shadow-2xl rounded-xl my-8 border-t-4 border-indigo-600">
+            <h2 class="text-3xl font-bold text-indigo-700 mb-6 text-center">StudyHub</h2>
+            <p id="auth-title" class="text-xl font-semibold text-gray-800 mb-6 text-center">Welcome! Sign In</p>
+
+            <form id="auth-form" class="space-y-5">
+                <div>
+                    <label for="auth-email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <input
+                        id="auth-email"
+                        type="email"
+                        placeholder="your.email@school.com"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                        required
+                    />
                 </div>
-                <button onclick="signupUser()">Sign Up</button>
-                <p>Already have an account? <span class="auth-link" onclick="showLogin()">Login</span></p>
+                <div>
+                    <label for="auth-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input
+                        id="auth-password"
+                        type="password"
+                        placeholder="••••••••"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                        required
+                    />
+                </div>
+                <button
+                    type="submit"
+                    id="auth-submit-btn"
+                    class="w-full flex items-center justify-center p-3 rounded-lg font-semibold text-white transition-colors duration-200 bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/50 disabled:bg-indigo-400"
+                >
+                    Sign In
+                </button>
+            </form>
+
+            <p id="auth-error" class="mt-4 text-sm text-red-500 text-center hidden"></p>
+            
+            <div class="mt-6 text-center">
+                <button id="toggle-auth-btn" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                    Need an account? Sign Up
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="app-dashboard" class="hidden">
+    <div id="onboarding-view" class="fixed inset-0 hidden items-center justify-center bg-gray-50 p-4 transition-opacity duration-300 overflow-y-auto">
+        <div class="w-full max-w-lg p-8 bg-white shadow-2xl rounded-xl my-8">
+            <h2 class="text-3xl font-bold text-indigo-700 mb-6 text-center">Welcome Aboard!</h2>
+            <p class="text-gray-600 mb-8 text-center">Please complete your profile to start collaborating.</p>
+
+            <div class="space-y-5">
+                <div>
+                    <label for="onboarding-display-name" class="block text-sm font-medium text-gray-700 mb-2">
+                        Your Display Name
+                    </label>
+                    <input
+                        id="onboarding-display-name"
+                        type="text"
+                        placeholder="e.g., Alex Johnson"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                    />
+                </div>
+
+                <div>
+                    <label for="onboarding-year" class="block text-sm font-medium text-gray-700 mb-2">
+                        Year of Learning
+                    </label>
+                    <select
+                        id="onboarding-year"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 bg-white"
+                    >
+                        <option value="" disabled selected>Select your current year...</option>
+                        <option value="5">Year 5</option>
+                        <option value="6">Year 6</option>
+                        <option value="7">Year 7</option>
+                        <option value="8">Year 8</option>
+                        <option value="9">Year 9</option>
+                        <option value="10">Year 10</option>
+                        <option value="11">Year 11</option>
+                        <option value="12">Year 12</option>
+                        <option value="13">Year 13</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="onboarding-institution" class="block text-sm font-medium text-gray-700 mb-2">
+                        Institution of Learning
+                    </label>
+                    <input
+                        id="onboarding-institution"
+                        type="text"
+                        placeholder="e.g., Central High School"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                    />
+                </div>
+
+                <div>
+                    <label for="onboarding-subjects" class="block text-sm font-medium text-gray-700 mb-2">
+                        Key Subjects (Lessons you will be using)
+                    </label>
+                    <input
+                        id="onboarding-subjects"
+                        type="text"
+                        placeholder="Comma-separated list (e.g., Math, History, Physics)"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                    />
+                    <p class="text-xs text-gray-500 mt-1">Example: Algebra, World History, English Literature</p>
+                </div>
+            </div>
+
+
+            <button
+                id="complete-onboarding-btn"
+                class="mt-8 w-full flex items-center justify-center p-3 rounded-lg font-semibold text-white transition-colors duration-200 bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/50 disabled:bg-indigo-400"
+            >
+                Start Collaborating
+            </button>
+            <p id="onboarding-error" class="mt-4 text-sm text-red-500 text-center hidden"></p>
+        </div>
+    </div>
+
+    <div id="app-view" class="flex hidden">
         
-        <div id="sidebar">
-            <div class="logo-box">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-check">
-                    <path d="M8 2h4l2 5h7V8"/><path d="M4 19.5V8a2 2 0 0 1 2-2h12.5C14 17 6.3 15.6 4 19.5"/><path d="M4 19.5 2.5 21l2-1.5 2 1.5V6a2 2 0 0 0-2 2v11.5Z"/><path d="m15 19 2 2 4-4"/>
-                </svg>
-                <span style="font-size: 1.2em; font-weight: 600; margin-left: 5px;">StudyHub</span>
+        <nav id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-indigo-800 p-4 space-y-4 md:block flex-shrink-0">
+            <div class="text-white text-2xl font-bold mb-8 flex items-center justify-between">
+                <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block mr-2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> StudyHub</span>
+                <button id="close-menu-btn" class="md:hidden p-1 hover:bg-indigo-700 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
             </div>
-            <a href="#" class="nav-item active" data-view="ai-helper"><i data-lucide="bot"></i> AI Helper</a>
-            <a href="#" class="nav-item" data-view="notes-flashcards"><i data-lucide="book-open"></i> Notes & Cards</a>
-            <a href="#" class="nav-item" data-view="credits"><i data-lucide="award"></i> Credits</a>
-            <a href="#" class="nav-item bottom-nav" data-view="settings"><i data-lucide="settings"></i> Settings</a>
-            <a href="#" class="nav-item bottom-nav" onclick="logoutUser()"><i data-lucide="log-out"></i> Logout</a>
-        </div>
-
-        <div id="main-content">
             
-            <div id="ai-helper" class="content-view">
-                <h2>🤖 AI Study Helper</h2>
-                <div id="ai-chat-box">
-                    <div class="ai-message">Hello! I'm your AI Study Helper. How can I assist you with your studies today?</div>
-                </div>
-                <div class="ai-input-area">
-                    <input type="text" id="ai-user-input" placeholder="Ask me about Cambridge IGCSE Physics, Math, or anything else...">
-                    <button onclick="sendAIChat()"><i data-lucide="send"></i></button>
-                </div>
+            <div id="nav-items" class="space-y-2">
             </div>
 
-            <div id="notes-flashcards" class="content-view hidden">
-                <h2>📝 Notes & Flashcards</h2>
-                <div class="flashcard-controls">
-                    <button onclick="showCreateNote()"><i data-lucide="file-plus"></i> Create Note</button>
-                    <button onclick="showCreateFlashcard()"><i data-lucide="layers"></i> Create Flashcard</button>
-                    <button onclick="createFlashcardsFromNote()"><i data-lucide="bot"></i> AI Generate Cards</button>
-                </div>
-
-                <div id="note-card-editor" class="hidden">
-                    <h3>Create Note</h3>
-                    <input type="text" id="note-title" placeholder="Note Title (e.g., Photosynthesis)">
-                    <textarea id="note-content" placeholder="Type your detailed notes here..."></textarea>
-                    <button onclick="saveNote()">Save Note</button>
-                </div>
-
-                <div id="flashcard-editor" class="hidden">
-                    <h3>Create Flashcard</h3>
-                    <input type="text" id="card-front" placeholder="Card Front (Question or Term)">
-                    <input type="text" id="card-back" placeholder="Card Back (Answer or Definition)">
-                    <button onclick="saveFlashcard()">Save Flashcard</button>
-                </div>
-
-                <h3>Your Saved Content</h3>
-                <div id="user-content-list">
-                    </div>
+            <div class="pt-4 border-t border-indigo-700">
+                <button id="logout-btn" class="flex items-center space-x-3 p-3 rounded-xl transition-all duration-200 w-full text-left text-indigo-200 hover:bg-indigo-700 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <span class="font-medium">Logout</span>
+                </button>
             </div>
+        </nav>
 
-            <div id="settings" class="content-view hidden">
-                <h2>⚙️ Settings</h2>
-                <div class="settings-form">
-                    <label for="setting-name">Name:</label>
-                    <input type="text" id="setting-name">
-
-                    <label for="setting-age">Age:</label>
-                    <input type="number" id="setting-age" min="5" max="100">
-
-                    <label for="setting-year-group">Year Group:</label>
-                    <input type="text" id="setting-year-group">
-
-                    <label for="setting-institution">Institution of Learning:</label>
-                    <input type="text" id="setting-institution">
-                    
-                    <label for="setting-lessons">Lessons (Type, press Enter to add):</label>
-                    <input type="text" id="setting-lessons-input" placeholder="e.g., Mathematics, Physics, History">
-                    <div id="setting-lessons-list" class="itemized-list"></div>
-                    
-                    <button onclick="saveSettings()">Save Changes</button>
-                    
-                    <br>
-                    <h3>Account Security</h3>
-                    <label for="setting-new-password">Reset Password:</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="setting-new-password" placeholder="Enter new password">
-                        <i data-lucide="eye" class="view-password" onclick="togglePasswordVisibility('setting-new-password')"></i>
-                    </div>
-                    <button onclick="resetPassword()">Reset Password</button>
-                </div>
-            </div>
-
-            <div id="onboarding" class="content-view hidden">
-                <h2>👋 Welcome to StudyHub!</h2>
-                <p>Complete your profile to get personalized AI assistance.</p>
-                <input type="text" id="onboard-name" placeholder="Name" required>
-                <input type="number" id="onboard-age" placeholder="Age" min="5" max="100" required>
-                <input type="text" id="onboard-year-group" placeholder="Year Group (e.g., IGCSE Year 10)" required>
-                <input type="text" id="onboard-institution" placeholder="Institution of Learning" required>
+        <main id="main-content" class="md:ml-64 flex-1 p-4 md:p-8 transition-all duration-300">
+            <div class="h-full">
                 
-                <label for="onboard-lessons-input">Lessons (Type, press Enter to add):</label>
-                <input type="text" id="onboard-lessons-input" placeholder="e.g., Mathematics, Physics, History" required>
-                <div id="onboard-lessons-list" class="itemized-list"></div>
+                <section id="dashboard-view" class="content-section bg-white p-6 md:p-10 rounded-xl shadow-lg h-full hidden">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-8 border-b pb-4">Dashboard</h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Welcome back, <span id="dashboard-user-name" class="font-semibold text-indigo-600">User</span>! Here is your quick summary.
+                    </p>
 
-                <button onclick="completeOnboarding()">Complete Setup</button>
-            </div>
-
-            <div id="credits" class="content-view hidden">
-                <h2>🏆 Credits</h2>
-                <p class="credit-text">StudyHub Pro was made by:</p>
-                <p class="credit-text-main">Nathan Koech</p>
-                <style>
-                    .credit-text-main {
-                        font-size: 1.5em;
-                        color: var(--primary-blue);
-                        margin-top: 20px;
-                        font-weight: bold;
-                    }
-                </style>
-            </div>
-
-            <div id="admin-panel" class="content-view hidden">
-                <h2>🔒 Admin Panel</h2>
-                <p>This panel allows management and oversight of user accounts.</p>
-                <h3>Registered Users</h3>
-                <div id="user-management-list">
+                    <div id="stat-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     </div>
+
+                    <h2 class="text-2xl font-bold text-gray-800 mt-12 mb-4">Quick Links</h2>
+                    <div id="quick-links" class="flex flex-wrap gap-4">
+                    </div>
+                </section>
+
+                <section id="notes-flashcards-view" class="content-section flex flex-col h-full bg-white p-6 md:p-10 rounded-xl shadow-lg hidden">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block mr-2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                        Study Tools
+                    </h1>
+
+                    <div class="flex-shrink-0 mb-6 flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                        <label for="subject-select" class="font-semibold text-gray-700">Select Subject:</label>
+                        <select id="subject-select" class="p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white sm:max-w-xs w-full">
+                        </select>
+                    </div>
+
+                    <div id="study-tabs" class="flex-shrink-0 mb-6">
+                        <button id="tab-notes" class="tab-button px-4 py-2 rounded-t-lg font-semibold bg-indigo-600 text-white">Notes</button>
+                        <button id="tab-flashcards" class="tab-button px-4 py-2 rounded-t-lg font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300 transition">Flashcards</button>
+                    </div>
+
+                    <div id="notes-content" class="tab-content flex-grow flex flex-col">
+                        <textarea
+                            id="notes-textarea"
+                            rows="15"
+                            placeholder="Start typing your notes for the selected subject here. These notes are saved automatically as you type."
+                            class="flex-grow w-full p-4 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none custom-scrollbar"
+                        ></textarea>
+                        <p id="notes-status" class="mt-2 text-sm text-gray-500"></p>
+                    </div>
+
+                    <div id="flashcards-content" class="tab-content flex-grow flex flex-col hidden">
+                        <div class="flex-shrink-0 mb-6 bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                            <h3 class="text-lg font-bold text-indigo-700 mb-3">AI Flashcard Generator</h3>
+                            <button
+                                id="generate-flashcards-btn"
+                                class="w-full flex items-center justify-center p-3 rounded-lg font-semibold text-white transition-colors duration-200 bg-green-600 hover:bg-green-700 disabled:bg-green-400"
+                            >
+                                <svg id="ai-flashcard-icon" class="animate-pulse h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 13h3a3 3 0 0 0 0-6h-.029a6 6 0 0 0-10.45 2.766L4 10a8 8 0 0 1 12.83-5.553l1.17 1.17a3 3 0 0 0 3 5H13"></path><path d="M11 11h-3a3 3 0 0 0 0 6h.029a6 6 0 0 0 10.45-2.766L20 14a8 8 0 0 1-12.83 5.553l-1.17-1.17a3 3 0 0 0-3-5H11"></path></svg>
+                                <span>Generate from Notes</span>
+                            </button>
+                            <p id="flashcard-ai-message" class="mt-2 text-sm text-red-500 text-center hidden"></p>
+                        </div>
+                        
+                        <div class="flex-shrink-0 mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="text-lg font-bold text-gray-700 mb-3">Manually Add Card</h3>
+                            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-3">
+                                <input type="text" id="new-card-front" placeholder="Question/Term (Front)" class="flex-1 p-2 border border-gray-300 rounded-lg">
+                                <input type="text" id="new-card-back" placeholder="Answer/Definition (Back)" class="flex-1 p-2 border border-gray-300 rounded-lg">
+                                <button id="add-manual-card-btn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition">Add Card</button>
+                            </div>
+                        </div>
+
+                        <div id="flashcards-list" class="flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar">
+                            <p class="col-span-full text-center text-gray-500 pt-8">No flashcards found for this subject. Start by creating one manually or using the AI generator!</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="ai-help-view" class="content-section flex flex-col h-full bg-white p-6 md:p-10 rounded-xl shadow-lg hidden">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block mr-2"><path d="M12.5 16h-1"></path><path d="M12 3a6 6 0 0 0-6 6c0 1.95 1.054 3.725 2.766 4.887L12 17.5l3.234-2.613C16.946 12.725 18 10.95 18 9a6 6 0 0 0-6-6z"></path><path d="M12 17.5v4"></path></svg>
+                        AI Help Assistant
+                    </h1>
+
+                    <div class="flex-shrink-0 mb-6">
+                        <textarea
+                            id="ai-prompt-input"
+                            rows="4"
+                            placeholder="Ask 'What is the role of the prefrontal cortex in decision-making?' or 'Summarize the main points of the Paris Agreement.'"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 resize-none"
+                        ></textarea>
+                        <button
+                            id="ai-generate-btn"
+                            class="mt-3 w-full flex items-center justify-center p-3 rounded-lg font-semibold text-white transition-colors duration-200 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400"
+                        >
+                            <span id="ai-btn-text">Get Answer</span>
+                        </button>
+                    </div>
+
+                    <div class="flex-grow bg-gray-50 p-6 rounded-xl shadow-inner overflow-y-auto custom-scrollbar border border-gray-200">
+                        <h2 class="text-xl font-bold text-indigo-700 mb-4">Response</h2>
+                        <div id="ai-response-output" class="text-gray-700 markdown-response">
+                            Your AI response will appear here.
+                        </div>
+                        <div id="ai-response-sources" class="mt-4 pt-4 border-t border-gray-200 hidden">
+                            <h3 class="text-sm font-semibold text-gray-600 mb-2">Sources:</h3>
+                            <ul id="ai-sources-list" class="list-disc list-inside text-xs text-gray-500 space-y-1"></ul>
+                        </div>
+                        <p id="ai-error-message" class="text-red-500 font-semibold mt-4 hidden"></p>
+                    </div>
+                </section>
+
+                <section id="chat-view" class="content-section flex flex-col h-full bg-white p-6 md:p-10 rounded-xl shadow-lg hidden">
+                    <header class="flex-shrink-0 border-b pb-4 mb-4">
+                        <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block mr-2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            Global Chat Room
+                        </h1>
+                        <p class="text-sm text-gray-500">Connect with everyone on the platform in real time. (Your ID: <span id="current-user-id" class="font-mono text-xs font-bold text-indigo-500 bg-indigo-50 px-1 py-0.5 rounded">N/A</span>)</p>
+                    </header>
+
+                    <div id="chat-messages" class="flex-grow p-4 space-y-4 overflow-y-auto custom-scrollbar bg-gray-50 rounded-lg mb-4 h-96">
+                    </div>
+                    
+                    <footer class="flex-shrink-0">
+                        <form id="chat-form" class="flex space-x-3">
+                            <input
+                                type="text"
+                                id="chat-input"
+                                placeholder="Type your message..."
+                                class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                                required
+                            />
+                            <button
+                                type="submit"
+                                id="chat-send-btn"
+                                class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition disabled:bg-indigo-400"
+                            >
+                                Send
+                            </button>
+                        </form>
+                    </footer>
+                </section>
+
+                <section id="settings-view" class="content-section bg-white p-6 md:p-10 rounded-xl shadow-lg hidden">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-8 border-b pb-4">Settings</h1>
+                    
+                    <div class="space-y-6 max-w-xl">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h2 class="text-xl font-bold text-indigo-700 mb-2">Profile Information</h2>
+                            <p class="text-gray-600 mb-4">Update your profile details.</p>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="settings-display-name" class="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
+                                    <input type="text" id="settings-display-name" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="settings-year" class="block text-sm font-medium text-gray-700 mb-1">Year of Learning</label>
+                                    <select id="settings-year" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                                        <option value="5">Year 5</option>
+                                        <option value="6">Year 6</option>
+                                        <option value="7">Year 7</option>
+                                        <option value="8">Year 8</option>
+                                        <option value="9">Year 9</option>
+                                        <option value="10">Year 10</option>
+                                        <option value="11">Year 11</option>
+                                        <option value="12">Year 12</option>
+                                        <option value="13">Year 13</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="settings-institution" class="block text-sm font-medium text-gray-700 mb-1">Institution of Learning</label>
+                                    <input type="text" id="settings-institution" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="settings-subjects" class="block text-sm font-medium text-gray-700 mb-1">Key Subjects</label>
+                                    <input type="text" id="settings-subjects" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                            </div>
+
+                            <button id="save-settings-btn" class="mt-4 w-full p-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                                Save Profile
+                            </button>
+                            <p id="settings-message" class="mt-2 text-sm text-center"></p>
+                        </div>
+
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h2 class="text-xl font-bold text-red-700 mb-2">Danger Zone</h2>
+                            <p class="text-gray-600 mb-4">You can delete your user data from the platform.</p>
+                            <button id="delete-data-btn" class="w-full p-2 rounded-lg font-semibold text-white bg-red-600 hover:bg-red-700 transition">
+                                Delete My Data
+                            </button>
+                            <p id="delete-message" class="mt-2 text-sm text-center text-red-500 hidden"></p>
+                        </div>
+                    </div>
+
+                    <div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-20">
+                        <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full text-center">
+                            <h3 class="text-xl font-bold text-red-600 mb-4">Confirm Data Deletion</h3>
+                            <p class="text-gray-700 mb-6">Are you absolutely sure you want to delete all your user data? This action cannot be undone.</p>
+                            <div class="flex justify-between space-x-3">
+                                <button id="cancel-delete-btn" class="flex-1 p-2 rounded-lg font-semibold border border-gray-300 hover:bg-gray-100 transition">
+                                    Cancel
+                                </button>
+                                <button id="confirm-delete-btn" class="flex-1 p-2 rounded-lg font-semibold text-white bg-red-600 hover:bg-red-700 transition">
+                                    Yes, Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
             </div>
-            
-        </div>
+        </main>
     </div>
 
-    <script>
-        /* Made by Nathan */
-        // Calls the Lucide library to render the icons
-        lucide.createIcons();
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, limit, serverTimestamp, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- Configuration and Initialization ---
+        const geminiApiKey = "";
+        const geminiApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${geminiApiKey}`;
 
-        // Firebase Config provided by the user
-        const firebaseConfig = {
-            apiKey: "AIzaSyCAJ5kM37MKyq2UGUw1dHF8EEskdKWU5f4",
-            authDomain: "studyhubon.firebaseapp.com",
-            projectId: "studyhubon",
-            storageBucket: "studyhubon.firebasestorage.app",
-            messagingSenderId: "137164743903",
-            appId: "1:137164743903:web:9ffa7d3f8e67d9b349f56a",
-            measurementId: "G-6SPKY9LQ0S"
-        };
+        let app;
+        let db;
+        let auth;
+        let userId = null;
+        let userName = 'Anonymous';
+        let userProfile = null;
+        let isAuthReady = false;
+        let selectedSubject = null;
+        let notesData = '';
+        let flashcardsData = [];
 
-        // Gemini API Key provided by the user
-        const GEMINI_API_KEY = "AIzaSyAsXY-tMiXaC2CX3VlWJa8NtOWb6pp4cFc";
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        const loadingView = document.getElementById('loading-view');
+        const authView = document.getElementById('auth-view');
+        const onboardingView = document.getElementById('onboarding-view');
+        const appView = document.getElementById('app-view');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const contentOverlay = document.getElementById('content-overlay');
+        const currentUserIdSpan = document.getElementById('current-user-id');
+        const notesTextarea = document.getElementById('notes-textarea');
+        const notesStatus = document.getElementById('notes-status');
+        const subjectSelect = document.getElementById('subject-select');
+        const flashcardsList = document.getElementById('flashcards-list');
 
-        // AI Initialization (using a simple fetch wrapper for the API)
-        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;
+        const profilePath = (uid) => `artifacts/${appId}/users/${uid}/profile/data`;
+        const chatCollectionPath = `artifacts/${appId}/public/data/chat_messages`;
+        const notesDocPath = (uid, subject) => `artifacts/${appId}/users/${uid}/notes/${subject.replace(/\s/g, '_')}`;
+        const flashcardsDocPath = (uid, subject) => `artifacts/${appId}/users/${uid}/flashcards/${subject.replace(/\s/g, '_')}`;
 
-        // Global state
-        let currentUserData = {};
-        let currentLessons = [];
-        const ADMIN_EMAIL = 'declanthebest01@gmail.com';
+        const navigation = [
+            { id: 'dashboard', name: 'Dashboard', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>' },
+            { id: 'notes-flashcards', name: 'Study Tools', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>' },
+            { id: 'ai-help', name: 'AI Help', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>' },
+            { id: 'chat', name: 'Global Chat', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>' },
+            { id: 'settings', name: 'Settings', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9.41a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V15a1.65 1.65 0 0 0 1.51 1z"></path></svg>' },
+        ];
 
-        // --- Authentication and Onboarding Functions ---
+        function showView(viewId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(`${viewId}-view`).classList.remove('hidden');
 
-        function showLogin() {
-            document.getElementById('login-form').classList.remove('hidden');
-            document.getElementById('signup-form').classList.add('hidden');
-        }
+            document.querySelectorAll('#nav-items button').forEach(button => {
+                button.classList.remove('bg-indigo-700');
+                if (button.id === `nav-${viewId}`) {
+                    button.classList.add('bg-indigo-700');
+                }
+            });
 
-        function showSignup() {
-            document.getElementById('login-form').classList.add('hidden');
-            document.getElementById('signup-form').classList.remove('hidden');
-        }
-
-        function togglePasswordVisibility(id) {
-            const input = document.getElementById(id);
-            const icon = input.nextElementSibling; // The eye icon is the next sibling
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.setAttribute('data-lucide', 'eye-off');
-            } else {
-                input.type = 'password';
-                icon.setAttribute('data-lucide', 'eye');
-            }
-            lucide.createIcons(); // Re-render the icon
-        }
-
-        async function signupUser() {
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-
-            if (!email || !password) {
-                alert("Please enter both email and password.");
-                return;
-            }
-
-            try {
-                // 1. Create user in Firebase Auth
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                
-                // 2. Initial user data for Firestore
-                await db.collection('users').doc(user.uid).set({
-                    email: user.email,
-                    onboarded: false,
-                    name: '',
-                    age: null,
-                    yearGroup: '',
-                    institution: '',
-                    lessons: []
-                });
-
-                alert("Sign Up successful! Please complete the onboarding process.");
-            } catch (error) {
-                alert("Sign Up Failed: " + error.message);
+            if (window.innerWidth < 768) {
+                sidebar.classList.remove('open');
+                contentOverlay.classList.remove('open');
             }
         }
 
-        async function loginUser() {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-
-            if (!email || !password) {
-                alert("Please enter both email and password.");
-                return;
-            }
-
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-            } catch (error) {
-                alert("Login Failed: " + error.message);
-            }
-        }
-
-        function logoutUser() {
-            auth.signOut();
-        }
-
-        // Handle the user's authentication state
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                document.getElementById('auth-screen').classList.add('hidden');
-                await loadUserData(user.uid);
-
-                // Admin Panel Logic
-                const adminLinkPlaceholder = document.querySelector('.nav-item[data-view="credits"]');
-                let adminPanelLink = document.querySelector('.nav-item[data-view="admin-panel"]');
-
-                if (user.email === ADMIN_EMAIL) {
-                    if (!adminPanelLink) {
-                        // Dynamically create the admin link
-                        const adminLink = document.createElement('a');
-                        adminLink.href = '#';
-                        adminLink.className = 'nav-item';
-                        adminLink.setAttribute('data-view', 'admin-panel');
-                        adminLink.innerHTML = '<i data-lucide="lock"></i> Admin Panel';
-                        document.getElementById('sidebar').insertBefore(adminLink, adminLinkPlaceholder);
-                        lucide.createIcons();
+        function createNav() {
+            const navItemsContainer = document.getElementById('nav-items');
+            navItemsContainer.innerHTML = '';
+            navigation.forEach((item) => {
+                const button = document.createElement('button');
+                button.id = `nav-${item.id}`;
+                button.className = 'flex items-center space-x-3 p-3 rounded-xl transition-all duration-200 w-full text-left text-indigo-200 hover:bg-indigo-700 hover:text-white';
+                button.innerHTML = `${item.icon}<span class="font-medium">${item.name}</span>`;
+                button.addEventListener('click', () => {
+                    showView(item.id);
+                    if (item.id === 'notes-flashcards') {
+                        setupStudyTools();
                     }
-                } else {
-                    if (adminPanelLink) {
-                        adminPanelLink.remove(); 
-                    }
-                }
-
-
-                if (currentUserData.onboarded) {
-                    document.getElementById('onboarding').classList.add('hidden');
-                    document.getElementById('app-dashboard').classList.remove('hidden');
-                    // Initial view is AI Helper
-                    switchView('ai-helper'); 
-                } else {
-                    document.getElementById('app-dashboard').classList.remove('hidden');
-                    document.getElementById('onboarding').classList.remove('hidden');
-                    switchView('onboarding'); // Force onboarding view
-                }
-            } else {
-                document.getElementById('app-dashboard').classList.add('hidden');
-                document.getElementById('auth-screen').classList.remove('hidden');
-                showLogin();
-            }
-        });
-
-        // Load user data from Firestore
-        async function loadUserData(uid) {
-            try {
-                const doc = await db.collection('users').doc(uid).get();
-                if (doc.exists) {
-                    currentUserData = doc.data();
-                    currentLessons = currentUserData.lessons || [];
-                } else {
-                    console.error("No user data found in Firestore.");
-                }
-            } catch (error) {
-                console.error("Error loading user data:", error);
-            }
-        }
-
-        // Onboarding logic
-        document.getElementById('onboard-lessons-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addLesson(this.value.trim(), 'onboard-lessons-list');
-                this.value = '';
-            }
-        });
-
-        function addLesson(lesson, listId) {
-            if (lesson && !currentLessons.includes(lesson)) {
-                currentLessons.push(lesson);
-                renderLessonsList(listId);
-            }
-        }
-
-        function removeLesson(lesson, listId) {
-            currentLessons = currentLessons.filter(l => l !== lesson);
-            renderLessonsList(listId);
-        }
-
-        function renderLessonsList(listId) {
-            const listElement = document.getElementById(listId);
-            listElement.innerHTML = '';
-            currentLessons.forEach(lesson => {
-                const item = document.createElement('span');
-                item.className = 'list-item';
-                item.textContent = lesson;
-                const removeIcon = document.createElement('span');
-                removeIcon.className = 'list-item-remove';
-                removeIcon.innerHTML = '&times;';
-                // Determine the correct list ID for removal handler
-                const targetListId = listId; 
-                removeIcon.onclick = () => removeLesson(lesson, targetListId);
-                item.appendChild(removeIcon);
-                listElement.appendChild(item);
+                });
+                navItemsContainer.appendChild(button);
             });
+            showView('dashboard');
         }
 
-        async function completeOnboarding() {
-            const user = auth.currentUser;
-            if (!user) return;
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            contentOverlay.classList.toggle('open');
+        }
 
-            const name = document.getElementById('onboard-name').value;
-            const age = parseInt(document.getElementById('onboard-age').value);
-            const yearGroup = document.getElementById('onboard-year-group').value;
-            const institution = document.getElementById('onboard-institution').value;
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        closeMenuBtn.addEventListener('click', toggleSidebar);
+        contentOverlay.addEventListener('click', toggleSidebar);
 
-            if (!name || !age || !yearGroup || !institution || currentLessons.length === 0) {
-                alert("Please fill in all onboarding fields and add at least one lesson.");
+        async function fetchUserProfile(uid) {
+            const profileRef = doc(db, profilePath(uid));
+            try {
+                const profileSnap = await getDoc(profileRef);
+                return profileSnap.exists() ? profileSnap.data() : null;
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+                return null;
+            }
+        }
+
+        async function saveUserProfile(uid, data) {
+            const profileRef = doc(db, profilePath(uid));
+            try {
+                await setDoc(profileRef, data, { merge: true });
+                return true;
+            } catch (error) {
+                console.error("Error saving user profile:", error);
+                return false;
+            }
+        }
+
+        function renderStatCards() {
+            const container = document.getElementById('stat-cards');
+            container.innerHTML = `
+                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-200">
+                    <h3 class="text-lg font-semibold text-indigo-800">Learning Year</h3>
+                    <p id="stat-year" class="text-3xl font-bold text-indigo-600 mt-2">${userProfile?.year || 'N/A'}</p>
+                </div>
+                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-200">
+                    <h3 class="text-lg font-semibold text-indigo-800">Institution</h3>
+                    <p id="stat-institution" class="text-xl font-bold text-indigo-600 mt-2 truncate">${userProfile?.institution || 'N/A'}</p>
+                </div>
+                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-200">
+                    <h3 class="text-lg font-semibold text-indigo-800">Key Subjects</h3>
+                    <p id="stat-subjects" class="text-xl font-bold text-indigo-600 mt-2">${(userProfile?.subjects || []).length} Subjects</p>
+                </div>
+            `;
+
+            document.getElementById('dashboard-user-name').textContent = userName;
+        }
+
+        function renderQuickLinks() {
+            const container = document.getElementById('quick-links');
+            container.innerHTML = `
+                <button onclick="showView('notes-flashcards')" class="flex items-center space-x-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    <span>Go to Study Tools</span>
+                </button>
+                <button onclick="showView('ai-help')" class="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5C17.25 21.5 21.5 17.25 21.5 12C21.5 6.75 17.25 2.5 12 2.5C6.75 2.5 2.5 6.75 2.5 12C2.5 17.25 6.75 21.5 12 21.5Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><line x1="12" y1="17" x2="12.01" y2="17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></line></svg>
+                    <span>Ask AI for Help</span>
+                </button>
+                <button onclick="showView('chat')" class="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    <span>Join Global Chat</span>
+                </button>
+            `;
+        }
+
+        async function attemptOnboarding() {
+            const displayNameInput = document.getElementById('onboarding-display-name').value.trim();
+            const yearInput = document.getElementById('onboarding-year').value;
+            const institutionInput = document.getElementById('onboarding-institution').value.trim();
+            const subjectsInput = document.getElementById('onboarding-subjects').value.trim();
+            const errorElement = document.getElementById('onboarding-error');
+
+            if (!displayNameInput || !yearInput || !institutionInput || !subjectsInput) {
+                errorElement.textContent = "Please fill in all required fields.";
+                errorElement.classList.remove('hidden');
                 return;
             }
+            errorElement.classList.add('hidden');
 
-            try {
-                await db.collection('users').doc(user.uid).update({
-                    onboarded: true,
-                    name,
-                    age,
-                    yearGroup,
-                    institution,
-                    lessons: currentLessons
-                });
+            const subjectsArray = subjectsInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
+            const profileData = {
+                displayName: displayNameInput,
+                year: yearInput,
+                institution: institutionInput,
+                subjects: subjectsArray,
+                onboarded: true,
+                createdAt: serverTimestamp(),
+            };
+
+            const success = await saveUserProfile(userId, profileData);
+            if (success) {
+                userName = displayNameInput;
+                userProfile = profileData;
+                onboardingView.classList.add('hidden');
+                loadingView.classList.add('hidden');
+                appView.classList.remove('hidden');
+                createNav();
+                setupSettings();
+                renderStatCards();
+                renderQuickLinks();
                 
-                currentUserData = { ...currentUserData, onboarded: true, name, age, yearGroup, institution, lessons: currentLessons };
-                alert("Onboarding complete! Welcome to StudyHub.");
-                document.getElementById('onboarding').classList.add('hidden');
-                switchView('ai-helper');
-            } catch (error) {
-                alert("Failed to complete onboarding: " + error.message);
+                if (userProfile.subjects && userProfile.subjects.length > 0) {
+                    selectedSubject = userProfile.subjects[0];
+                }
+                
+                showView('dashboard');
+            } else {
+                errorElement.textContent = "Failed to save profile. Please try again.";
+                errorElement.classList.remove('hidden');
             }
         }
 
+        function setupOnboarding() {
+            document.getElementById('complete-onboarding-btn').addEventListener('click', attemptOnboarding);
+            onboardingView.classList.remove('hidden');
+            loadingView.classList.add('hidden');
+            authView.classList.add('hidden');
+        }
 
-        // --- Sidebar and View Management ---
+        function setupSettings() {
+            const displayNameInput = document.getElementById('settings-display-name');
+            const yearSelect = document.getElementById('settings-year');
+            const institutionInput = document.getElementById('settings-institution');
+            const subjectsInput = document.getElementById('settings-subjects');
+            const saveBtn = document.getElementById('save-settings-btn');
+            const messageElement = document.getElementById('settings-message');
+            
+            displayNameInput.value = userProfile?.displayName || '';
+            yearSelect.value = userProfile?.year || '5';
+            institutionInput.value = userProfile?.institution || '';
+            subjectsInput.value = userProfile?.subjects?.join(', ') || '';
 
-        function switchView(viewId) {
-            // Hide all content views
-            document.querySelectorAll('.content-view').forEach(view => {
-                view.classList.add('hidden');
-            });
-            // Show the requested view
-            document.getElementById(viewId).classList.remove('hidden');
+            saveBtn.onclick = async () => {
+                const newDisplayName = displayNameInput.value.trim();
+                const newYear = yearSelect.value;
+                const newInstitution = institutionInput.value.trim();
+                const newSubjectsArray = subjectsInput.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
 
-            // Update active state in sidebar
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            document.querySelector(`.nav-item[data-view="${viewId}"]`)?.classList.add('active'); 
-
-            // Special initialization for specific views
-            if (viewId === 'settings') {
-                loadSettings();
-            } else if (viewId === 'notes-flashcards') {
-                loadUserContent();
-            } else if (viewId === 'admin-panel') {
-                if (auth.currentUser.email !== ADMIN_EMAIL) {
-                    alert('Access Denied: You are not authorized to view the Admin Panel.');
-                    switchView('ai-helper'); // Redirect
+                if (!newDisplayName || !newYear || !newInstitution || newSubjectsArray.length === 0) {
+                    messageElement.textContent = "Please ensure all fields are filled before saving.";
+                    messageElement.className = "mt-2 text-sm text-center text-red-500";
                     return;
                 }
-                loadAdminPanel(); // Load admin data
+
+                const newProfileData = {
+                    displayName: newDisplayName,
+                    year: newYear,
+                    institution: newInstitution,
+                    subjects: newSubjectsArray,
+                    onboarded: true,
+                };
+                
+                const success = await saveUserProfile(userId, newProfileData);
+                if (success) {
+                    userName = newDisplayName;
+                    userProfile = newProfileData;
+                    renderStatCards();
+                    messageElement.textContent = "Profile updated successfully!";
+                    messageElement.className = "mt-2 text-sm text-center text-green-600";
+                    setTimeout(() => messageElement.textContent = '', 3000);
+                } else {
+                    messageElement.textContent = "Failed to save profile. Try again.";
+                    messageElement.className = "mt-2 text-sm text-center text-red-500";
+                }
+            };
+        }
+        
+        function formatAuthError(code) {
+            switch (code) {
+                case 'auth/user-not-found': return 'No account found with this email.';
+                case 'auth/wrong-password': return 'Incorrect password. Please try again.';
+                case 'auth/email-already-in-use': return 'This email address is already in use.';
+                case 'auth/invalid-email': return 'The email address is not valid.';
+                case 'auth/weak-password': return 'Password should be at least 6 characters.';
+                case 'auth/invalid-credential': return 'Invalid credentials. Check email and password.';
+                default: return 'An authentication error occurred. Please try again.';
             }
         }
 
-        // Attach event listeners to sidebar items
-        document.getElementById('sidebar').addEventListener('click', (e) => {
-            const navItem = e.target.closest('.nav-item');
-            if (navItem) {
+        function setupAuthView() {
+            const authForm = document.getElementById('auth-form');
+            const toggleAuthBtn = document.getElementById('toggle-auth-btn');
+            const authTitle = document.getElementById('auth-title');
+            const authSubmitBtn = document.getElementById('auth-submit-btn');
+            const authError = document.getElementById('auth-error');
+            const authEmailInput = document.getElementById('auth-email');
+            const authPasswordInput = document.getElementById('auth-password');
+
+            let isSigningUp = false;
+
+            const updateAuthUI = () => {
+                authTitle.textContent = isSigningUp ? 'Create Your Account' : 'Welcome Back! Sign In';
+                authSubmitBtn.innerHTML = isSigningUp ? 'Sign Up' : 'Sign In';
+                toggleAuthBtn.textContent = isSigningUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up';
+                authError.classList.add('hidden');
+            };
+
+            toggleAuthBtn.addEventListener('click', () => {
+                isSigningUp = !isSigningUp;
+                updateAuthUI();
+            });
+
+            authForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const viewId = navItem.getAttribute('data-view');
-                // Prevent logout link from trying to switch view
-                if (viewId && viewId !== 'logout') {
-                    switchView(viewId);
+                authError.classList.add('hidden');
+                authSubmitBtn.disabled = true;
+                authSubmitBtn.innerHTML = isSigningUp ? 'Signing Up...' : 'Signing In...';
+                
+                const email = authEmailInput.value.trim();
+                const password = authPasswordInput.value;
+
+                try {
+                    if (isSigningUp) {
+                        await createUserWithEmailAndPassword(auth, email, password);
+                    } else {
+                        await signInWithEmailAndPassword(auth, email, password);
+                    }
+                } catch (error) {
+                    console.error("Authentication Error:", error);
+                    authError.textContent = formatAuthError(error.code);
+                    authError.classList.remove('hidden');
+                    authSubmitBtn.disabled = false;
+                    authSubmitBtn.innerHTML = isSigningUp ? 'Sign Up' : 'Sign In';
+                }
+            });
+            
+            updateAuthUI();
+            authView.classList.remove('hidden');
+            authView.classList.add('flex');
+            onboardingView.classList.add('hidden');
+        }
+
+        async function initializeAppAndAuth() {
+            try {
+                if (Object.keys(firebaseConfig).length === 0) {
+                    throw new Error("Firebase configuration is missing.");
+                }
+
+                document.getElementById('auth-status').textContent = 'Initializing app.';
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                document.getElementById('auth-status').textContent = 'Checking authentication state...';
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        currentUserIdSpan.textContent = userId;
+                        isAuthReady = true;
+
+                        authView.classList.add('hidden');
+                        loadingView.classList.add('hidden');
+                        mobileMenuBtn.classList.remove('hidden');
+
+                        userProfile = await fetchUserProfile(userId);
+
+                        if (userProfile?.onboarded) {
+                            userName = userProfile.displayName;
+                            appView.classList.remove('hidden');
+                            createNav();
+                            setupSettings();
+                            renderStatCards();
+                            renderQuickLinks();
+
+                            if (userProfile.subjects && userProfile.subjects.length > 0) {
+                                selectedSubject = userProfile.subjects[0];
+                            }
+                            
+                            setupChatListener();
+                            setupStudyToolsListeners();
+                            showView('dashboard');
+                        } else {
+                            setupOnboarding();
+                        }
+                    } else {
+                        userId = null;
+                        isAuthReady = true;
+                        loadingView.classList.add('hidden');
+                        mobileMenuBtn.classList.add('hidden');
+                        setupAuthView(); 
+                    }
+                });
+
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                }
+
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                document.getElementById('auth-status').textContent = `Authentication failed. Check console for details.`;
+                loadingView.classList.add('hidden');
+                setupAuthView();
+            }
+        }
+
+        async function exponentialBackoffFetch(url, options, maxRetries = 5, delay = 1000) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        return response;
+                    }
+                    if (response.status === 400 || response.status === 401) {
+                        throw new Error(`API Request failed with status ${response.status}.`);
+                    }
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
                 }
             }
-        });
+        }
 
+        function markdownToHtml(markdown) {
+            let html = markdown
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+                .replace(/^- (.*$)/gim, '<li>$1</li>')
+                .replace(/(\r\n|\n|\r)/gm, '<br>')
+                .replace(/<br>\s*<li>/g, '<li>')
+                .replace(/<li>/g, '<li class="list-disc ml-6">')
+                .replace(/<br>/g, '<p></p>');
+            
+            html = html.replace(/<p><\/p><li>/g, '<li>').replace(/<p><\/p><h3>/g, '<h3>');
 
-        // --- 1. AI Study Helper Functionality ---
+            if (html.includes('<li>')) {
+                html = '<ul>' + html + '</ul>';
+                html = html.replace(/<\/ul><ul>/g, '').replace(/<p><ul>/g, '<ul>');
+                html = html.replace(/<br>/g, '');
+            }
+            
+            return html;
+        }
 
-        async function sendAIChat() {
-            const inputElement = document.getElementById('ai-user-input');
-            const chatBox = document.getElementById('ai-chat-box');
-            const userPrompt = inputElement.value.trim();
-
-            if (!userPrompt) return;
-
-            // Display user message
-            const userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'user-message';
-            userMessageDiv.textContent = userPrompt;
-            chatBox.appendChild(userMessageDiv);
-
-            // Clear input and show a placeholder AI message
-            inputElement.value = '';
-            const aiMessageDiv = document.createElement('div');
-            aiMessageDiv.className = 'ai-message';
-            aiMessageDiv.innerHTML = '<span class="loading">... Thinking ...</span>';
-            chatBox.appendChild(aiMessageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // Construct the context for the AI
-            const context = `You are a helpful study assistant named StudyHub AI, designed to help students, especially those in Cambridge curriculum. The user's profile is: Name: ${currentUserData.name || 'Student'}, Year Group: ${currentUserData.yearGroup || 'N/A'}, Lessons: ${currentUserData.lessons ? currentUserData.lessons.join(', ') : 'None'}. Provide concise, accurate, and encouraging study help.`;
+        async function callGemini(userQuery) {
+            const systemPrompt = `You are StudyHub AI, a helpful, encouraging, and knowledgeable study assistant for students in Year ${userProfile?.year || 'N/A'}, specializing in subjects like ${userProfile?.subjects?.join(', ') || 'General Knowledge'}. Provide clear, concise, and structured answers, using a conversational and supportive tone. Use Markdown formatting for readability.`;
 
             const payload = {
-                contents: [
-                    { role: "user", parts: [{ text: context + "\n\nUser Question: " + userPrompt }] }
-                ]
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            const options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             };
 
             try {
-                const response = await fetch(GEMINI_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                const response = await exponentialBackoffFetch(geminiApiUrl, options);
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                const aiResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm experiencing a high volume of requests. Please try again in a moment.";
-
-                // Update the placeholder message with the actual response
-                aiMessageDiv.innerHTML = aiResponseText.replace(/\n/g, '<br>'); // Basic formatting for newlines
-                
-            } catch (error) {
-                console.error("AI Chat Error:", error);
-                aiMessageDiv.textContent = "Sorry, I couldn't connect to the AI service. " + error.message;
-            } finally {
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        }
-
-
-        // --- 2. Notes & Flashcards Functionality ---
-
-        function showCreateNote() {
-            document.getElementById('note-card-editor').classList.remove('hidden');
-            document.getElementById('flashcard-editor').classList.add('hidden');
-            document.querySelector('#note-card-editor h3').textContent = 'Create Note';
-            document.getElementById('note-title').value = '';
-            document.getElementById('note-content').value = '';
-        }
-
-        function showCreateFlashcard() {
-            document.getElementById('note-card-editor').classList.add('hidden');
-            document.getElementById('flashcard-editor').classList.remove('hidden');
-            document.getElementById('card-front').value = '';
-            document.getElementById('card-back').value = '';
-        }
-
-        async function saveNote() {
-            const user = auth.currentUser;
-            if (!user) return;
-            const title = document.getElementById('note-title').value.trim();
-            const content = document.getElementById('note-content').value.trim();
-
-            if (!title || !content) {
-                alert("Please enter a title and content for your note.");
-                return;
-            }
-
-            try {
-                // FIXED: Using set with a generated ID and merging timestamp handling
-                await db.collection('content').doc().set({
-                    uid: user.uid,
-                    type: 'note',
-                    title: title,
-                    content: content,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                alert('Note saved successfully!');
-                document.getElementById('note-card-editor').classList.add('hidden');
-                loadUserContent(); // Refresh list
-            } catch (error) {
-                // Improved error logging for the user
-                console.error("Error saving note:", error);
-                alert(`Failed to save note. Please check your network connection. Error: ${error.message}`);
-            }
-        }
-
-        async function saveFlashcard() {
-            const user = auth.currentUser;
-            if (!user) return;
-            const front = document.getElementById('card-front').value.trim();
-            const back = document.getElementById('card-back').value.trim();
-
-            if (!front || !back) {
-                alert("Please enter a question/term for the front and an answer/definition for the back.");
-                return;
-            }
-
-            try {
-                // FIXED: Using set with a generated ID and merging timestamp handling
-                await db.collection('content').doc().set({
-                    uid: user.uid,
-                    type: 'flashcard',
-                    front: front,
-                    back: back,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                alert('Flashcard saved successfully!');
-                document.getElementById('flashcard-editor').classList.add('hidden');
-                loadUserContent(); // Refresh list
-            } catch (error) {
-                // Improved error logging for the user
-                console.error("Error saving flashcard:", error);
-                alert(`Failed to save flashcard. Please check your network connection. Error: ${error.message}`);
-            }
-        }
-
-        async function loadUserContent() {
-            const user = auth.currentUser;
-            if (!user) return;
-
-            const listElement = document.getElementById('user-content-list');
-            listElement.innerHTML = '<div>Loading content...</div>';
-
-            try {
-                const snapshot = await db.collection('content')
-                                        .where('uid', '==', user.uid)
-                                        .orderBy('createdAt', 'desc')
-                                        .get();
-
-                listElement.innerHTML = '';
-                if (snapshot.empty) {
-                    listElement.innerHTML = '<div>You have no saved notes or flashcards. Start creating!</div>';
-                    return;
-                }
-
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const item = document.createElement('div');
-                    item.className = 'content-item';
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    const text = candidate.content.parts[0].text;
+                    let sources = [];
+                    const groundingMetadata = candidate.groundingMetadata;
                     
-                    const dateDisplay = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
-
-                    if (data.type === 'note') {
-                        item.innerHTML = `
-                            <h4>📝 ${data.title}</h4>
-                            <p>Note created on: ${dateDisplay}</p>
-                        `;
-                        item.onclick = () => alert(`Note: ${data.title}\n\nContent:\n${data.content}`);
-                    } else if (data.type === 'flashcard') {
-                        item.innerHTML = `
-                            <h4>🃏 ${data.front}</h4>
-                            <p>Card created on: ${dateDisplay}</p>
-                        `;
-                        // Simple flip logic
-                        item.onclick = () => {
-                            if (item.classList.contains('card-flip')) {
-                                item.innerHTML = `<h4>🃏 ${data.front}</h4><p>Card created on: ${dateDisplay}</p>`;
-                                item.classList.remove('card-flip');
-                            } else {
-                                item.innerHTML = `<h4>💡 ${data.back}</h4><p>Card created on: ${dateDisplay}</p>`;
-                                item.classList.add('card-flip');
-                            }
-                        };
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        sources = groundingMetadata.groundingAttributions
+                            .map(attribution => ({
+                                uri: attribution.web?.uri,
+                                title: attribution.web?.title,
+                            }))
+                            .filter(source => source.uri && source.title);
                     }
-                    listElement.appendChild(item);
-                });
-
+                    return { text, sources };
+                } else {
+                    console.error("Unexpected API response structure:", result);
+                    return { text: "I couldn't generate a response. Please try rephrasing your question.", sources: [] };
+                }
             } catch (error) {
-                console.error("Error loading content:", error);
-                listElement.innerHTML = '<div>Failed to load your content.</div>';
+                console.error("API call failed:", error);
+                return { text: `An error occurred while connecting to the AI: ${error.message}. Please try again later.`, sources: [] };
             }
         }
 
+        const aiPromptInput = document.getElementById('ai-prompt-input');
+        const aiGenerateBtn = document.getElementById('ai-generate-btn');
+        const aiBtnText = document.getElementById('ai-btn-text');
+        const aiResponseOutput = document.getElementById('ai-response-output');
+        const aiResponseSources = document.getElementById('ai-response-sources');
+        const aiSourcesList = document.getElementById('ai-sources-list');
+        const aiErrorMessage = document.getElementById('ai-error-message');
 
-        function createFlashcardsFromNote() {
-            alert("AI Flashcard generation is currently handled via the AI Helper chat. Please copy your note content, go to the AI Helper, and ask it to 'generate 5 flashcards from the following text'.");
-        }
+        aiGenerateBtn.addEventListener('click', async () => {
+            const prompt = aiPromptInput.value.trim();
+            if (!prompt) {
+                aiErrorMessage.textContent = "Please enter a question to get an answer.";
+                aiErrorMessage.classList.remove('hidden');
+                return;
+            }
 
+            aiErrorMessage.classList.add('hidden');
+            aiResponseOutput.innerHTML = `<div class="flex items-center space-x-2 text-indigo-500"><svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Generating response...</span></div>`;
+            aiResponseSources.classList.add('hidden');
+            aiSourcesList.innerHTML = '';
+            aiGenerateBtn.disabled = true;
+            aiBtnText.textContent = 'Generating...';
 
-        // --- 3. Settings Functionality ---
-
-        document.getElementById('setting-lessons-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addLesson(this.value.trim(), 'setting-lessons-list');
-                this.value = '';
+            const { text, sources } = await callGemini(prompt);
+            
+            aiResponseOutput.innerHTML = markdownToHtml(text);
+            aiGenerateBtn.disabled = false;
+            aiBtnText.textContent = 'Get Answer';
+            
+            if (sources.length > 0) {
+                aiResponseSources.classList.remove('hidden');
+                sources.forEach((source, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a href="${source.uri}" target="_blank" class="text-indigo-500 hover:underline">${index + 1}. ${source.title || source.uri}</a>`;
+                    aiSourcesList.appendChild(li);
+                });
+            } else {
+                aiResponseSources.classList.add('hidden');
             }
         });
 
-        function loadSettings() {
-            // Populate the form with current user data
-            document.getElementById('setting-name').value = currentUserData.name || '';
-            document.getElementById('setting-age').value = currentUserData.age || '';
-            document.getElementById('setting-year-group').value = currentUserData.yearGroup || '';
-            document.getElementById('setting-institution').value = currentUserData.institution || '';
+        const chatMessagesContainer = document.getElementById('chat-messages');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+
+        function renderMessage(message) {
+            const isSelf = message.userId === userId;
+            const messageDiv = document.createElement('div');
             
-            // Set up the lessons list. Re-fetch currentLessons from global state.
-            currentLessons = [...(currentUserData.lessons || [])]; 
-            renderLessonsList('setting-lessons-list');
+            messageDiv.className = `flex ${isSelf ? 'justify-end' : 'justify-start'}`;
+            messageDiv.innerHTML = `
+                <div class="max-w-xs lg:max-w-md ${isSelf ? 'bg-indigo-600 text-white rounded-t-xl rounded-bl-xl' : 'bg-gray-200 text-gray-800 rounded-t-xl rounded-br-xl'} p-3 shadow-md">
+                    <div class="text-xs font-semibold ${isSelf ? 'text-indigo-200' : 'text-indigo-600'} mb-1">
+                        ${isSelf ? 'You' : message.userName}
+                    </div>
+                    <p class="text-sm break-words">${message.text}</p>
+                    <p class="text-right text-xs mt-1 ${isSelf ? 'text-indigo-300' : 'text-gray-500'}">
+                        ${message.timestamp ? new Date(message.timestamp.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Sending...'}
+                    </p>
+                </div>
+            `;
+            chatMessagesContainer.appendChild(messageDiv);
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
         }
 
-        async function saveSettings() {
-            const user = auth.currentUser;
-            if (!user) return;
+        if (chatForm) {
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const messageText = chatInput.value.trim();
+                if (!messageText || !isAuthReady) return;
 
-            const name = document.getElementById('setting-name').value;
-            const age = parseInt(document.getElementById('setting-age').value);
-            const yearGroup = document.getElementById('setting-year-group').value;
-            const institution = document.getElementById('setting-institution').value;
+                const message = {
+                    userId: userId,
+                    userName: userName,
+                    text: messageText,
+                    timestamp: serverTimestamp(),
+                };
+
+                try {
+                    await setDoc(doc(collection(db, chatCollectionPath), crypto.randomUUID()), message);
+                    chatInput.value = '';
+                } catch (error) {
+                    console.error("Error sending message:", error);
+                }
+            });
+        }
+
+        let chatUnsubscribe = () => {};
+
+        function setupChatListener() {
+            chatUnsubscribe();
             
-            try {
-                await db.collection('users').doc(user.uid).update({
-                    name,
-                    age,
-                    yearGroup,
-                    institution,
-                    lessons: currentLessons
+            if (!isAuthReady || !userId) return;
+
+            const q = query(collection(db, chatCollectionPath), limit(50));
+            
+            chatUnsubscribe = onSnapshot(q, (snapshot) => {
+                chatMessagesContainer.innerHTML = '';
+                snapshot.docChanges().forEach((change) => {
+                    const message = change.doc.data();
+                    if (change.type === "added") {
+                        renderMessage(message);
+                    }
                 });
-                
-                // Update global state
-                currentUserData = { ...currentUserData, name, age, yearGroup, institution, lessons: currentLessons };
-                alert("Settings saved successfully!");
+            }, (error) => {
+                console.error("Error listening to chat messages:", error);
+                chatMessagesContainer.innerHTML = '<p class="text-center text-red-500">Failed to load chat. Reloading may help.</p>';
+            });
+        }
+        
+        const tabNotesBtn = document.getElementById('tab-notes');
+        const tabFlashcardsBtn = document.getElementById('tab-flashcards');
+        const notesContent = document.getElementById('notes-content');
+        const flashcardsContent = document.getElementById('flashcards-content');
 
-            } catch (error) {
-                alert("Failed to save settings: " + error.message);
+        function switchTab(tabId) {
+            tabNotesBtn.classList.remove('bg-indigo-600', 'text-white');
+            tabFlashcardsBtn.classList.remove('bg-indigo-600', 'text-white');
+            tabNotesBtn.classList.add('bg-gray-200', 'text-gray-700');
+            tabFlashcardsBtn.classList.add('bg-gray-200', 'text-gray-700');
+
+            notesContent.classList.add('hidden');
+            flashcardsContent.classList.add('hidden');
+
+            if (tabId === 'notes') {
+                tabNotesBtn.classList.add('bg-indigo-600', 'text-white');
+                notesContent.classList.remove('hidden');
+            } else if (tabId === 'flashcards') {
+                tabFlashcardsBtn.classList.add('bg-indigo-600', 'text-white');
+                flashcardsContent.classList.remove('hidden');
             }
         }
 
-        async function resetPassword() {
-            const newPassword = document.getElementById('setting-new-password').value;
-            const user = auth.currentUser;
+        tabNotesBtn.addEventListener('click', () => switchTab('notes'));
+        tabFlashcardsBtn.addEventListener('click', () => switchTab('flashcards'));
 
-            if (!user) {
-                alert("You must be logged in to reset your password.");
+        let notesUnsubscribe = () => {};
+        let flashcardsUnsubscribe = () => {};
+        let notesTimeout = null;
+        let isFlipped = {};
+
+        function renderFlashcards() {
+            flashcardsList.innerHTML = '';
+            isFlipped = {};
+
+            if (flashcardsData.length === 0) {
+                flashcardsList.innerHTML = `<p class="col-span-full text-center text-gray-500 pt-8">No flashcards found for **${selectedSubject}**. Start by creating one manually or using the AI generator!</p>`;
                 return;
             }
 
-            if (!newPassword || newPassword.length < 6) {
-                alert("Password must be at least 6 characters long.");
-                return;
+            flashcardsData.forEach((card, index) => {
+                const cardContainer = document.createElement('div');
+                cardContainer.className = 'flashcard-container relative h-48 w-full';
+                cardContainer.id = `card-${index}`;
+
+                cardContainer.innerHTML = `
+                    <div class="flashcard h-full" onclick="window.flipCard(${index})">
+                        <div class="flashcard-face flashcard-front">
+                            <p class="text-lg font-bold text-indigo-700">${card.front}</p>
+                        </div>
+                        <div class="flashcard-face flashcard-back">
+                            <p class="text-lg font-medium">${card.back}</p>
+                        </div>
+                    </div>
+                    <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition" onclick="window.deleteFlashcard(${index}); event.stopPropagation();">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button>
+                `;
+                
+                flashcardsList.appendChild(cardContainer);
+            });
+        }
+        
+        window.flipCard = (index) => {
+            const cardElement = document.getElementById(`card-${index}`).querySelector('.flashcard');
+            if (cardElement) {
+                isFlipped[index] = !isFlipped[index];
+                cardElement.classList.toggle('flipped', isFlipped[index]);
             }
+        };
+
+        window.deleteFlashcard = async (indexToDelete) => {
+            const cardToDelete = flashcardsData[indexToDelete];
+            if (cardToDelete) {
+                const updatedCards = flashcardsData.filter((_, index) => index !== indexToDelete);
+                await setFlashcardsData(updatedCards, `Flashcard '${cardToDelete.front.substring(0, 20)}...' deleted.`);
+            }
+        };
+
+        async function setFlashcardsData(newCards, message = 'Flashcards updated.') {
+            if (!userId || !selectedSubject) return;
+
+            const flashcardsRef = doc(db, flashcardsDocPath(userId, selectedSubject));
+            flashcardsData = newCards.map(card => ({
+                id: card.id || crypto.randomUUID(),
+                front: card.front,
+                back: card.back
+            }));
 
             try {
-                await user.updatePassword(newPassword);
-                alert("Password reset successfully!");
-                document.getElementById('setting-new-password').value = ''; // Clear the field
+                await setDoc(flashcardsRef, { cards: flashcardsData }, { merge: true });
+                notesStatus.textContent = message;
+                notesStatus.className = "mt-2 text-sm text-center text-green-600";
+                setTimeout(() => notesStatus.textContent = '', 3000);
             } catch (error) {
-                if (error.code === 'auth/requires-recent-login') {
-                    alert("Error: For security, please log out and log in again immediately before attempting to change your password.");
+                console.error("Error saving flashcards:", error);
+            }
+        }
+
+        function setupStudyToolsListeners() {
+            subjectSelect.addEventListener('change', handleSubjectChange);
+            notesTextarea.addEventListener('input', handleNoteInput);
+            document.getElementById('add-manual-card-btn').addEventListener('click', handleManualCardAdd);
+            document.getElementById('generate-flashcards-btn').addEventListener('click', handleAIGeneration);
+        }
+
+        function setupStudyTools() {
+            if (!userId || !userProfile || !userProfile.subjects || userProfile.subjects.length === 0) {
+                subjectSelect.innerHTML = '<option value="">No subjects found</option>';
+                notesTextarea.value = 'Please add subjects in the Settings tab first.';
+                notesTextarea.disabled = true;
+                return;
+            }
+
+            notesTextarea.disabled = false;
+            subjectSelect.innerHTML = '';
+            userProfile.subjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject;
+                option.textContent = subject;
+                if (subject === selectedSubject) {
+                    option.selected = true;
+                }
+                subjectSelect.appendChild(option);
+            });
+
+            if (selectedSubject) {
+                startDataListeners(selectedSubject);
+            } else if (userProfile.subjects.length > 0) {
+                selectedSubject = userProfile.subjects[0];
+                startDataListeners(selectedSubject);
+            }
+        }
+
+        function handleSubjectChange(e) {
+            selectedSubject = e.target.value;
+            startDataListeners(selectedSubject);
+        }
+
+        function startDataListeners(subject) {
+            notesUnsubscribe();
+            flashcardsUnsubscribe();
+
+            notesTextarea.value = 'Loading notes...';
+            flashcardsList.innerHTML = '<p class="col-span-full text-center text-gray-500 pt-8">Loading flashcards...</p>';
+
+            const notesRef = doc(db, notesDocPath(userId, subject));
+            notesUnsubscribe = onSnapshot(notesRef, (docSnap) => {
+                notesData = docSnap.exists() ? docSnap.data().content || '' : '';
+                notesTextarea.value = notesData;
+                notesStatus.textContent = `Notes for ${subject} loaded.`;
+            }, (error) => {
+                console.error("Error fetching notes:", error);
+                notesTextarea.value = 'Error loading notes.';
+            });
+
+            const flashcardsRef = doc(db, flashcardsDocPath(userId, subject));
+            flashcardsUnsubscribe = onSnapshot(flashcardsRef, (docSnap) => {
+                flashcardsData = docSnap.exists() ? docSnap.data().cards || [] : [];
+                renderFlashcards();
+            }, (error) => {
+                console.error("Error fetching flashcards:", error);
+                flashcardsList.innerHTML = '<p class="col-span-full text-center text-red-500 pt-8">Error loading flashcards.</p>';
+            });
+        }
+        
+        function handleNoteInput() {
+            clearTimeout(notesTimeout);
+            notesStatus.textContent = "Saving...";
+            
+            notesTimeout = setTimeout(async () => {
+                notesData = notesTextarea.value;
+                if (!userId || !selectedSubject) return;
+
+                const notesRef = doc(db, notesDocPath(userId, selectedSubject));
+                try {
+                    await setDoc(notesRef, { content: notesData, lastUpdated: serverTimestamp() }, { merge: true });
+                    notesStatus.textContent = "Notes saved successfully.";
+                } catch (error) {
+                    notesStatus.textContent = "Failed to save notes.";
+                    console.error("Error saving notes:", error);
+                }
+            }, 1000);
+        }
+
+        function handleManualCardAdd() {
+            const front = document.getElementById('new-card-front').value.trim();
+            const back = document.getElementById('new-card-back').value.trim();
+
+            if (front && back) {
+                const newCard = { id: crypto.randomUUID(), front, back };
+                const newCards = [...flashcardsData, newCard];
+                setFlashcardsData(newCards, 'Manual flashcard added.');
+                document.getElementById('new-card-front').value = '';
+                document.getElementById('new-card-back').value = '';
+            } else {
+                notesStatus.textContent = "Please fill in both front and back fields.";
+                notesStatus.className = "mt-2 text-sm text-center text-red-500";
+                setTimeout(() => notesStatus.textContent = '', 3000);
+            }
+        }
+
+        async function handleAIGeneration() {
+            const notes = notesTextarea.value.trim();
+            const aiBtn = document.getElementById('generate-flashcards-btn');
+            const aiMsg = document.getElementById('flashcard-ai-message');
+            
+            if (!notes) {
+                aiMsg.textContent = "You need to write some notes first!";
+                aiMsg.classList.remove('hidden');
+                return;
+            }
+
+            aiMsg.classList.add('hidden');
+            aiBtn.disabled = true;
+            aiBtn.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Generating...</span>';
+
+            try {
+                const generatedCards = await callGeminiForFlashcards(notes);
+                if (generatedCards && generatedCards.length > 0) {
+                    const newCards = [...flashcardsData, ...generatedCards];
+                    await setFlashcardsData(newCards, `${generatedCards.length} flashcards generated by AI!`);
                 } else {
-                    alert("Password reset failed: " + error.message);
+                    aiMsg.textContent = "AI could not generate any flashcards from the given notes. Try adding more content.";
+                    aiMsg.classList.remove('hidden');
                 }
+            } catch (error) {
+                console.error("AI Generation Error:", error);
+                aiMsg.textContent = "Failed to connect to AI. Please try again.";
+                aiMsg.classList.remove('hidden');
+            } finally {
+                aiBtn.disabled = false;
+                aiBtn.innerHTML = '<svg id="ai-flashcard-icon" class="animate-pulse h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 13h3a3 3 0 0 0 0-6h-.029a6 6 0 0 0-10.45 2.766L4 10a8 8 0 0 1 12.83-5.553l1.17 1.17a3 3 0 0 0 3 5H13"></path><path d="M11 11h-3a3 3 0 0 0 0 6h.029a6 6 0 0 0 10.45-2.766L20 14a8 8 0 0 1-12.83 5.553l-1.17-1.17a3 3 0 0 0-3-5H11"></path></svg><span>Generate from Notes</span>';
             }
         }
 
-        // --- 4. Admin Panel Functionality ---
+        async function callGeminiForFlashcards(notes) {
+            const flashcardSchema = {
+                type: "ARRAY",
+                items: {
+                    type: "OBJECT",
+                    properties: {
+                        "front": { "type": "STRING", "description": "The question or term for the front of the flashcard." },
+                        "back": { "type": "STRING", "description": "The answer or definition for the back of the flashcard." }
+                    },
+                    required: ["front", "back"]
+                }
+            };
+            
+            const systemPrompt = `You are an expert educational assistant specializing in summarizing information into effective flashcards. Your goal is to analyze the provided notes for the subject "${selectedSubject}" and generate between 5 and 10 distinct, question/answer flashcards. The response MUST be a valid JSON array matching the provided schema.`;
 
-        async function loadAdminPanel() {
-            const listElement = document.getElementById('user-management-list');
-            listElement.innerHTML = '<div>Loading user data...</div>';
+            const userQuery = `Using the following notes for the subject ${selectedSubject}, please generate a list of question-and-answer flashcards:\n\n---\n\n${notes}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: flashcardSchema
+                }
+            };
+
+            const options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            };
+
+            const response = await exponentialBackoffFetch(geminiApiUrl, options);
+            const result = await response.json();
+            
+            if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                const jsonText = result.candidates[0].content.parts[0].text;
+                const parsedJson = JSON.parse(jsonText);
+                return parsedJson.map(card => ({ id: crypto.randomUUID(), ...card }));
+            }
+            return [];
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                location.reload();
+            } catch (error) {
+                console.error("Error signing out:", error);
+            }
+        });
+
+        const deleteDataBtn = document.getElementById('delete-data-btn');
+        const deleteModal = document.getElementById('delete-modal');
+        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const deleteMessage = document.getElementById('delete-message');
+
+        deleteDataBtn.addEventListener('click', () => {
+            deleteModal.classList.remove('hidden');
+            deleteModal.classList.add('flex');
+            deleteMessage.classList.add('hidden');
+        });
+
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.classList.add('hidden');
+            deleteModal.classList.remove('flex');
+        });
+
+        confirmDeleteBtn.addEventListener('click', async () => {
+            deleteMessage.classList.remove('hidden');
+            deleteMessage.textContent = 'Deleting data...';
+            confirmDeleteBtn.disabled = true;
 
             try {
-                // Fetch all user documents
-                const snapshot = await db.collection('users').get();
+                const batch = writeBatch(db);
                 
-                listElement.innerHTML = '';
+                const profileRef = doc(db, profilePath(userId));
+                batch.delete(profileRef);
 
-                if (snapshot.empty) {
-                    listElement.innerHTML = '<div>No registered users found.</div>';
-                    return;
-                }
-
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const item = document.createElement('div');
-                    item.className = 'user-list-item';
-                    
-                    const statusClass = data.onboarded ? 'status-onboarded' : 'status-pending';
-                    const statusText = data.onboarded ? 'Onboarded' : 'Pending Setup';
-
-                    item.innerHTML = `
-                        <span class="user-email">${data.email}</span>
-                        <span class="user-status ${statusClass}">${statusText}</span>
-                    `;
-                    listElement.appendChild(item);
+                const q = query(collection(db, chatCollectionPath), limit(100));
+                const querySnapshot = await getDocs(q);
+                
+                querySnapshot.forEach((doc) => {
+                    if (doc.data().userId === userId) {
+                        batch.delete(doc.ref);
+                    }
                 });
 
+                await batch.commit();
+
+                await auth.currentUser.delete();
+
+                deleteMessage.textContent = 'Data deleted successfully. Logging out...';
+                setTimeout(() => location.reload(), 2000);
+
             } catch (error) {
-                console.error("Error loading admin panel data:", error);
-                listElement.innerHTML = '<div>Failed to load user data for admin panel. Check Firestore rules.</div>';
+                console.error("Error deleting data:", error);
+                deleteMessage.textContent = `Deletion failed: ${error.message}`;
+                confirmDeleteBtn.disabled = false;
             }
-        }
+        });
+
+        initializeAppAndAuth();
     </script>
 </body>
 </html>

@@ -369,12 +369,6 @@
             <div class="sidebar-item" data-tab="flashcards" onclick="window.changeTab(this, 'flashcards')">
                 <i data-lucide="layers"></i> Notes & Flashcards
             </div>
-            <div class="sidebar-item" data-tab="chat" onclick="window.changeTab(this, 'chat')">
-                <i data-lucide="messages-square"></i> Global/Group Chat
-            </div>
-            <div class="sidebar-item" data-tab="leaderboard" onclick="window.changeTab(this, 'leaderboard')">
-                <i data-lucide="award"></i> Leaderboard
-            </div>
             <div class="sidebar-item" data-tab="settings" onclick="window.changeTab(this, 'settings')">
                 <i data-lucide="settings"></i> Settings
             </div>
@@ -403,6 +397,7 @@
 
             <section id="flashcards" class="tab-content">
                 <h2>📝 Notes & Flashcards</h2>
+                <p>Year Group: <span id="chat-year-group-display">N/A</span></p>
                 
                 <div class="flashcard-creator">
                     <h3>➕ Create New Flashcard</h3>
@@ -467,8 +462,6 @@
                 <p style="margin-top: 20px;">Technology used: Firebase (Authentication & Data), Gemini API (AI Helper), HTML/CSS/JS, Lucide Icons.</p>
             </section>
 
-            <section id="chat" class="tab-content"><h2>💬 Global/Group Chat</h2><p>Chat functionality (Global and Year Group) is pending further implementation.</p></section>
-            <section id="leaderboard" class="tab-content"><h2>🏆 Leaderboard</h2><p>Leaderboard functionality coming soon.</p></section>
             <section id="admin-panel" class="tab-content"><h2>🔒 Admin Panel</h2><p>Welcome, Admin! This panel is restricted to declanthebest01@gmail.com.</p></section>
 
         </main>
@@ -767,6 +760,7 @@
 
         window.loadFlashcards = async (uid) => {
             const userFlashcardsList = document.getElementById('user-flashcards');
+            const noCardsMsg = document.getElementById('no-flashcards-msg');
             const userDocRef = db.collection('users').doc(uid);
             
             try {
@@ -775,7 +769,6 @@
                 currentUserData.flashcards = flashcards;
                 userFlashcardsList.innerHTML = '';
                 
-                const noCardsMsg = document.getElementById('no-flashcards-msg');
                 if (flashcards.length === 0) {
                     noCardsMsg.style.display = 'block';
                     return;
@@ -826,7 +819,12 @@
                 return;
             }
             
-            const newCard = { front, back, source: 'student', timestamp: firebase.firestore.FieldValue.serverTimestamp() };
+            const newCard = { 
+                front, 
+                back, 
+                source: 'student', 
+                timestamp: firebase.firestore.Timestamp.now()
+            };
 
             try {
                 const userDocRef = db.collection('users').doc(auth.currentUser.uid);
@@ -896,6 +894,10 @@
                         config: { temperature: 0.7 }
                     })
                 });
+
+                if (!response.ok) {
+                    throw new Error(`API call failed: ${response.statusText}`);
+                }
                 
                 const data = await response.json();
                 let aiText = data.candidates[0].content.parts[0].text.trim();
@@ -911,7 +913,7 @@
                     front: card.front,
                     back: card.back,
                     source: 'AI',
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: firebase.firestore.Timestamp.now()
                 }));
                 
                 if (cardsToSave.length > 0) {
@@ -931,7 +933,7 @@
 
             } catch (error) {
                 console.error('AI Flashcard Generation Error:', error);
-                statusElement.textContent = 'I don\'t know. Failed to generate flashcards. Please check the topic and try again.';
+                statusElement.textContent = 'I don\'t know. Failed to generate flashcards. Please check the topic and API key.';
                 statusElement.style.color = 'red';
             } finally {
                 button.disabled = false;

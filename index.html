@@ -3,1355 +3,1034 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyHub - Your AI Learning Companion</title>
-    <!-- Lucide Icons -->
+    <title>StudyHub - Learn Smarter</title>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
     <style>
-        /* Made by Nathan */
         :root {
-            --primary-blue: #1E90FF; /* Dodger Blue */
-            --secondary-white: #FFFFFF;
-            --background-light: #F4F7FA;
+            --primary-blue: #007bff;
+            --light-blue: #e9f5ff;
+            --white: #ffffff;
             --text-dark: #333333;
-            --sidebar-width: 250px;
+            --border-light: #dddddd;
+            --chat-user: #007bff;
+            --chat-ai: #5cb85c;
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--background-light);
+            background-color: var(--light-blue);
             color: var(--text-dark);
-            transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease;
         }
 
-        .container {
+        #auth-container, #onboarding-container {
             display: flex;
-            min-height: 100vh;
-        }
-
-        /* --- Global Styles --- */
-
-        .header-logo {
-            display: flex;
+            justify-content: center;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: var(--secondary-white);
-            background-color: var(--primary-blue);
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-
-        .blue-book-icon {
-            color: var(--secondary-white);
-            margin-right: 10px;
-            width: 30px;
-            height: 30px;
-        }
-
-        /* --- Button Centering Implementation --- */
-        button {
-            background-color: var(--primary-blue);
-            color: var(--secondary-white);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            /* New styles for centering in main content areas */
-            display: block;
-            max-width: 300px; /* Limit size for visual appeal */
-            width: 100%; /* Ensure it's responsive up to max-width */
-            margin: 15px auto; /* Center the button block */
-        }
-
-        button:hover {
-            background-color: #1c7ed6;
-        }
-        
-        /* Override for Auth/Onboarding buttons to retain full width in small containers */
-        .auth-box button, .onboarding-box button {
-            max-width: none;
-            margin: 20px 0 0 0; /* Adjust margin for proper spacing in auth boxes */
-        }
-        /* Override for AI Helper Send button (inline group) */
-        .ai-input-group button {
-            display: inline-block;
-            max-width: 100px; 
-            width: auto;
-            margin: 0; 
-            padding: 10px 15px;
-        }
-        /* End Button Centering Implementation */
-
-        input[type="email"], input[type="password"], input[type="text"], input[type="number"], select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        .error-message {
-            color: red;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        /* --- Auth/Onboarding View (CRITICAL CENTERING) --- */
-
-        .auth-container, .onboarding-container {
-            width: 100%;
-            /* Force full screen height */
-            min-height: 100vh; 
-            /* Center content horizontally and vertically */
-            display: flex;
-            justify-content: center;
-            align-items: center; 
-            background-color: var(--background-light);
-            
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--light-blue) 0%, #a4c4ff 100%);
         }
 
         .auth-box, .onboarding-box {
-            background: var(--secondary-white);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .auth-box h2, .onboarding-box h2 {
-            text-align: center;
+        .logo {
             color: var(--primary-blue);
             margin-bottom: 25px;
+            font-size: 28px;
+            font-weight: bold;
         }
-
-        /* --- Sidebar Navigation --- */
-
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--text-dark);
-            color: var(--secondary-white);
-            flex-shrink: 0; /* Prevents sidebar from shrinking */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between; /* Push logout to bottom */
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            flex-grow: 1;
-            padding-top: 10px;
-        }
-
-        .sidebar-menu li {
-            padding: 15px 20px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar-menu li:hover, .sidebar-menu li.active {
-            background-color: #555555;
-        }
-
-        .sidebar-menu li lucide-icon {
+        .logo svg {
+            width: 48px;
+            height: 48px;
+            stroke-width: 2.5;
+            vertical-align: middle;
             margin-right: 10px;
         }
-        
-        .sidebar-footer {
-            padding: 10px 20px;
-            border-top: 1px solid #444;
-        }
-        
-        .user-info {
-            padding: 15px;
-            font-size: 0.9em;
-            color: #ccc;
-            border-bottom: 1px solid #444;
+
+        input[type="email"], input[type="password"], input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
         }
 
-        .user-info .user-name {
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
             font-weight: bold;
-            color: var(--secondary-white);
-            display: block;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:active {
+            transform: scale(0.99);
+        }
+        .toggle-auth {
+            margin-top: 20px;
+            font-size: 15px;
+        }
+        .toggle-auth span {
+            color: var(--primary-blue);
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .password-input-group {
+            position: relative;
+        }
+        .password-input-group input {
+            padding-right: 40px;
+        }
+        .password-input-group .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--primary-blue);
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .password-input-group .toggle-password:hover {
+            opacity: 1;
         }
         
-        /* --- Main Content Area --- */
+        #app-dashboard {
+            display: none;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+            background-color: var(--white);
+        }
 
-        .main-content {
-            flex-grow: 1;
+        #sidebar {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 20px 0;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-left 0.3s;
+            border-left: 5px solid transparent;
+        }
+        .sidebar-item:hover {
+            background-color: #0056b3;
+        }
+        .sidebar-item.active {
+            background-color: #004080;
+            border-left: 5px solid var(--light-blue);
+        }
+        .sidebar-item svg {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+        }
+
+        #main-content {
             padding: 40px;
             overflow-y: auto;
         }
-
-        .content-section {
+        .tab-content {
             display: none;
-            background: var(--secondary-white);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            min-height: calc(100vh - 80px); /* Fill space */
         }
-        
-        .content-section.active {
+        .tab-content.active {
             display: block;
         }
-
-        .content-section h1 {
+        
+        h2 {
             color: var(--primary-blue);
-            border-bottom: 2px solid #eee;
+            border-bottom: 2px solid var(--light-blue);
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
-
-        /* --- Notes/Flashcard Section --- */
-        .notes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+        
+        #lessons-list, #setting-lessons-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 40px;
         }
-
-        .note-card {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
+        .lesson-tag {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
             cursor: pointer;
-            transition: box-shadow 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
         }
-
-        .note-card:hover {
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .note-card-title {
-            margin-top: 0;
-            color: var(--primary-blue);
-            font-size: 1.1em;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-        }
-
-        .note-card p {
-            font-size: 0.9em;
-            color: #555;
+        .lesson-tag span {
+            margin-left: 5px;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 1;
         }
         
-        .card-buttons {
+        #ai-chat-box {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .chat-message.user {
+            align-self: flex-end;
+            background-color: var(--chat-user);
+            color: var(--white);
+            border-bottom-right-radius: 2px;
+        }
+        .chat-message.ai {
+            align-self: flex-start;
+            background-color: var(--light-blue);
+            color: var(--text-dark);
+            border-bottom-left-radius: 2px;
+        }
+        #ai-input-container {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
         }
-        
-        .card-buttons button {
+        #ai-input-container input {
             flex-grow: 1;
-            max-width: none;
-            margin: 0;
-            padding: 8px 10px;
-            font-size: 0.9em;
+            margin-bottom: 0;
         }
-
-        /* Flashcard View Styles */
-        .flashcard-view {
-            max-width: 600px;
-            margin: 30px auto;
-            text-align: center;
+        #ai-input-container button {
+            width: auto;
+            min-width: 100px;
         }
         
-        .flashcard-view select {
-            margin-bottom: 20px;
-        }
-        
-        .flashcard {
-            background: #fff;
+        .flashcard-creator, .flashcard-list-container {
+            background: var(--light-blue);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
             border: 1px solid var(--primary-blue);
-            border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            min-height: 250px;
+        }
+        .flashcard-list {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .flashcard-card {
+            width: 200px;
+            height: 120px;
             perspective: 1000px;
-            margin-bottom: 20px;
+            cursor: pointer;
         }
-        
-        .flipped {
-            transform: rotateY(180deg);
-        }
-        
         .flashcard-inner {
+            position: relative;
             width: 100%;
             height: 100%;
-            position: relative;
+            text-align: center;
+            transition: transform 0.6s;
             transform-style: preserve-3d;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
-        
-        .flashcard-face {
+        .flashcard-card.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
             display: flex;
-            justify-content: center;
             align-items: center;
-            flex-direction: column;
-            padding: 20px;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 10px;
             box-sizing: border-box;
-        }
-        
-        .flashcard-back {
-            transform: rotateY(180deg);
-            background-color: #e0f0ff;
-        }
-
-        /* Flashcard content adjustments to use <b> */
-        .flashcard-face b {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.8em; /* Smaller label */
-            color: var(--primary-blue);
-        }
-
-        /* --- AI Helper Section --- */
-        .ai-output {
-            background-color: #e9ecef;
-            padding: 15px;
             border-radius: 8px;
-            min-height: 150px;
-            margin-bottom: 20px;
-            white-space: pre-wrap; /* Preserve formatting and line breaks */
-            max-height: 400px;
-            overflow-y: auto;
+        }
+        .flashcard-front {
+            background-color: var(--white);
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+        .flashcard-back {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            transform: rotateY(180deg);
+            border: 2px solid var(--primary-blue);
         }
         
-        .ai-input-group {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .ai-input-group textarea {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            resize: vertical;
-            min-height: 60px;
-        }
-        
-        /* --- Admin Panel --- */
-        .admin-section h2 {
-            margin-top: 30px;
-            color: var(--text-dark);
-        }
-        
-        .log-entry {
-            background: #f1f1f1;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-left: 5px solid var(--primary-blue);
-            border-radius: 4px;
-            font-size: 0.9em;
+        #settings-form label {
+            display: block;
+            text-align: left;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
         
     </style>
 </head>
 <body>
 
-    <div class="auth-container" id="auth-view">
+    <div id="auth-container">
         <div class="auth-box">
-            <h2>StudyHub Login / Sign Up</h2>
-            <div id="auth-error" class="error-message"></div>
-            <input type="email" id="auth-email" placeholder="Email" required>
-            <input type="password" id="auth-password" placeholder="Password" required>
-            <button onclick="handleAuth(true)">Login</button>
-            <button onclick="handleAuth(false)">Sign Up</button>
+            <div class="logo">
+                <i data-lucide="book-open"></i> StudyHub
+            </div>
+            <h2 id="auth-title">Log In</h2>
+            <form id="auth-form">
+                <input type="email" id="auth-email" placeholder="Email" required>
+                <div class="password-input-group">
+                    <input type="password" id="auth-password" placeholder="Password" required>
+                    <i data-lucide="eye" class="toggle-password" id="toggle-auth-password"></i>
+                </div>
+                <button type="submit" id="auth-submit-btn">Log In</button>
+            </form>
+            <p class="toggle-auth">
+                Don't have an account? <span onclick="window.toggleAuthMode()">Sign Up</span>
+            </p>
+            <p id="auth-error" style="color: red; margin-top: 10px; display: none;"></p>
         </div>
     </div>
 
-    <div class="onboarding-container" id="onboarding-view" style="display: none;">
+    <div id="onboarding-container" style="display: none;">
         <div class="onboarding-box">
+            <div class="logo">
+                <i data-lucide="book-open"></i> StudyHub
+            </div>
             <h2>Welcome to StudyHub!</h2>
-            <p>Please complete your profile to get started.</p>
-            <div id="onboarding-error" class="error-message"></div>
-            <input type="text" id="onboarding-name" placeholder="Full Name" required>
-            <input type="number" id="onboarding-age" placeholder="Age" min="10" max="99" required>
-            <input type="text" id="onboarding-year-group" placeholder="Year Group (e.g., Year 10)" required>
-            <input type="text" id="onboarding-institution" placeholder="Institution Name" required>
-            
-            <p style="margin-top: 20px;">What subjects are you studying? (e.g., Maths, Physics, History)</p>
-            <input type="text" id="onboarding-lessons" placeholder="Comma-separated list of subjects" required>
+            <p>Tell us a bit about yourself to get started.</p>
+            <form id="onboarding-form">
+                <input type="text" id="onboarding-name" placeholder="Full Name (e.g., Jane Doe)" required>
+                <input type="number" id="onboarding-age" placeholder="Age" min="10" max="100" required>
+                <input type="text" id="onboarding-yeargroup" placeholder="Year Group (e.g., 10 or Freshman)" required>
+                <input type="text" id="onboarding-institution" placeholder="Institution of Learning (e.g., Cambridge High School)" required>
 
-            <button onclick="completeOnboarding()">Complete Onboarding</button>
+                <input type="text" id="onboarding-lesson-input" placeholder="Type a Lesson and Press Enter">
+                <ul id="lessons-list"></ul>
+                <p style="font-size: 12px; color: gray; margin-top: -10px; margin-bottom: 20px;">Type a lesson and press Enter to add it. Click to remove.</p>
+
+                <button type="submit">Complete Setup</button>
+                <p id="onboarding-error" style="color: red; margin-top: 10px; display: none;"></p>
+            </form>
         </div>
     </div>
 
-    <div class="container" id="main-app" style="display: none;">
-        <div class="sidebar">
-            <div>
-                <div class="header-logo">
-                    <lucide-icon name="book-open-text" class="blue-book-icon"></lucide-icon>
-                    StudyHub
-                </div>
-                <div class="user-info">
-                    Logged in as: <span class="user-name" id="display-user-email"></span>
-                </div>
-                <ul class="sidebar-menu" id="sidebar-menu">
-                    <li data-section="dashboard" onclick="showSection('dashboard')" class="active">
-                        <lucide-icon name="home"></lucide-icon> Dashboard
-                    </li>
-                    <li data-section="notes" onclick="showSection('notes')">
-                        <lucide-icon name="notebook-text"></lucide-icon> Notes & Flashcards
-                    </li>
-                    <li data-section="flashcards" onclick="showSection('flashcards')">
-                        <lucide-icon name="album"></lucide-icon> Study Flashcards
-                    </li>
-                    <li data-section="ai-helper" onclick="showSection('ai-helper')">
-                        <lucide-icon name="lightbulb"></lucide-icon> AI Helper
-                    </li>
-                    <li data-section="settings" onclick="showSection('settings')">
-                        <lucide-icon name="settings"></lucide-icon> Settings
-                    </li>
-                    <!-- Admin Panel Link inserted here by JS -->
-                </ul>
+    <div id="app-dashboard">
+        <aside id="sidebar">
+            <div class="logo" style="padding: 0 20px; margin-bottom: 30px; text-align: left; font-size: 24px;">
+                <i data-lucide="book-open" style="color: white; width: 30px; height: 30px;"></i> StudyHub
             </div>
-            <div class="sidebar-footer">
-                <button onclick="signOutUser()">
-                    <lucide-icon name="log-out"></lucide-icon> Log Out
-                </button>
+            <div class="sidebar-item active" data-tab="ai-helper" onclick="window.changeTab(this, 'ai-helper')">
+                <i data-lucide="brain"></i> AI Study Helper
             </div>
-        </div>
+            <div class="sidebar-item" data-tab="flashcards" onclick="window.changeTab(this, 'flashcards')">
+                <i data-lucide="layers"></i> Notes & Flashcards
+            </div>
+            <div class="sidebar-item" data-tab="chat" onclick="window.changeTab(this, 'chat')">
+                <i data-lucide="messages-square"></i> Global/Group Chat
+            </div>
+            <div class="sidebar-item" data-tab="leaderboard" onclick="window.changeTab(this, 'leaderboard')">
+                <i data-lucide="award"></i> Leaderboard
+            </div>
+            <div class="sidebar-item" data-tab="settings" onclick="window.changeTab(this, 'settings')">
+                <i data-lucide="settings"></i> Settings
+            </div>
+            <div class="sidebar-item" data-tab="credits" onclick="window.changeTab(this, 'credits')">
+                <i data-lucide="info"></i> Credits
+            </div>
+            <div id="admin-panel-link" class="sidebar-item" data-tab="admin-panel" style="display: none;" onclick="window.changeTab(this, 'admin-panel')">
+                <i data-lucide="shield"></i> Admin Panel
+            </div>
+            <div class="sidebar-item" onclick="window.logoutUser()">
+                <i data-lucide="log-out"></i> Log Out
+            </div>
+        </aside>
 
-        <div class="main-content">
-            
-            <!-- Dashboard Section -->
-            <div id="dashboard-section" class="content-section active">
-                <h1>Dashboard</h1>
-                <p>Welcome back, <strong id="dashboard-name"></strong>! Here is your study overview.</p>
-                <div class="notes-grid">
-                    <div class="note-card">
-                        <b>Lessons Active</b>
-                        <p id="dashboard-lessons-count"></p>
-                    </div>
-                    <div class="note-card">
-                        <b>Total Flashcards</b>
-                        <p id="dashboard-flashcards-count"></p>
+        <main id="main-content">
+            <section id="ai-helper" class="tab-content active">
+                <h2>🤖 AI Study Helper</h2>
+                <div id="ai-chat-box">
+                    <div class="chat-message ai">Hello! I'm your AI Study Helper. Ask me anything about your lessons, like "Explain the process of photosynthesis."</div>
+                </div>
+                <div id="ai-input-container">
+                    <input type="text" id="ai-input" placeholder="Ask your study question here..." onkeypress="if(event.key === 'Enter') window.sendAiMessage()">
+                    <button onclick="window.sendAiMessage()">Send</button>
+                </div>
+            </section>
+
+            <section id="flashcards" class="tab-content">
+                <h2>📝 Notes & Flashcards</h2>
+                
+                <div class="flashcard-creator">
+                    <h3>➕ Create New Flashcard</h3>
+                    <input type="text" id="fc-front" placeholder="Front (Question/Term)" required>
+                    <input type="text" id="fc-back" placeholder="Back (Answer/Definition)" required>
+                    <button onclick="window.createFlashcard()">Add Flashcard</button>
+                    <p id="fc-error" style="color: red; margin-top: 10px; display: none;"></p>
+                </div>
+
+                <div class="flashcard-creator" style="margin-top: 20px;">
+                    <h3>🧠 Generate Flashcards with AI</h3>
+                    <input type="text" id="ai-fc-topic" placeholder="Topic (e.g., 'Key dates of The French Revolution')" required>
+                    <button onclick="window.generateFlashcardsWithAI(this)">Generate 5 Cards</button>
+                    <p id="ai-fc-status" style="color: var(--primary-blue); margin-top: 10px; display: none;">Generating...</p>
+                </div>
+                
+                <h3>📚 My Flashcards</h3>
+                <div class="flashcard-list-container">
+                    <div class="flashcard-list" id="user-flashcards">
+                        <p style="text-align: center; width: 100%;" id="no-flashcards-msg">No flashcards yet. Create one or use the AI generator!</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Notes & Flashcards Section -->
-            <div id="notes-section" class="content-section">
-                <h1>Notes & Flashcards</h1>
-                
-                <p>Select Lesson to view/edit notes:</p>
-                <select id="notes-lesson-select" onchange="loadNotesForLesson()">
-                    <option value="">Select Lesson</option>
-                </select>
-                
-                <div id="notes-content">
-                    <p style="margin-top: 20px;">
-                        <strong id="current-lesson-title">Select a lesson to begin.</strong>
-                    </p>
-                    <textarea id="lesson-notes-textarea" rows="15" placeholder="Your notes for this lesson..."></textarea>
+            <section id="settings" class="tab-content">
+                <h2>⚙️ Account Settings</h2>
+                <form id="settings-form">
+                    <label for="setting-name">Name:</label>
+                    <input type="text" id="setting-name" required>
+
+                    <label for="setting-age">Age:</label>
+                    <input type="number" id="setting-age" min="10" required>
+
+                    <label for="setting-yeargroup">Year Group:</label>
+                    <input type="text" id="setting-yeargroup" required>
                     
-                    <button onclick="saveNotes()">Save Notes</button>
+                    <label for="setting-institution">Institution of Learning:</label>
+                    <input type="text" id="setting-institution" required>
+
+                    <label for="setting-lessons-input">Lessons (Type and press Enter to add/remove):</label>
+                    <input type="text" id="setting-lessons-input" placeholder="Type a Lesson and Press Enter">
+                    <ul id="setting-lessons-list"></ul>
                     
-                    <h2 style="margin-top: 30px;">Flashcards for this Lesson</h2>
-                    <div id="flashcards-list" class="notes-grid">
-                        <!-- Flashcards will be dynamically loaded here -->
+                    <p id="settings-save-status" style="color: var(--primary-blue); margin-top: 15px; display: none; font-weight: bold;">Changes saved successfully!</p>
+
+                    <h3 style="margin-top: 30px;">🔐 Password Reset</h3>
+                    <div class="password-input-group">
+                        <input type="password" id="setting-new-password" placeholder="New Password (min 6 characters)">
+                        <i data-lucide="eye" class="toggle-password" id="toggle-setting-password"></i>
                     </div>
-                    
-                    <button onclick="showFlashcardModal()">Add New Flashcard</button>
-                </div>
-            </div>
+                    <button type="submit" style="margin-top: 20px;">Save Changes</button>
+                </form>
+                <p id="password-reset-status" style="color: red; margin-top: 10px; display: none;"></p>
+            </section>
 
-            <!-- Study Flashcards Section -->
-            <div id="flashcards-section" class="content-section">
-                <h1>Study Flashcards</h1>
-                <div class="flashcard-view">
-                    <p>Select Lesson to study:</p>
-                    <select id="study-lesson-select" onchange="loadFlashcardsForStudy()">
-                        <option value="">Select Lesson</option>
-                    </select>
-
-                    <p id="study-status">No cards loaded.</p>
-
-                    <div id="flashcard-display" class="flashcard" style="display: none;">
-                        <div class="flashcard-inner" id="flashcard-inner">
-                            <div class="flashcard-face flashcard-front" id="card-front"></div>
-                            <div class="flashcard-face flashcard-back" id="card-back"></div>
-                        </div>
-                    </div>
-                    
-                    <div id="flashcard-controls" style="display: none; display: flex; justify-content: center; gap: 20px;">
-                         <button onclick="prevCard()" style="max-width: 150px; margin: 0;">Previous</button>
-                         <button onclick="nextCard()" style="max-width: 150px; margin: 0;">Next</button>
-                    </div>
+            <section id="credits" class="tab-content">
+                <h2>✨ Credits</h2>
+                <p>This StudyHub platform was conceptualized and developed with key contributions from:</p>
+                <div style="background: var(--light-blue); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 5px solid var(--primary-blue);">
+                    <p style="font-size: 18px; font-weight: bold;">Development & Implementation: **Made by Nathan**</p>
                 </div>
-            </div>
-            
-            <!-- AI Helper Section -->
-            <div id="ai-helper-section" class="content-section">
-                <h1>AI Helper</h1>
-                <p>Ask StudyHub's AI any question about your lessons, generate summaries, or create quiz questions.</p>
-                
-                <div class="ai-output" id="ai-output">
-                    I am ready. Ask me anything about your current lessons!
-                </div>
-                
-                <div class="ai-input-group">
-                    <!-- Added onkeydown listener to allow sending on Enter press -->
-                    <textarea id="ai-input" placeholder="Your question..." onkeydown="if(event.keyCode === 13 && !event.shiftKey) { event.preventDefault(); sendAiQuery(); }"></textarea>
-                    <button onclick="sendAiQuery()">Send</button>
-                </div>
-            </div>
+                <p style="margin-top: 20px;">Technology used: Firebase (Authentication & Data), Gemini API (AI Helper), HTML/CSS/JS, Lucide Icons.</p>
+            </section>
 
-            <!-- Settings Section -->
-            <div id="settings-section" class="content-section">
-                <h1>Settings</h1>
-                <p>Update your personal details and preferences.</p>
-                <div id="settings-error" class="error-message"></div>
+            <section id="chat" class="tab-content"><h2>💬 Global/Group Chat</h2><p>Chat functionality (Global and Year Group) is pending further implementation.</p></section>
+            <section id="leaderboard" class="tab-content"><h2>🏆 Leaderboard</h2><p>Leaderboard functionality coming soon.</p></section>
+            <section id="admin-panel" class="tab-content"><h2>🔒 Admin Panel</h2><p>Welcome, Admin! This panel is restricted to declanthebest01@gmail.com.</p></section>
 
-                <label for="settings-name">Full Name</label>
-                <input type="text" id="settings-name">
-                
-                <label for="settings-age">Age</label>
-                <input type="number" id="settings-age" min="10" max="99">
-                
-                <label for="settings-year-group">Year Group</label>
-                <input type="text" id="settings-year-group">
-                
-                <label for="settings-institution">Institution Name</label>
-                <input type="text" id="settings-institution">
-                
-                <label for="settings-lessons">Subjects (Comma-separated)</label>
-                <input type="text" id="settings-lessons">
-                
-                <button onclick="saveSettings()">Save Settings</button>
-            </div>
-            
-            <!-- Admin Panel Section -->
-            <div id="admin-panel-section" class="content-section">
-                <h1>Admin Panel</h1>
-                <p>Administrative functions for monitoring and maintenance.</p>
-                
-                <h2>User Management (Sample)</h2>
-                <p>Total active users: <strong id="admin-user-count">...</strong></p>
-                
-                <h2>System Logs</h2>
-                <div id="admin-logs-output">
-                    <p>Loading logs...</p>
-                    <!-- Logs will be inserted here -->
-                </div>
-            </div>
-            
-        </div>
+        </main>
     </div>
-    
-    <!-- Modal for Adding/Editing Flashcard (Simple, in-page modal style) -->
-    <div id="flashcard-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
-        <div style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 8px;">
-            <span onclick="document.getElementById('flashcard-modal').style.display='none'" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
-            <h2><span id="modal-title">Add New Flashcard</span></h2>
-            
-            <input type="hidden" id="modal-card-id">
-            
-            <label for="modal-front">Front (Question/Term)</label>
-            <input type="text" id="modal-front">
-            
-            <label for="modal-back">Back (Answer/Definition)</label>
-            <textarea id="modal-back" rows="5"></textarea>
-            
-            <button onclick="saveFlashcard()">Save Flashcard</button>
-            
-        </div>
-    </div>
-
 
     <script>
-        // Global Variables
-        let firebaseApp, db, auth;
-        let userId = null;
-        let userData = { notes: {}, flashcards: {} }; // Store all user data
-        let currentLesson = null;
-        let currentStudyCards = [];
-        let currentCardIndex = 0;
-        let isCardFlipped = false;
-
-        // Configuration and Initialization
-        const ADMIN_EMAIL = 'declanthebest01@gmail.com'; // Admin user email
-        const FIREBASE_MODEL = 'gemini-2.5-flash-preview-09-2025';
+        const firebaseConfig = {
+            apiKey: "AIzaSyCAJ5kM37MKyq2UGUw1dHF8EEskdKWU5f4",
+            authDomain: "studyhubon.firebaseapp.com",
+            projectId: "studyhubon",
+            storageBucket: "studyhubon.firebasestorage.app",
+            messagingSenderId: "137164743903",
+            appId: "1:137164743903:web:9ffa7d3f8e67d9b349f56a",
+            measurementId: "G-6SPKY9LQ0S"
+        };
         
-        // --- Firebase Setup and Authentication ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
-        // Utility for exponential backoff during API calls
-        async function fetchWithRetry(apiUrl, payload, retries = 3, delay = 1000) {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-                    if (response.ok) {
-                        return response.json();
-                    } else if (response.status === 429 && i < retries - 1) { // Rate limit
-                        console.warn(`Rate limit exceeded. Retrying in ${delay / 1000}s...`);
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2; // Exponential backoff
-                        continue;
-                    } else {
-                        throw new Error(`API call failed with status: ${response.status}`);
-                    }
-                } catch (error) {
-                    if (i === retries - 1) {
-                        console.error("API Call failed after multiple retries:", error);
-                        throw error;
-                    }
-                    console.warn(`Attempt ${i + 1} failed. Retrying...`);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2;
-                }
+        const GEMINI_API_KEY = "AIzaSyAsXY-tMiXaC2CX3VlWJa8NtOWb6pp4cFc";
+        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;
+
+        let currentUserData = {};
+        
+        function setupPasswordToggle(inputId, toggleId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(toggleId);
+            if (toggleIcon) {
+                toggleIcon.addEventListener('click', () => {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    toggleIcon.setAttribute('data-lucide', type === 'password' ? 'eye' : 'eye-off');
+                    lucide.createIcons();
+                });
             }
         }
         
-        // Firebase Initialization
-        function initializeFirebase() {
-            if (Object.keys(firebaseConfig).length === 0) {
-                console.error("Firebase config is missing. Cannot initialize Firestore.");
-                return;
-            }
-            firebaseApp = firebase.initializeApp(firebaseConfig);
-            db = firebaseApp.firestore();
-            auth = firebaseApp.auth();
-            
-            // Setting up authentication state listener
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    if (initialAuthToken) {
-                        // If signed in via custom token, we trust the authentication, but still ensure UI state is correct
-                        handleSuccessfulLogin(user);
-                    } else if (user.isAnonymous) {
-                         // Fallback for anonymous login if custom token failed/was missing
-                        handleSuccessfulLogin(user);
-                    } else {
-                        // User signed in via email/password
-                        handleSuccessfulLogin(user);
+        function setupLessonInput(inputId, listId, lessonsArray, isSetting = false) {
+            const inputElement = document.getElementById(inputId);
+            const listElement = document.getElementById(listId);
+
+            const renderLessons = () => {
+                listElement.innerHTML = '';
+                lessonsArray.forEach(lesson => {
+                    const tag = document.createElement('li');
+                    tag.className = 'lesson-tag';
+                    tag.textContent = lesson;
+                    
+                    if (isSetting) {
+                        const removeSpan = document.createElement('span');
+                        removeSpan.textContent = 'x';
+                        removeSpan.onclick = () => {
+                            const index = lessonsArray.indexOf(lesson);
+                            if (index > -1) {
+                                lessonsArray.splice(index, 1);
+                                renderLessons();
+                            }
+                        };
+                        tag.appendChild(removeSpan);
                     }
-                } else {
-                    showAuthView();
+
+                    listElement.appendChild(tag);
+                });
+            };
+
+            inputElement.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && inputElement.value.trim() !== '') {
+                    e.preventDefault();
+                    const lesson = inputElement.value.trim();
+                    if (!lessonsArray.includes(lesson)) {
+                        lessonsArray.push(lesson);
+                        renderLessons();
+                        inputElement.value = '';
+                    }
                 }
             });
+
+            renderLessons();
             
-            // Attempt silent sign-in with custom token provided by the environment
-            if (initialAuthToken) {
-                auth.signInWithCustomToken(initialAuthToken)
-                    .then(userCredential => {
-                        console.log("Signed in with custom token:", userCredential.user.uid);
-                    })
-                    .catch(error => {
-                        console.error("Custom token sign-in failed. Attempting anonymous login.", error);
-                        // Fallback to anonymous login if custom token fails
-                        auth.signInAnonymously()
-                            .catch(anonError => {
-                                console.error("Anonymous login failed:", anonError);
-                                showAuthView();
-                            });
-                    });
+            return { lessonsArray, renderLessons };
+        }
+        
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                await checkOnboardingStatus(user.uid, user.email);
             } else {
-                // If no custom token, attempt anonymous login
-                auth.signInAnonymously()
-                    .catch(error => {
-                        console.error("Anonymous login failed:", error);
-                        showAuthView();
-                    });
+                document.getElementById('app-dashboard').style.display = 'none';
+                document.getElementById('onboarding-container').style.display = 'none';
+                document.getElementById('auth-container').style.display = 'flex';
             }
-        }
+        });
         
-        document.addEventListener('DOMContentLoaded', initializeFirebase);
-        
-        // --- UI State Management ---
-
-        function showAuthView() {
-            document.getElementById('auth-view').style.display = 'flex';
-            document.getElementById('onboarding-view').style.display = 'none';
-            document.getElementById('main-app').style.display = 'none';
-        }
-
-        function showOnboardingView() {
-            document.getElementById('auth-view').style.display = 'none';
-            document.getElementById('onboarding-view').style.display = 'flex';
-            document.getElementById('main-app').style.display = 'none';
-        }
-
-        function showAppView() {
-            document.getElementById('auth-view').style.display = 'none';
-            document.getElementById('onboarding-view').style.display = 'none';
-            document.getElementById('main-app').style.display = 'flex';
-            showSection('dashboard');
-        }
-
-        function showSection(sectionId) {
-            // Remove active class from all sidebar items
-            document.querySelectorAll('.sidebar-menu li').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Add active class to the selected item
-            const selectedItem = document.querySelector(`.sidebar-menu li[data-section="${sectionId}"]`);
-            if (selectedItem) {
-                selectedItem.classList.add('active');
-            }
+        async function checkOnboardingStatus(uid, email) {
+            const userDocRef = db.collection('users').doc(uid);
+            const userDoc = await userDocRef.get();
             
-            // Hide all content sections
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.style.display = 'none';
-            });
-
-            // Show the selected content section
-            const targetSection = document.getElementById(sectionId + '-section');
-            if (targetSection) {
-                targetSection.style.display = 'block';
-            }
-            
-            // Run section-specific load functions
-            if (sectionId === 'settings') {
-                loadSettingsData();
-            } else if (sectionId === 'notes') {
-                updateLessonSelects();
-                loadNotesForLesson(); // Load notes for the first lesson or selected lesson
-            } else if (sectionId === 'flashcards') {
-                updateLessonSelects();
-                loadFlashcardsForStudy();
-            } else if (sectionId === 'dashboard') {
-                updateDashboard();
-            } else if (sectionId === 'admin-panel') {
-                loadAdminData();
-            }
-        }
-        
-        // FIX IMPLEMENTATION: Adding a delay after set operation to ensure permissions resolve.
-        async function handleSuccessfulLogin(user) {
-            userId = user.uid;
-            document.getElementById('display-user-email').textContent = user.email || `User ID: ${userId}`;
-            
-            const docRef = db.collection('users').doc(userId);
-            
-            try {
-                // 1. Guarantee Document Existence (Write operation which usually resolves permissions)
-                await docRef.set({ 
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                    email: user.email || 'anonymous-user',
-                }, { merge: true });
+            if (userDoc.exists() && userDoc.data().onboarded) {
+                currentUserData = userDoc.data();
                 
-                // FIX: Add a minimal delay (100ms) to allow Firebase security rules
-                // to catch up after the initial document creation before performing the read.
-                await new Promise(resolve => setTimeout(resolve, 100));
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('onboarding-container').style.display = 'none';
+                document.getElementById('app-dashboard').style.display = 'grid';
+                
+                loadUserSettings(currentUserData);
+                loadFlashcards(uid);
+                document.getElementById('chat-year-group-display').textContent = currentUserData.yearGroup || 'N/A';
 
-            } catch (error) {
-                // If this fails, it's a serious auth/rule problem, but we proceed to check onboarding anyway
-                console.warn("Could not set initial document timestamp (may be new user rule issue), proceeding with read check:", error);
+                const adminLink = document.getElementById('admin-panel-link');
+                if (email === "declanthebest01@gmail.com") {
+                    adminLink.style.display = 'flex';
+                } else {
+                    adminLink.style.display = 'none';
+                }
+
+            } else {
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('onboarding-container').style.display = 'flex';
             }
+        }
+        
+        let isLoginMode = true; 
+        
+        window.toggleAuthMode = function() {
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('auth-title');
+            const btn = document.getElementById('auth-submit-btn');
+            const toggleP = document.querySelector('.toggle-auth');
+            const error = document.getElementById('auth-error');
+            error.style.display = 'none';
 
-            // 2. Check Onboarding Status (Read operation)
-            checkOnboardingStatus(userId);
+            if (isLoginMode) {
+                title.textContent = 'Log In';
+                btn.textContent = 'Log In';
+                toggleP.innerHTML = "Don't have an account? <span onclick=\"window.toggleAuthMode()\">Sign Up</span>";
+            } else {
+                title.textContent = 'Sign Up';
+                btn.textContent = 'Sign Up';
+                toggleP.innerHTML = "Already have an account? <span onclick=\"window.toggleAuthMode()\">Log In</span>";
+            }
         }
 
-        // --- Authentication Logic ---
-
-        async function handleAuth(isLogin) {
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
-            const errorElement = document.getElementById('auth-error');
-            errorElement.textContent = '';
-
-            if (!email || !password) {
-                errorElement.textContent = "Please enter both email and password.";
-                return;
-            }
+            const error = document.getElementById('auth-error');
+            error.style.display = 'none';
 
             try {
-                if (isLogin) {
+                if (isLoginMode) {
                     await auth.signInWithEmailAndPassword(email, password);
                 } else {
                     await auth.createUserWithEmailAndPassword(email, password);
                 }
-                // Auth state listener handles the rest
-            } catch (error) {
-                console.error("Authentication Error:", error);
-                errorElement.textContent = `Authentication Failed: ${error.message}`;
-            }
-        }
-
-        function signOutUser() {
-            auth.signOut().then(() => {
-                userId = null;
-                userData = { notes: {}, flashcards: {} };
-                // auth.onAuthStateChanged listener will handle showing auth view
-            }).catch(error => {
-                console.error("Sign Out Error:", error);
-            });
-        }
-        
-        // --- Onboarding Logic ---
-        
-        async function checkOnboardingStatus(uid) {
-            try {
-                const docRef = db.collection('users').doc(uid);
-                const doc = await docRef.get();
-
-                if (doc.exists && doc.data().onboarded) {
-                    userData = doc.data();
-                    await loadUserData();
-                    showAppView();
-                } else {
-                    showOnboardingView();
+            } catch (err) {
+                let errorMessage = 'An unknown error occurred. Please try again.';
+                switch (err.code) {
+                    case 'auth/wrong-password':
+                    case 'auth/user-not-found':
+                    case 'auth/invalid-credential':
+                        errorMessage = 'Invalid email or password.';
+                        break;
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'This email is already registered.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password must be at least 6 characters.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'The email address is not valid.';
+                        break;
                 }
+                error.textContent = errorMessage;
+                error.style.display = 'block';
+            }
+        });
+        
+        window.logoutUser = async () => {
+            try {
+                await auth.signOut();
             } catch (error) {
-                // Error can happen here if the Firestore rules haven't fully synced after sign-in.
-                console.error("Error checking onboarding status:", error);
-                showOnboardingView();
+                alert('Error logging out: ' + error.message);
             }
         }
         
-        async function completeOnboarding() {
+        setupPasswordToggle('auth-password', 'toggle-auth-password');
+        
+        let onboardingLessons = [];
+        const onboardingLessonSetup = setupLessonInput('onboarding-lesson-input', 'lessons-list', onboardingLessons, true);
+        onboardingLessons = onboardingLessonSetup.lessonsArray;
+
+        document.getElementById('onboarding-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            const error = document.getElementById('onboarding-error');
+            error.style.display = 'none';
+
+            if (!user) {
+                error.textContent = 'Authentication error. Please log in again.';
+                error.style.display = 'block';
+                return;
+            }
+
             const name = document.getElementById('onboarding-name').value.trim();
-            const age = parseInt(document.getElementById('onboarding-age').value, 10);
-            const yearGroup = document.getElementById('onboarding-year-group').value.trim();
+            const age = document.getElementById('onboarding-age').value;
+            const yearGroup = document.getElementById('onboarding-yeargroup').value.trim();
             const institution = document.getElementById('onboarding-institution').value.trim();
-            const lessonsInput = document.getElementById('onboarding-lessons').value.trim();
-            const errorElement = document.getElementById('onboarding-error');
-            errorElement.textContent = '';
 
-            if (!name || isNaN(age) || !yearGroup || !institution || !lessonsInput) {
-                errorElement.textContent = "Please fill out all fields.";
+            if (onboardingLessons.length === 0) {
+                error.textContent = 'Please add at least one lesson.';
+                error.style.display = 'block';
                 return;
             }
-            
-            const lessons = lessonsInput.split(',').map(l => l.trim()).filter(l => l.length > 0);
-            
-            if (lessons.length === 0) {
-                 errorElement.textContent = "Please enter at least one subject.";
-                 return;
-            }
-
-            const initialData = {
-                name: name,
-                age: age,
-                yearGroup: yearGroup,
-                institution: institution,
-                lessons: lessons, // Array of lesson names
-                onboarded: true,
-                // Initialize notes object with one entry per lesson for clean structure
-                notes: lessons.reduce((acc, lesson) => {
-                    acc[lesson] = { text: `Start typing your ${lesson} notes here!`, flashcards: [] };
-                    return acc;
-                }, {}),
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-            };
 
             try {
-                // Use set to guarantee creation/overwrite (merge: true used in handleSuccessfulLogin handles basic fields)
-                await db.collection('users').doc(userId).set(initialData, { merge: true });
-                userData = initialData;
-                await loadUserData();
-                showAppView();
-            } catch (error) {
-                console.error("Onboarding Error:", error);
-                errorElement.textContent = `Onboarding Error: ${error.message}. Please try again.`;
-            }
-        }
-        
-        // --- Core Data Loading ---
+                const isAdminUser = user.email === "declanthebest01@gmail.com";
+                const userData = {
+                    email: user.email,
+                    name: name,
+                    age: parseInt(age),
+                    yearGroup: yearGroup,
+                    institution: institution,
+                    lessons: onboardingLessons,
+                    onboarded: true,
+                    score_overall: 0,
+                    score_year_group: 0,
+                    flashcards: [],
+                    isAdmin: isAdminUser,
+                };
 
-        async function loadUserData() {
-            try {
-                const doc = await db.collection('users').doc(userId).get();
-                if (doc.exists) {
-                    userData = doc.data();
-                    updateDashboard();
-                    updateLessonSelects();
-                    renderAdminLink(); // Check and render admin link once
-                }
-            } catch (error) {
-                console.error("Error loading user data:", error);
+                await db.collection('users').doc(user.uid).set(userData, { merge: true });
+                await checkOnboardingStatus(user.uid, user.email);
+            } catch (err) {
+                error.textContent = 'Failed to save profile: ' + err.message;
+                error.style.display = 'block';
             }
-        }
-        
-        // --- Admin Logic ---
-        
-        function renderAdminLink() {
-            const sidebarMenu = document.getElementById('sidebar-menu');
-            const existingAdminLink = document.querySelector('.sidebar-menu li[data-section="admin-panel"]');
+        });
+
+        window.changeTab = (sidebarItem, tabId) => {
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            sidebarItem.classList.add('active');
             
-            // Check if user is admin
-            if (auth.currentUser && auth.currentUser.email === ADMIN_EMAIL) {
-                if (!existingAdminLink) {
-                    // Create the admin link element
-                    const adminLink = document.createElement('li');
-                    adminLink.setAttribute('data-section', 'admin-panel');
-                    adminLink.setAttribute('onclick', "showSection('admin-panel')");
-                    adminLink.innerHTML = '<lucide-icon name="shield"></lucide-icon> Admin Panel';
-                    
-                    // Insert before the last item (which is usually settings) or before the sidebar footer if menu is empty
-                    const settingsItem = document.querySelector('.sidebar-menu li[data-section="settings"]');
-                    if (settingsItem) {
-                        sidebarMenu.insertBefore(adminLink, settingsItem.nextSibling);
-                    } else {
-                        sidebarMenu.appendChild(adminLink);
-                    }
-                }
-            } else {
-                // If not admin, ensure the link is removed
-                if (existingAdminLink) {
-                    existingAdminLink.remove();
-                }
-            }
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
         }
 
-        async function loadAdminData() {
-            if (auth.currentUser.email !== ADMIN_EMAIL) {
-                document.getElementById('admin-panel-section').innerHTML = "<h1>Access Denied</h1><p>You do not have administrative privileges.</p>";
-                return;
-            }
+        window.sendAiMessage = async () => {
+            const input = document.getElementById('ai-input');
+            const chatBox = document.getElementById('ai-chat-box');
+            const userMessage = input.value.trim();
             
-            const logsOutput = document.getElementById('admin-logs-output');
-            logsOutput.innerHTML = '<p>Loading logs...</p>';
-            
-            try {
-                // 1. Load Admin Logs (using hardcoded admin-123 UID)
-                const logQuerySnapshot = await db.collection('adminLogs').get();
-                const logs = logQuerySnapshot.docs.map(doc => doc.data());
-                
-                logsOutput.innerHTML = logs.map(log => 
-                    `<div class="log-entry">[${log.timestamp ? new Date(log.timestamp.toDate()).toLocaleString() : 'N/A'}] User ${log.userId}: ${log.message}</div>`
-                ).join('');
-                
-                // 2. Load User Count (Simulated)
-                const userSnapshot = await db.collection('users').get();
-                document.getElementById('admin-user-count').textContent = userSnapshot.size;
-                
-            } catch (error) {
-                console.error("Error loading admin data:", error);
-                logsOutput.innerHTML = `<p class="error-message">Error loading admin data: ${error.message}</p>`;
-            }
-        }
-        
-        // --- Dashboard Logic ---
-        
-        function updateDashboard() {
-            const totalCards = Object.values(userData.notes).reduce((sum, lesson) => sum + (lesson.flashcards ? lesson.flashcards.length : 0), 0);
-            
-            document.getElementById('dashboard-name').textContent = userData.name || 'User';
-            document.getElementById('dashboard-lessons-count').textContent = userData.lessons.length;
-            document.getElementById('dashboard-flashcards-count').textContent = totalCards;
-        }
+            if (!userMessage) return;
 
-        // --- Settings Logic ---
-        
-        function loadSettingsData() {
-            document.getElementById('settings-name').value = userData.name || '';
-            document.getElementById('settings-age').value = userData.age || '';
-            document.getElementById('settings-year-group').value = userData.yearGroup || '';
-            document.getElementById('settings-institution').value = userData.institution || '';
-            document.getElementById('settings-lessons').value = userData.lessons ? userData.lessons.join(', ') : '';
-        }
-        
-        async function saveSettings() {
-            const name = document.getElementById('settings-name').value.trim();
-            const age = parseInt(document.getElementById('settings-age').value, 10);
-            const yearGroup = document.getElementById('settings-year-group').value.trim();
-            const institution = document.getElementById('settings-institution').value.trim();
-            const lessonsInput = document.getElementById('settings-lessons').value.trim();
-            const errorElement = document.getElementById('settings-error');
-            errorElement.textContent = '';
-
-            if (!name || isNaN(age) || !yearGroup || !institution || !lessonsInput) {
-                errorElement.textContent = "Please fill out all fields.";
-                return;
-            }
+            const userMsgElement = document.createElement('div');
+            userMsgElement.className = 'chat-message user';
+            userMsgElement.textContent = userMessage;
+            chatBox.appendChild(userMsgElement);
             
-            const lessons = lessonsInput.split(',').map(l => l.trim()).filter(l => l.length > 0);
+            const aiMsgElement = document.createElement('div');
+            aiMsgElement.className = 'chat-message ai';
+            aiMsgElement.innerHTML = 'Thinking...';
+            chatBox.appendChild(aiMsgElement);
 
-            const updatedData = {
-                name: name,
-                age: age,
-                yearGroup: yearGroup,
-                institution: institution,
-                lessons: lessons,
-                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            // Merge with existing notes to keep them safe, but update the lessons list
-            const updatedNotes = { ...userData.notes };
-            lessons.forEach(lesson => {
-                if (!updatedNotes[lesson]) {
-                    updatedNotes[lesson] = { text: `Start typing your ${lesson} notes here!`, flashcards: [] };
-                }
-            });
-            updatedData.notes = updatedNotes;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                await db.collection('users').doc(userId).update(updatedData);
-                userData = { ...userData, ...updatedData }; // Update local state
-                errorElement.textContent = "Settings saved successfully!";
-                
-                // Re-initialize select boxes and dashboard
-                updateLessonSelects();
-                updateDashboard();
-                
-            } catch (error) {
-                console.error("Settings Save Error:", error);
-                errorElement.textContent = `Error saving settings: ${error.message}`;
-            }
-        }
-        
-        // --- Notes/Flashcards Logic ---
-        
-        function updateLessonSelects() {
-            const notesSelect = document.getElementById('notes-lesson-select');
-            const studySelect = document.getElementById('study-lesson-select');
-            
-            [notesSelect, studySelect].forEach(select => {
-                select.innerHTML = '<option value="">Select Lesson</option>';
-            });
-
-            if (userData.lessons && userData.lessons.length > 0) {
-                userData.lessons.forEach(lesson => {
-                    const option = document.createElement('option');
-                    option.value = lesson;
-                    option.textContent = lesson;
-                    notesSelect.appendChild(option.cloneNode(true));
-                    studySelect.appendChild(option);
+                const response = await fetch(GEMINI_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: userMessage }] }],
+                        config: {
+                            systemInstruction: `You are a helpful and concise study assistant for students in year group ${currentUserData.yearGroup} studying ${currentUserData.lessons.join(', ')}. Keep your answers clear, accurate, and relevant to the user's study context.`,
+                            temperature: 0.5
+                        }
+                    })
                 });
+
+                if (!response.ok) {
+                    throw new Error(`API call failed: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+                
+                aiMsgElement.textContent = aiText;
+            } catch (error) {
+                console.error('Gemini API Error:', error);
+                aiMsgElement.textContent = 'I don\'t know. Error communicating with the study model.';
             }
             
-            // Set the current lesson or default to the first
-            currentLesson = notesSelect.value || userData.lessons?.[0] || null;
-            if (currentLesson) notesSelect.value = currentLesson;
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        function loadNotesForLesson() {
-            currentLesson = document.getElementById('notes-lesson-select').value;
-            const notesContainer = document.getElementById('notes-content');
-            const lessonNotesTextarea = document.getElementById('lesson-notes-textarea');
-            const currentLessonTitle = document.getElementById('current-lesson-title');
-            const flashcardsList = document.getElementById('flashcards-list');
-
-            if (!currentLesson) {
-                notesContainer.style.display = 'none';
-                return;
-            }
-            
-            notesContainer.style.display = 'block';
-            currentLessonTitle.textContent = `Notes for ${currentLesson}`;
-
-            const lessonData = userData.notes[currentLesson] || { text: '', flashcards: [] };
-            lessonNotesTextarea.value = lessonData.text || '';
-            
-            // Load Flashcards for the lesson
-            flashcardsList.innerHTML = '';
-            const cards = lessonData.flashcards || [];
-            if (cards.length === 0) {
-                flashcardsList.innerHTML = '<p>No flashcards created for this lesson yet.</p>';
-            } else {
-                cards.forEach((card, index) => {
-                    const cardElement = document.createElement('div');
-                    cardElement.classList.add('note-card');
-                    cardElement.innerHTML = `
-                        <div class="note-card-title">
-                            <b>${card.front.substring(0, 50)}${card.front.length > 50 ? '...' : ''}</b>
-                        </div>
-                        <p>Answer: ${card.back.substring(0, 50)}${card.back.length > 50 ? '...' : ''}</p>
-                        <div class="card-buttons">
-                            <button onclick="event.stopPropagation(); editFlashcard(${index})">Edit</button>
-                            <button onclick="event.stopPropagation(); deleteFlashcard(${index})" style="background-color: #dc3545;">Delete</button>
-                        </div>
-                    `;
-                    flashcardsList.appendChild(cardElement);
-                });
-            }
-        }
-        
-        async function saveNotes() {
-            const lesson = currentLesson;
-            if (!lesson || !userId) return;
-
-            const newText = document.getElementById('lesson-notes-textarea').value;
-            
-            // Fix: Explicitly target the nested 'text' field using dot notation to prevent overwriting flashcards.
-            const textUpdatePath = `notes.${lesson}.text`;
-            
-            const updateData = {
-                [textUpdatePath]: newText,
-                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-            };
+        window.loadFlashcards = async (uid) => {
+            const userFlashcardsList = document.getElementById('user-flashcards');
+            const userDocRef = db.collection('users').doc(uid);
             
             try {
-                await db.collection('users').doc(userId).update(updateData);
+                const doc = await userDocRef.get();
+                const flashcards = doc.data().flashcards || [];
+                currentUserData.flashcards = flashcards;
+                userFlashcardsList.innerHTML = '';
                 
-                // Update local state
-                userData.notes[lesson].text = newText;
-                console.log(`Notes for ${lesson} saved.`);
+                const noCardsMsg = document.getElementById('no-flashcards-msg');
+                if (flashcards.length === 0) {
+                    noCardsMsg.style.display = 'block';
+                    return;
+                }
+                noCardsMsg.style.display = 'none';
+
+                flashcards.forEach((card, index) => {
+                    userFlashcardsList.appendChild(createFlashcardElement(card, index));
+                });
             } catch (error) {
-                console.error("Error saving notes:", error);
-                alert(`Error saving notes: ${error.message}`); // Use alert as a temporary simple message box
+                console.error("Error loading flashcards:", error);
+                userFlashcardsList.innerHTML = '<p style="color: red;">Failed to load flashcards.</p>';
             }
         }
         
-        // --- Flashcard Modal & CRUD ---
-        
-        function showFlashcardModal(cardIndex = null) {
-            const modal = document.getElementById('flashcard-modal');
-            const frontInput = document.getElementById('modal-front');
-            const backTextarea = document.getElementById('modal-back');
-            const cardIdInput = document.getElementById('modal-card-id');
-            const modalTitle = document.getElementById('modal-title');
-
-            if (!currentLesson) {
-                alert("Please select a lesson first before adding a flashcard.");
-                return;
-            }
-
-            if (cardIndex !== null) {
-                const card = userData.notes[currentLesson].flashcards[cardIndex];
-                modalTitle.textContent = 'Edit Flashcard';
-                frontInput.value = card.front;
-                backTextarea.value = card.back;
-                cardIdInput.value = cardIndex; // Use index for editing
-            } else {
-                modalTitle.textContent = 'Add New Flashcard';
-                frontInput.value = '';
-                backTextarea.value = '';
-                cardIdInput.value = ''; // Empty for new card
-            }
-
-            modal.style.display = 'block';
-        }
-        
-        function editFlashcard(index) {
-            showFlashcardModal(index);
+        function createFlashcardElement(card, index) {
+            const cardElement = document.createElement('div');
+            cardElement.className = 'flashcard-card';
+            cardElement.setAttribute('data-index', index);
+            
+            cardElement.innerHTML = `
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        ${card.front}
+                        <i data-lucide="x-circle" style="position: absolute; top: 5px; right: 5px; width: 20px; height: 20px; color: red;" onclick="event.stopPropagation(); window.deleteFlashcard(${index});"></i>
+                    </div>
+                    <div class="flashcard-back">${card.back}</div>
+                </div>
+            `;
+            
+            cardElement.onclick = () => {
+                cardElement.classList.toggle('flipped');
+            };
+            
+            setTimeout(() => lucide.createIcons(), 0);
+            return cardElement;
         }
 
-        async function saveFlashcard() {
-            const lesson = currentLesson;
-            const front = document.getElementById('modal-front').value.trim();
-            const back = document.getElementById('modal-back').value.trim();
-            const cardIndex = document.getElementById('modal-card-id').value;
-
+        window.createFlashcard = async () => {
+            const front = document.getElementById('fc-front').value.trim();
+            const back = document.getElementById('fc-back').value.trim();
+            const error = document.getElementById('fc-error');
+            error.style.display = 'none';
+            
             if (!front || !back) {
-                alert("Please enter both a question/term and an answer/definition.");
+                error.textContent = 'Both front and back fields must be filled.';
+                error.style.display = 'block';
                 return;
             }
-
-            const newCard = { front, back, lesson };
             
-            // Ensure the flashcards array exists before modifying it
-            if (!userData.notes[lesson].flashcards) {
-                userData.notes[lesson].flashcards = [];
-            }
-            let cards = userData.notes[lesson].flashcards;
+            const newCard = { front, back, source: 'student', timestamp: firebase.firestore.FieldValue.serverTimestamp() };
 
-            if (cardIndex === '') {
-                // Add New Card
-                cards.push(newCard);
+            try {
+                const userDocRef = db.collection('users').doc(auth.currentUser.uid);
+                await userDocRef.update({
+                    flashcards: firebase.firestore.FieldValue.arrayUnion(newCard)
+                });
+                
+                currentUserData.flashcards.push(newCard);
+                loadFlashcards(auth.currentUser.uid);
+
+                document.getElementById('fc-front').value = '';
+                document.getElementById('fc-back').value = '';
+                error.textContent = 'Flashcard added!';
+                error.style.color = 'var(--chat-ai)';
+                error.style.display = 'block';
+                setTimeout(() => error.style.display = 'none', 3000);
+
+            } catch (e) {
+                error.textContent = 'Failed to save flashcard: ' + e.message;
+                error.style.color = 'red';
+                error.style.display = 'block';
+            }
+        }
+        
+        window.deleteFlashcard = async (index) => {
+            if (!confirm("Are you sure you want to delete this flashcard?")) return;
+
+            const cardToDelete = currentUserData.flashcards[index];
+            if (!cardToDelete) return;
+
+            try {
+                const userDocRef = db.collection('users').doc(auth.currentUser.uid);
+                
+                // Firestore arrayRemove requires an exact match of the item being removed.
+                // We use the local copy of the card data to remove it.
+                await userDocRef.update({
+                    flashcards: firebase.firestore.FieldValue.arrayRemove(cardToDelete)
+                });
+
+                currentUserData.flashcards.splice(index, 1);
+                loadFlashcards(auth.currentUser.uid);
+            } catch (e) {
+                alert('Failed to delete flashcard: ' + e.message);
+                console.error(e);
+            }
+        }
+        
+        window.generateFlashcardsWithAI = async (button) => {
+            const topic = document.getElementById('ai-fc-topic').value.trim();
+            const statusElement = document.getElementById('ai-fc-status');
+            
+            if (!topic) {
+                alert('Please enter a topic to generate flashcards.');
+                return;
+            }
+            
+            button.disabled = true;
+            statusElement.textContent = 'Generating... This may take a moment.';
+            statusElement.style.display = 'block';
+            
+            const prompt = `Generate 5 key flashcards (Question/Answer pairs) on the topic: "${topic}". Format your response STRICTLY as a JSON array of objects, where each object has a 'front' key (the question) and a 'back' key (the answer). Do not include any introductory or concluding text outside the JSON block.`;
+
+            try {
+                const response = await fetch(GEMINI_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        config: { temperature: 0.7 }
+                    })
+                });
+                
+                const data = await response.json();
+                let aiText = data.candidates[0].content.parts[0].text.trim();
+                
+                if (aiText.startsWith('```json')) {
+                    aiText = aiText.substring(7, aiText.lastIndexOf('```')).trim();
+                } else if (aiText.startsWith('```')) {
+                    aiText = aiText.substring(3, aiText.lastIndexOf('```')).trim();
+                }
+                
+                const newCards = JSON.parse(aiText);
+                const cardsToSave = newCards.map(card => ({
+                    front: card.front,
+                    back: card.back,
+                    source: 'AI',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                }));
+                
+                if (cardsToSave.length > 0) {
+                    const userDocRef = db.collection('users').doc(auth.currentUser.uid);
+                    await userDocRef.update({
+                        flashcards: firebase.firestore.FieldValue.arrayUnion(...cardsToSave)
+                    });
+                    
+                    currentUserData.flashcards.push(...cardsToSave);
+                    loadFlashcards(auth.currentUser.uid);
+                    
+                    statusElement.textContent = `Successfully generated and added ${cardsToSave.length} flashcards!`;
+                    statusElement.style.color = 'var(--chat-ai)';
+                } else {
+                    throw new Error("AI returned no valid flashcards.");
+                }
+
+            } catch (error) {
+                console.error('AI Flashcard Generation Error:', error);
+                statusElement.textContent = 'I don\'t know. Failed to generate flashcards. Please check the topic and try again.';
+                statusElement.style.color = 'red';
+            } finally {
+                button.disabled = false;
+                document.getElementById('ai-fc-topic').value = '';
+                setTimeout(() => statusElement.style.display = 'none', 5000);
+            }
+        }
+
+
+        let settingsLessons = [];
+        let settingLessonSetup;
+
+        function loadUserSettings(data) {
+            document.getElementById('setting-name').value = data.name || '';
+            document.getElementById('setting-age').value = data.age || '';
+            document.getElementById('setting-yeargroup').value = data.yearGroup || '';
+            document.getElementById('setting-institution').value = data.institution || '';
+            
+            settingsLessons = [...(data.lessons || [])];
+            if (!settingLessonSetup) {
+                 settingLessonSetup = setupLessonInput('setting-lessons-input', 'setting-lessons-list', settingsLessons, true);
             } else {
-                // Edit Existing Card
-                const index = parseInt(cardIndex, 10);
-                if (index >= 0 && index < cards.length) {
-                    cards[index] = newCard;
+                settingLessonSetup.lessonsArray = settingsLessons;
+                settingLessonSetup.renderLessons();
+            }
+        }
+        
+        setupPasswordToggle('setting-new-password', 'toggle-setting-password');
+
+        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            const status = document.getElementById('settings-save-status');
+            const passwordStatus = document.getElementById('password-reset-status');
+            status.style.display = 'none';
+            passwordStatus.style.display = 'none';
+
+            const newName = document.getElementById('setting-name').value.trim();
+            const newAge = document.getElementById('setting-age').value;
+            const newYearGroup = document.getElementById('setting-yeargroup').value.trim();
+            const newInstitution = document.getElementById('setting-institution').value.trim();
+            const newPassword = document.getElementById('setting-new-password').value;
+
+            try {
+                const updatedData = {
+                    name: newName,
+                    age: parseInt(newAge),
+                    yearGroup: newYearGroup,
+                    institution: newInstitution,
+                    lessons: settingsLessons,
+                };
+
+                await db.collection('users').doc(user.uid).update(updatedData);
+                
+                currentUserData = { ...currentUserData, ...updatedData };
+                loadUserSettings(currentUserData);
+                document.getElementById('chat-year-group-display').textContent = currentUserData.yearGroup;
+
+                status.textContent = 'Profile changes saved successfully!';
+                status.style.color = 'var(--primary-blue)';
+                status.style.display = 'block';
+                setTimeout(() => status.style.display = 'none', 3000);
+
+            } catch (error) {
+                status.textContent = 'Failed to save profile changes: ' + error.message;
+                status.style.color = 'red';
+                status.style.display = 'block';
+                return;
+            }
+            
+            if (newPassword) {
+                if (newPassword.length < 6) {
+                    passwordStatus.textContent = 'Password must be at least 6 characters.';
+                    passwordStatus.style.display = 'block';
+                    return;
+                }
+                
+                try {
+                    await user.updatePassword(newPassword);
+                    document.getElementById('setting-new-password').value = '';
+                    passwordStatus.textContent = 'Password reset successfully! You may need to log in again soon.';
+                    passwordStatus.style.color = 'var(--chat-ai)';
+                    passwordStatus.style.display = 'block';
+                    setTimeout(() => passwordStatus.style.display = 'none', 5000);
+                } catch (error) {
+                    passwordStatus.textContent = 'Failed to reset password. Please log out and log in again to perform this action.';
+                    passwordStatus.style.color = 'red';
+                    passwordStatus.style.display = 'block';
                 }
             }
-
-            // Update Firestore
-            await updateFlashcardsInFirestore(lesson, cards);
-            
-            // Close modal and refresh view
-            document.getElementById('flashcard-modal').style.display = 'none';
-            loadNotesForLesson();
-            updateDashboard();
-        }
+        });
         
-        async function deleteFlashcard(index) {
-            const lesson = currentLesson;
-            // Use custom modal/confirm box for a real application, using simple confirm for this exercise
-            if (!lesson || !confirm("Are you sure you want to delete this flashcard?")) return;
-
-            let cards = userData.notes[lesson].flashcards || [];
-            
-            if (index >= 0 && index < cards.length) {
-                cards.splice(index, 1);
-            }
-
-            // Update Firestore
-            await updateFlashcardsInFirestore(lesson, cards);
-            
-            // Refresh view
-            loadNotesForLesson();
-            updateDashboard();
-        }
-        
-        async function updateFlashcardsInFirestore(lesson, cards) {
-            const updatePath = `notes.${lesson}.flashcards`;
-            
-            const updateData = {
-                [updatePath]: cards,
-                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            try {
-                await db.collection('users').doc(userId).update(updateData);
-                userData.notes[lesson].flashcards = cards; // Update local state
-            } catch (error) {
-                console.error("Error updating flashcards:", error);
-                alert(`Error updating flashcards: ${error.message}`);
-                // Re-load data to ensure local state is consistent with Firestore
-                await loadUserData(); 
-            }
-        }
-        
-        // --- Study Flashcards Logic ---
-        
-        function loadFlashcardsForStudy() {
-            const lesson = document.getElementById('study-lesson-select').value;
-            const studyStatus = document.getElementById('study-status');
-            const flashcardDisplay = document.getElementById('flashcard-display');
-            const controls = document.getElementById('flashcard-controls');
-            
-            if (!lesson) {
-                studyStatus.textContent = "Select a lesson to begin studying.";
-                flashcardDisplay.style.display = 'none';
-                controls.style.display = 'none';
-                currentStudyCards = [];
-                currentCardIndex = 0;
-                return;
-            }
-            
-            currentStudyCards = userData.notes[lesson]?.flashcards || [];
-            currentCardIndex = 0;
-            isCardFlipped = false;
-
-            if (currentStudyCards.length === 0) {
-                studyStatus.textContent = `No flashcards found for ${lesson}.`;
-                flashcardDisplay.style.display = 'none';
-                controls.style.display = 'none';
-                return;
-            }
-            
-            flashcardDisplay.style.display = 'flex';
-            controls.style.display = 'flex';
-            flashcardDisplay.onclick = toggleFlip;
-            
-            displayCurrentCard();
-        }
-
-        function displayCurrentCard() {
-            const card = currentStudyCards[currentCardIndex];
-            const studyStatus = document.getElementById('study-status');
-            
-            if (!card) return;
-            
-            studyStatus.textContent = `Card ${currentCardIndex + 1} of ${currentStudyCards.length}`;
-            
-            // Updated to use <b> tags
-            document.getElementById('card-front').innerHTML = `<b>Term/Question:</b><p>${card.front}</p>`;
-            document.getElementById('card-back').innerHTML = `<b>Answer/Definition:</b><p>${card.back}</p>`;
-            
-            const inner = document.getElementById('flashcard-inner');
-            inner.style.transform = isCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
-        }
-
-        function toggleFlip() {
-            isCardFlipped = !isCardFlipped;
-            displayCurrentCard();
-        }
-        
-        function prevCard() {
-            isCardFlipped = false;
-            currentCardIndex = (currentCardIndex - 1 + currentStudyCards.length) % currentStudyCards.length;
-            displayCurrentCard();
-        }
-
-        function nextCard() {
-            isCardFlipped = false;
-            currentCardIndex = (currentCardIndex + 1) % currentStudyCards.length;
-            displayCurrentCard();
-        }
-        
-        // --- AI Helper Logic ---
-        
-        async function sendAiQuery() {
-            const userQuery = document.getElementById('ai-input').value.trim();
-            const outputElement = document.getElementById('ai-output');
-            
-            if (!userQuery) return;
-            
-            outputElement.innerHTML = 'Thinking... <span style="font-style: italic;">(This may take a moment)</span>';
-            document.getElementById('ai-input').value = '';
-            
-            // Build system prompt based on user data
-            const systemPrompt = [
-                "You are StudyHub, a friendly and knowledgeable AI assistant for students.",
-                `The user is currently studying the following subjects: ${userData.lessons.join(', ')}.`,
-                "The user's personal notes and flashcards are private and should not be used in generating answers unless the user explicitly refers to them.",
-                "Provide concise, study-focused answers."
-            ].join('\n');
-            
-            const apiKey = "AIzaSyAsXY-tMiXaC2CX3VlWJa8NtOWb6pp4cFc"; // Leave as-is for Canvas environment
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${FIREBASE_MODEL}:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                tools: [{ "google_search": {} }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-            };
-            
-            try {
-                const result = await fetchWithRetry(apiUrl, payload);
-                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate a response.";
-                
-                outputElement.innerHTML = text;
-                
-            } catch (error) {
-                console.error("Gemini API Error:", error);
-                outputElement.textContent = `Error: Failed to connect to AI helper. (${error.message})`;
-            }
-        }
-        
-        // Final initialization call
-        if (typeof firebase !== 'undefined' && typeof __firebase_config !== 'undefined') {
-            initializeFirebase();
-        } else {
-             console.error("Firebase SDK or configuration is missing. Cannot initialize.");
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            setupPasswordToggle('auth-password', 'toggle-auth-password');
+            setupPasswordToggle('setting-new-password', 'toggle-setting-password');
+        });
 
     </script>
 </body>

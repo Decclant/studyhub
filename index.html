@@ -842,8 +842,8 @@
                 // CORRECT STRUCTURE: contents is top-level
                 contents: [{ role: "user", parts: [{ text: userMessage }] }],
                 
-                // CRITICAL CONFIRMATION: systemInstruction MUST be a top-level string property (using camelCase)
-                systemInstruction: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`,
+                // CRITICAL FIX: Changed to 'system_instruction' (snake_case)
+                system_instruction: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`,
                 
                 // CORRECT STRUCTURE: generationConfig is a top-level property
                 generationConfig: {
@@ -1119,7 +1119,7 @@
         
         setupPasswordToggle('setting-new-password', 'toggle-setting-password');
         
-        // Made by Nathan: New event listener for Profile Settings Form
+        // Made by Nathan: Event listener for Profile Settings Form
         document.getElementById('profile-settings-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = auth.currentUser;
@@ -1158,7 +1158,7 @@
             }
         });
 
-        // Made by Nathan: New event listener for Password Reset Form
+        // Made by Nathan: Event listener for Password Reset Form
         document.getElementById('password-reset-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = auth.currentUser;

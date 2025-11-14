@@ -842,12 +842,11 @@
                 // CORRECT STRUCTURE: contents is top-level
                 contents: [{ role: "user", parts: [{ text: userMessage }] }],
                 
-                // CRITICAL FIX: Changed to 'system_instruction' (snake_case)
-                system_instruction: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`,
-                
-                // CORRECT STRUCTURE: generationConfig is a top-level property
+                // CRITICAL FIX: Moving system_instruction inside generationConfig 
                 generationConfig: {
-                    temperature: 0.5
+                    temperature: 0.5,
+                    // Placing the instruction here as required by the REST endpoint
+                    system_instruction: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`,
                 }
             };
             

@@ -532,9 +532,9 @@
                 <h2><i data-lucide="info"></i> Credits</h2>
                 <p>This StudyHub platform was conceptualized and developed with key contributions from:</p>
                 <div style="background: var(--light-blue); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 5px solid var(--primary-blue);">
-                    <p style="font-size: 18px; font-weight: bold;">Development & Implementation: <b>Made by Nathan</b></p>
+                    <p style="font-size: 18px; font-weight: bold;">Main Developer: <b>Made by Nathan</b></p>
                 </div>
-                <p style="margin-top: 20px;">Technology used: Firebase (Authentication & Data), Gemini API (AI Helper), HTML/CSS/JS, Lucide Icons.</p>
+                <p style="margin-top: 20px;">Technology used: Firebase, Gemini API, HTML/CSS/JS, Lucide Icons.</p>
             </section>
 
             <section id="admin-panel" class="tab-content"><h2><i data-lucide="shield"></i> Admin Panel</h2><p>Welcome, Admin! This panel is restricted to declanthebest01@gmail.com.</p></section>
@@ -571,9 +571,8 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // NOTE: If you are still getting a 400 Bad Request, the key is invalid. 
-        // Please replace this with a newly generated, valid API key from Google AI Studio.
-        const GEMINI_API_KEY = "AIzaSyCmry6ARR1EjM01RQaFleTqHx4MrRIVmG8"; 
+        // NOTE: Please replace this with a newly generated, valid API key.
+        const GEMINI_API_KEY = "AIzaSyCEBSFL8fLH02VdggHMA1mB13xvg9wkdLo"; 
         const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;
 
         let currentUserData = {};
@@ -719,7 +718,7 @@
                         errorMessage = 'This email is already registered.';
                         break;
                     case 'auth/weak-password':
-                        errorMessage = 'Password must be at least 8 characters long.';
+                        errorMessage = 'Password must be at least 6 characters.';
                         break;
                     case 'auth/invalid-email':
                         errorMessage = 'The email address is not valid.';
@@ -829,9 +828,13 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ role: "user", parts: [{ text: userMessage }] }],
+                        // SYSTEM INSTRUCTION MOVED TO ROOT LEVEL
+                        systemInstruction: `You are a helpful and concise study assistant for students in year group ${currentUserData.yearGroup} studying ${currentUserData.lessons.join(', ')}. Keep your answers clear, accurate, and relevant to the user's study context.`,
                         config: {
-                            systemInstruction: `You are a helpful and concise study assistant for students in year group ${currentUserData.yearGroup} studying ${currentUserData.lessons.join(', ')}. Keep your answers clear, accurate, and relevant to the user's study context.`,
-                            temperature: 0.5
+                            // GENERATION PARAMETERS MOVED INSIDE generationConfig
+                            generationConfig: {
+                                temperature: 0.5
+                            }
                         }
                     })
                 });
@@ -846,7 +849,7 @@
                 aiMsgElement.textContent = aiText;
             } catch (error) {
                 console.error('Gemini API Error:', error);
-                aiMsgElement.textContent = 'I don\'t know. Error communicating with the study model.';
+                aiMsgElement.textContent = 'I don\'t know. Error communicating with the study model. (Check console for details, likely API key or request structure).';
             }
             
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -872,12 +875,13 @@
                     noCardsMsg.style.display = 'none';
                 }
 
-
                 flashcards.forEach((card, index) => {
                     userFlashcardsList.appendChild(createFlashcardElement(card, index));
                 });
             } catch (error) {
                 console.error("Error loading flashcards:", error);
+                // Ensure noCardsMsg is handled even on error to prevent TypeError if called after tab change
+                if(noCardsMsg) noCardsMsg.style.display = 'block';
                 userFlashcardsList.innerHTML = '<p style="color: red;">Failed to load flashcards.</p>';
             }
         }
@@ -887,7 +891,6 @@
             cardElement.className = 'flashcard-card';
             cardElement.setAttribute('data-index', index);
             
-            // Display only the front content initially
             cardElement.innerHTML = `
                 <div class="flashcard-inner">
                     <div class="flashcard-front">
@@ -898,7 +901,6 @@
                 </div>
             `;
             
-            // Change click handler to open the modal
             cardElement.onclick = () => {
                 window.viewFlashcardDetails(index);
             };
@@ -911,14 +913,12 @@
             const card = currentUserData.flashcards[index];
             if (!card) return;
 
-            // Format timestamp (Firestore Timestamp object)
             let dateString = "N/A";
             if (card.timestamp && card.timestamp.toDate) {
                 dateString = card.timestamp.toDate().toLocaleDateString("en-US", {
                     year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
                 });
             } else if (card.timestamp) {
-                 // Handle cases where it might be a raw Date or string (less likely with the fix)
                  dateString = new Date(card.timestamp).toLocaleDateString("en-US");
             }
 
@@ -955,8 +955,7 @@
                     flashcards: firebase.firestore.FieldValue.arrayUnion(newCard)
                 });
                 
-                // Optimization: fetch the updated data after successful write
-                await loadFlashcards(auth.currentUser.uid); // <--- Reloads flashcards after save
+                await loadFlashcards(auth.currentUser.uid); // Reloads flashcards after save
 
                 document.getElementById('fc-front').value = '';
                 document.getElementById('fc-back').value = '';
@@ -981,12 +980,14 @@
             try {
                 const userDocRef = db.collection('users').doc(auth.currentUser.uid);
                 
+                // IMPORTANT: We must use a copy of the object, including its timestamp,
+                // for arrayRemove to correctly match the item in Firestore.
                 await userDocRef.update({
                     flashcards: firebase.firestore.FieldValue.arrayRemove(cardToDelete)
                 });
 
-                currentUserData.flashcards.splice(index, 1);
-                await loadFlashcards(auth.currentUser.uid); // <--- Reloads flashcards after delete
+                // Force UI update by reloading the data after successful database operation
+                await loadFlashcards(auth.currentUser.uid); 
             } catch (e) {
                 alert('Failed to delete flashcard: ' + e.message);
                 console.error(e);
@@ -1014,7 +1015,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        config: { temperature: 0.7 }
+                        config: { 
+                            generationConfig: { 
+                                temperature: 0.7 
+                            } 
+                        }
                     })
                 });
 
@@ -1045,7 +1050,6 @@
                         flashcards: firebase.firestore.FieldValue.arrayUnion(...cardsToSave)
                     });
                     
-                    currentUserData.flashcards.push(...cardsToSave);
                     await loadFlashcards(auth.currentUser.uid);
                     
                     statusElement.textContent = `Successfully generated and added ${cardsToSave.length} flashcards!`;
@@ -1128,8 +1132,8 @@
             }
             
             if (newPassword) {
-                if (newPassword.length < 8) {
-                    passwordStatus.textContent = 'Password must be at least 8 characters long.';
+                if (newPassword.length < 6) {
+                    passwordStatus.textContent = 'Password must be at least 6 characters.';
                     passwordStatus.style.display = 'block';
                     return;
                 }

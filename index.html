@@ -95,6 +95,31 @@
         button:active {
             transform: scale(0.99);
         }
+        
+        /* Made by Nathan: CSS for Loading Spinner and Disabled Button */
+        button:disabled {
+            background-color: #6c757d; /* Gray out */
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner-icon {
+            /* Apply the animation */
+            animation: spin 1s linear infinite;
+            /* Styling for alignment */
+            width: 18px;
+            height: 18px;
+            vertical-align: middle;
+            margin-right: 8px;
+            stroke: var(--primary-blue); /* Ensure the icon is visible */
+        }
+        /* End of Made by Nathan: Loading CSS */
+        
         .toggle-auth {
             margin-top: 20px;
             font-size: 15px;
@@ -541,8 +566,21 @@
                 <div class="flashcard-creator" style="margin-top: 20px;">
                     <h3><b>🧠</b> Generate Flashcards with AI</h3>
                     <input type="text" id="ai-fc-topic" placeholder="Topic (e.g., 'Key dates of The French Revolution')" required>
-                    <button onclick="window.generateFlashcardsWithAI(this)">Generate 5 Cards</button>
-                    <p id="ai-fc-status" style="color: var(--primary-blue); margin-top: 10px; display: none;">Generating...</p>
+
+                    <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
+                        <label style="font-weight: bold; margin-right: 5px;">Number of Cards:</label>
+                        
+                        <label><input type="radio" name="card-count" value="1" checked> 1 Card</label>
+                        <label><input type="radio" name="card-count" value="5"> 5 Cards</label>
+                        
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="card-count" value="custom" id="custom-radio"> Custom:
+                            <input type="number" id="ai-fc-count" min="1" max="50" value="10" style="width: 70px; margin: 0; padding: 5px;" disabled>
+                        </label>
+                    </div>
+                    
+                    <button onclick="window.generateFlashcardsWithAI(this)">Generate Flashcards</button>
+                    <p id="ai-fc-status" style="color: var(--primary-blue); margin-top: 10px; display: none; font-weight: bold;"></p> 
                 </div>
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
@@ -1291,11 +1329,35 @@
                 return;
             }
             
+            // Made by Nathan: Determine the number of cards requested
+            let cardCount = 5; // Default to 5 if somehow nothing is selected
+            const selectedCount = document.querySelector('input[name="card-count"]:checked').value;
+            
+            if (selectedCount === 'custom') {
+                const customInput = document.getElementById('ai-fc-count');
+                cardCount = parseInt(customInput.value) || 1;
+                cardCount = Math.min(Math.max(cardCount, 1), 50); // Clamp between 1 and 50
+            } else {
+                cardCount = parseInt(selectedCount);
+            }
+            
+            if (cardCount < 1) {
+                alert('Please request at least 1 flashcard.');
+                return;
+            }
+
+
             button.disabled = true;
-            statusElement.textContent = 'Generating... This may take a moment.';
+            
+            // Made by Nathan: Implementation of Lucide Loader Icon
+            statusElement.innerHTML = `
+                <i data-lucide="loader" class="spinner-icon"></i> 
+                Generating ${cardCount} flashcards on "${topic}"... This may take a moment.
+            `;
+            lucide.createIcons(); // Render the icon
             statusElement.style.display = 'block';
             
-            const prompt = `Generate 5 key flashcards (Question/Answer pairs) on the topic: "${topic}". Format your response STRICTLY as a JSON array of objects, where each object has a 'front' key (the question) and a 'back' key (the answer). Do not include any introductory or concluding text outside the JSON block.`;
+            const prompt = `Generate ${cardCount} key flashcards (Question/Answer pairs) on the topic: "${topic}". Format your response STRICTLY as a JSON array of objects, where each object has a 'front' key (the question) and a 'back' key (the answer). Do not include any introductory or concluding text outside the JSON block.`;
 
             try {
                 const response = await fetch(GEMINI_API_URL, {
@@ -1340,7 +1402,9 @@
                     
                     await loadFlashcards(auth.currentUser.uid);
                     
-                    statusElement.textContent = `Successfully generated and added ${cardsToSave.length} flashcards!`;
+                    // Success message update
+                    statusElement.innerHTML = `<i data-lucide="check-circle" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px; stroke: var(--chat-ai);"></i> Successfully generated and added ${cardsToSave.length} flashcards!`;
+                    lucide.createIcons();
                     statusElement.style.color = 'var(--chat-ai)';
                 } else {
                     throw new Error("AI returned no valid flashcards.");
@@ -1348,7 +1412,9 @@
 
             } catch (error) {
                 console.error('AI Flashcard Generation Error:', error);
-                statusElement.textContent = 'I don\'t know. Failed to generate flashcards. Please check the topic and console for details.';
+                // Error message update
+                statusElement.innerHTML = `<i data-lucide="alert-triangle" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px; stroke: red;"></i> I don't know. Failed to generate flashcards.`;
+                lucide.createIcons();
                 statusElement.style.color = 'red';
             } finally {
                 button.disabled = false;
@@ -1429,7 +1495,6 @@
             if (!newPassword) {
                 passwordStatus.textContent = 'Please enter a new password.';
                 passwordStatus.style.color = 'red';
-                passwordStatus.style.display = 'block';
                 return;
             }
 
@@ -1459,6 +1524,15 @@
             lucide.createIcons();
             setupPasswordToggle('auth-password', 'toggle-auth-password');
             setupPasswordToggle('setting-new-password', 'toggle-setting-password');
+
+            // Made by Nathan: Add listener for custom radio button
+            const customInput = document.getElementById('ai-fc-count');
+
+            document.querySelectorAll('input[name="card-count"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    customInput.disabled = radio.value !== 'custom';
+                });
+            });
         });
 
     </script>

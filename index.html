@@ -844,8 +844,11 @@
                 // CORRECT CONTENTS: Only user and model roles allowed for this API.
                 contents: [{ role: "user", parts: [{ text: userMessage }] }],
                 
-                // ** CRITICAL FIX: Use 'system_instruction' (snake_case) at the top level **
-                system_instruction: systemInstructionText,
+                // ** CRITICAL FIX: The value of 'system_instruction' must be a CONTENT object.**
+                // This is based on the final error message: "Invalid value at 'system_instruction' (type.googleapis.com/...Content)"
+                system_instruction: { 
+                    parts: [{ text: systemInstructionText }] 
+                },
                 
                 // generationConfig ONLY contains generation parameters (like temperature)
                 generationConfig: {

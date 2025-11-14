@@ -838,11 +838,11 @@
                         // CORRECT STRUCTURE: contents is top-level
                         contents: [{ role: "user", parts: [{ text: userMessage }] }],
                         
-                        // CORRECT STRUCTURE: systemInstruction is top-level (sibling to contents)
+                        // CRITICAL FIX: systemInstruction is a top-level string property (with capital 'I')
                         systemInstruction: `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`,
                         
-                        // FIX APPLIED: Using generationConfig as a top-level property instead of 'config' wrapper
-                        generationConfig: { 
+                        // CORRECT STRUCTURE: generationConfig is a top-level property
+                        generationConfig: {
                             temperature: 0.5
                         }
                     })

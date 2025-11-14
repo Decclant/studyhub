@@ -385,7 +385,7 @@
 
         <main id="main-content">
             <section id="ai-helper" class="tab-content active">
-                <h2>🤖 AI Study Helper</h2>
+                <h2><i data-lucide="brain"></i> AI Study Helper</h2>
                 <div id="ai-chat-box">
                     <div class="chat-message ai">Hello! I'm your AI Study Helper. Ask me anything about your lessons, like "Explain the process of photosynthesis."</div>
                 </div>
@@ -396,11 +396,11 @@
             </section>
 
             <section id="flashcards" class="tab-content">
-                <h2>📝 Notes & Flashcards</h2>
+                <h2><i data-lucide="layers"></i> Notes & Flashcards</h2>
                 <p>Year Group: <span id="chat-year-group-display">N/A</span></p>
                 
                 <div class="flashcard-creator">
-                    <h3>➕ Create New Flashcard</h3>
+                    <h3><b>+</b> Create New Flashcard</h3>
                     <input type="text" id="fc-front" placeholder="Front (Question/Term)" required>
                     <input type="text" id="fc-back" placeholder="Back (Answer/Definition)" required>
                     <button onclick="window.createFlashcard()">Add Flashcard</button>
@@ -408,13 +408,13 @@
                 </div>
 
                 <div class="flashcard-creator" style="margin-top: 20px;">
-                    <h3>🧠 Generate Flashcards with AI</h3>
+                    <h3><b>🧠</b> Generate Flashcards with AI</h3>
                     <input type="text" id="ai-fc-topic" placeholder="Topic (e.g., 'Key dates of The French Revolution')" required>
                     <button onclick="window.generateFlashcardsWithAI(this)">Generate 5 Cards</button>
                     <p id="ai-fc-status" style="color: var(--primary-blue); margin-top: 10px; display: none;">Generating...</p>
                 </div>
                 
-                <h3>📚 My Flashcards</h3>
+                <h3><b>📚</b> My Flashcards</h3>
                 <div class="flashcard-list-container">
                     <div class="flashcard-list" id="user-flashcards">
                         <p style="text-align: center; width: 100%;" id="no-flashcards-msg">No flashcards yet. Create one or use the AI generator!</p>
@@ -423,7 +423,7 @@
             </section>
 
             <section id="settings" class="tab-content">
-                <h2>⚙️ Account Settings</h2>
+                <h2><i data-lucide="settings"></i> Account Settings</h2>
                 <form id="settings-form">
                     <label for="setting-name">Name:</label>
                     <input type="text" id="setting-name" required>
@@ -443,7 +443,7 @@
                     
                     <p id="settings-save-status" style="color: var(--primary-blue); margin-top: 15px; display: none; font-weight: bold;">Changes saved successfully!</p>
 
-                    <h3 style="margin-top: 30px;">🔐 Password Reset</h3>
+                    <h3 style="margin-top: 30px;"><b>🔐</b> Password Reset</h3>
                     <div class="password-input-group">
                         <input type="password" id="setting-new-password" placeholder="New Password (min 6 characters)">
                         <i data-lucide="eye" class="toggle-password" id="toggle-setting-password"></i>
@@ -454,15 +454,15 @@
             </section>
 
             <section id="credits" class="tab-content">
-                <h2>✨ Credits</h2>
+                <h2><i data-lucide="info"></i> Credits</h2>
                 <p>This StudyHub platform was conceptualized and developed with key contributions from:</p>
                 <div style="background: var(--light-blue); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 5px solid var(--primary-blue);">
-                    <p style="font-size: 18px; font-weight: bold;">Development & Implementation: **Made by Nathan**</p>
+                    <p style="font-size: 18px; font-weight: bold;">Development & Implementation: <b>Made by Nathan</b></p>
                 </div>
-                <p style="margin-top: 20px;">Technology used: Firebase (Authentication & Data), Gemini API (AI Helper), HTML/CSS/JS, Lucide Icons.</p>
+                <p style="margin-top: 20px;">Technology used: Firebase, Gemini API, Lucide Icons.</p>
             </section>
 
-            <section id="admin-panel" class="tab-content"><h2>🔒 Admin Panel</h2><p>Welcome, Admin! This panel is restricted to declanthebest01@gmail.com.</p></section>
+            <section id="admin-panel" class="tab-content"><h2><i data-lucide="shield"></i> Admin Panel</h2><p>Welcome, Admin! This panel is restricted to declanthebest01@gmail.com.</p></section>
 
         </main>
     </div>
@@ -482,7 +482,8 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        const GEMINI_API_KEY = "AIzaSyAsXY-tMiXaC2CX3VlWJa8NtOWb6pp4cFc";
+        // NOTE: Please replace this with a newly generated, valid API key.
+        const GEMINI_API_KEY = "AIzaSyCEBSFL8fLH02VdggHMA1mB13xvg9wkdLo"; 
         const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;
 
         let currentUserData = {};
@@ -567,7 +568,6 @@
                 document.getElementById('app-dashboard').style.display = 'grid';
                 
                 loadUserSettings(currentUserData);
-                loadFlashcards(uid);
                 document.getElementById('chat-year-group-display').textContent = currentUserData.yearGroup || 'N/A';
 
                 const adminLink = document.getElementById('admin-panel-link');
@@ -707,6 +707,11 @@
             
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
+
+            // Load flashcards only when the user navigates to the flashcards tab
+            if (tabId === 'flashcards' && auth.currentUser) {
+                window.loadFlashcards(auth.currentUser.uid);
+            }
         }
 
         window.sendAiMessage = async () => {

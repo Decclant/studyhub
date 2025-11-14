@@ -566,7 +566,7 @@
             const userDocRef = db.collection('users').doc(uid);
             const userDoc = await userDocRef.get();
             
-            if (userDoc.exists() && userDoc.data().onboarded) {
+            if (userDoc.exists && userDoc.data().onboarded) {
                 currentUserData = userDoc.data();
                 
                 document.getElementById('auth-container').style.display = 'none';
@@ -860,8 +860,6 @@
             try {
                 const userDocRef = db.collection('users').doc(auth.currentUser.uid);
                 
-                // Firestore arrayRemove requires an exact match of the item being removed.
-                // We use the local copy of the card data to remove it.
                 await userDocRef.update({
                     flashcards: firebase.firestore.FieldValue.arrayRemove(cardToDelete)
                 });

@@ -674,6 +674,13 @@
                 } else {
                     adminLink.style.display = 'none';
                 }
+                
+                // Made by Nathan: Setup Enter key listener for AI chat on successful load
+                document.getElementById('ai-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        window.sendAiMessage();
+                    }
+                });
 
             } else {
                 document.getElementById('auth-container').style.display = 'none';
@@ -844,8 +851,7 @@
                 // CORRECT CONTENTS: Only user and model roles allowed for this API.
                 contents: [{ role: "user", parts: [{ text: userMessage }] }],
                 
-                // ** CRITICAL FIX: The value of 'system_instruction' must be a CONTENT object.**
-                // This is based on the final error message: "Invalid value at 'system_instruction' (type.googleapis.com/...Content)"
+                // FINAL CORRECT FIX: The value of 'system_instruction' must be a CONTENT object.
                 system_instruction: { 
                     parts: [{ text: systemInstructionText }] 
                 },
@@ -856,14 +862,13 @@
                 }
             };
             
-            const jsonBody = JSON.stringify(payload);
-            console.log('FINAL JSON PAYLOAD BEING SENT:', jsonBody); // <-- CRITICAL DEBUGGING LINE
+            // Made by Nathan: Removed FINAL JSON PAYLOAD console log
 
             try {
                 const response = await fetch(GEMINI_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: jsonBody
+                    body: JSON.stringify(payload) // Directly use payload object
                 });
 
                 if (!response.ok) {
@@ -879,7 +884,13 @@
                 aiMsgElement.textContent = aiText;
             } catch (error) {
                 console.error('Gemini API Error:', error);
-                aiMsgElement.textContent = 'I don\'t know. Error communicating with the study model. (Check console for full error details).';
+                
+                let displayError = 'I don\'t know. Error communicating with the study model.';
+                if (error.message.includes('status 503')) {
+                     displayError = 'The AI model is overloaded. Please try again in a moment.';
+                }
+
+                aiMsgElement.textContent = displayError;
             }
             
             chatBox.scrollTop = chatBox.scrollHeight;

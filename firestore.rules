@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null; }
+    function isSuperAdmin() { return isSignedIn() && request.auth.uid == 'IF6nIldJ9kZ4iu0ub2pow3SwojR2'; }
+    function staffRolePath(uid) { return /databases/$(database)/documents/staffRoles/$(uid); }
+    function accountStatusPath(uid) { return /databases/$(database)/documents/accountStatus/$(uid); }
+    function isBanned(uid) { return exists(accountStatusPath(uid)) && get(accountStatusPath(uid)).data.status == 'banned'; }
+    function isActive() { return isSignedIn() && (isSuperAdmin() || !isBanned(request.auth.uid)); }
+    function hasRole(role) { return isActive() && exists(staffRolePath(request.auth.uid)) && get(staffRolePath(request.auth.uid)).data.role == role; }
+    function isAdmin() { return isSuperAdmin() || hasRole('admin'); }
+    function isStaff() { return isAdmin() || hasRole('teacher'); }
+    match /accountStatus/{uid} {
+      allow get: if isSuperAdmin() || (isSignedIn() && request.auth.uid == uid);
+      allow list: if isSuperAdmin();
+      allow create, update, delete: if isSuperAdmin() && request.resource.data.keys().hasOnly(['status','updatedAt']) && request.resource.data.status in ['active','banned'];
+    }
+    match /bannedUsers/{uid} {
+      allow read: if isSuperAdmin();
+      allow create, update: if isSuperAdmin() && request.resource.data.keys().hasOnly(['email','reason','bannedAt','bannedBy']) && request.resource.data.bannedBy == request.auth.uid;
+      allow delete: if isSuperAdmin();
+    }
+    match /users/{userId} {
+      allow read: if isActive() && (request.auth.uid == userId || isStaff());
+      allow create, update: if isActive() && request.auth.uid == userId;
+      allow delete: if false;
+    }
+    match /users/{userId}/flashcards/{cardId} {
+      allow read, write: if isActive() && request.auth.uid == userId;
+    }
+    match /staffRoles/{staffUid} {
+      allow get: if isActive() && (request.auth.uid == staffUid || isSuperAdmin());
+      allow list: if isSuperAdmin();
+      allow create, update: if isSuperAdmin() && staffUid != 'IF6nIldJ9kZ4iu0ub2pow3SwojR2' && request.resource.data.keys().hasOnly(['role','assignedAt']) && request.resource.data.role in ['admin','teacher'];
+      allow delete: if isSuperAdmin() && staffUid != 'IF6nIldJ9kZ4iu0ub2pow3SwojR2';
+    }
+    match /appContent/{contentId} {
+      allow read: if isActive();
+      allow create, update, delete: if isAdmin();
+    }
+    match /supportThreads/{threadId} {
+      allow create: if isActive() && request.auth.uid == threadId && request.resource.data.participantUid == threadId && request.resource.data.status == 'open' && request.resource.data.keys().hasOnly(['participantUid','studentName','yearGroup','status','lastMessage','createdAt','updatedAt']);
+      allow read: if isActive() && (request.auth.uid == threadId || isSuperAdmin());
+      allow update: if isActive() && request.resource.data.participantUid == resource.data.participantUid && ((isSuperAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','lastMessage','updatedAt']) && request.resource.data.status in ['open','closed']) || (request.auth.uid == threadId && resource.data.status == 'open' && request.resource.data.status == 'open' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastMessage','updatedAt'])));
+      allow delete: if isSuperAdmin();
+      match /messages/{messageId} {
+        allow read: if isActive() && (request.auth.uid == threadId || isSuperAdmin());
+        allow create: if isActive() && exists(/databases/$(database)/documents/supportThreads/$(threadId)) && get(/databases/$(database)/documents/supportThreads/$(threadId)).data.status == 'open' && request.resource.data.keys().hasOnly(['text','senderUid','senderName','senderRole','createdAt']) && request.resource.data.senderUid == request.auth.uid && request.resource.data.text is string && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 2000 && ((request.auth.uid == threadId && request.resource.data.senderRole == 'student') || (isSuperAdmin() && request.resource.data.senderRole == 'super_admin'));
+        allow update, delete: if false;
+      }
+    }
+    match /artifacts/{appId}/public/data/flashcards/{cardId} {
+      allow read: if isActive();
+      allow update: if isActive() && request.auth.uid == resource.data.authorId && request.resource.data.authorId == resource.data.authorId;
+      allow create, delete: if isActive() && request.auth.uid == request.resource.data.authorId;
+    }
+    match /adminLogs/{logId} { allow read, write: if isSuperAdmin(); }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

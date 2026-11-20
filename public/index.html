@@ -1,89 +1,1698 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyHub · 2026–2027</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23007bff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/><path d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/></svg>" type="image/svg+xml">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root {
+            --primary-blue: #007bff;
+            --light-blue: #e9f5ff;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --border-light: #dddddd;
+            --chat-user: #007bff;
+            --chat-ai: #5cb85c;
+        }
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.5.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.5.0/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/12.5.0/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/12.5.0/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/12.5.0/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/12.5.0/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/12.5.0/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/12.5.0/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/12.5.0/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/12.5.0/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-blue);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
+        #auth-container, #onboarding-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--light-blue) 0%, #a4c4ff 100%);
+        }
+
+        .auth-box, .onboarding-box {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .logo svg {
+            width: 48px;
+            height: 48px;
+            stroke-width: 2.5;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        input[type="email"], input[type="password"], input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:active {
+            transform: scale(0.99);
+        }
+        
+        /* Made by Nathan: CSS for Loading Spinner and Disabled Button */
+        button:disabled {
+            background-color: #6c757d; /* Gray out */
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner-icon {
+            /* Apply the animation */
+            animation: spin 1s linear infinite;
+            /* Styling for alignment */
+            width: 18px;
+            height: 18px;
+            vertical-align: middle;
+            margin-right: 8px;
+            stroke: var(--primary-blue); /* Ensure the icon is visible */
+        }
+        /* End of Made by Nathan: Loading CSS */
+        
+        .toggle-auth {
+            margin-top: 20px;
+            font-size: 15px;
+        }
+        .toggle-auth span {
+            color: var(--primary-blue);
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .password-input-group {
+            position: relative;
+        }
+        .password-input-group input {
+            padding-right: 40px;
+        }
+        .password-input-group .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--primary-blue);
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .password-input-group .toggle-password:hover {
+            opacity: 1;
+        }
+        
+        #app-dashboard {
+            display: none;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+            background-color: var(--white);
+        }
+
+        #sidebar {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 20px 0;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-left 0.3s;
+            border-left: 5px solid transparent;
+        }
+        .sidebar-item:hover {
+            background-color: #0056b3;
+        }
+        .sidebar-item.active {
+            background-color: #004080;
+            border-left: 5px solid var(--light-blue);
+        }
+        .sidebar-item svg {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+        }
+
+        #main-content {
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--primary-blue);
+            border-bottom: 2px solid var(--light-blue);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        #lessons-list, #setting-lessons-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 40px;
+        }
+        .lesson-tag {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .lesson-tag span {
+            margin-left: 5px;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 1;
+        }
+        
+        #ai-chat-box {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .chat-message.user {
+            align-self: flex-end;
+            background-color: var(--chat-user);
+            color: var(--white);
+            border-bottom-right-radius: 2px;
+        }
+        .chat-message.ai {
+            align-self: flex-start;
+            background-color: var(--light-blue);
+            color: var(--text-dark);
+            border-bottom-left-radius: 2px;
+        }
+        #ai-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        #ai-input-container input {
+            flex-grow: 1;
+            margin-bottom: 0;
+        }
+        #ai-input-container button {
+            width: auto;
+            min-width: 100px;
+        }
+        
+        .flashcard-creator, .flashcard-list-container {
+            background: var(--light-blue);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 1px solid var(--primary-blue);
+        }
+        .flashcard-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .flashcard-card {
+            width: 200px;
+            height: 120px;
+            perspective: 1000px;
+            cursor: pointer;
+            position: relative; /* For the checkbox in the modal */
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .flashcard-card.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 8px;
+        }
+        .flashcard-front {
+            background-color: var(--white);
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+        .flashcard-back {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            transform: rotateY(180deg);
+            border: 2px solid var(--primary-blue);
+        }
+        
+        #settings-form label {
+            display: block;
+            text-align: left;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        /* Modal Styles */
+        #flashcard-modal, #confirm-modal, #mass-delete-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            animation: slideIn 0.3s ease-out;
+            position: relative;
+            text-align: center;
+        }
+        
+        /* Specific modal sizing for mass delete */
+        #mass-delete-modal .modal-content {
+            max-width: 900px; 
+        }
+
+        .modal-content h3 {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 10px;
+        }
+
+        .modal-card-display {
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: var(--light-blue);
+        }
+
+        .modal-card-display p {
+            margin: 10px 0;
+            font-size: 16px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        .modal-card-display strong {
+            display: block;
+            color: #004080;
+            margin-bottom: 5px;
+        }
+
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover, .close-btn:focus {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Styles for Mass Delete UI */
+        #mass-delete-cards-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            max-height: 50vh;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            background-color: #f8f9fa;
+        }
+        .mass-delete-card-item {
+            width: 180px;
+            height: 100px;
+            position: relative;
+            padding: 10px;
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            background-color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            text-align: center;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.2s;
+        }
+        .mass-delete-card-item.selected {
+            border-color: #dc3545;
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+            background-color: #fff0f0;
+        }
+        .mass-delete-card-item input[type="checkbox"] {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            z-index: 10;
+            width: 20px;
+            height: 20px;
+        }
+        .mass-delete-info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+
+        /* StudyHub 2026–2027 visual refresh */
+        :root { --primary-blue:#5265e8; --light-blue:#f0f2ff; --white:#fff; --text-dark:#20243a; --border-light:#e8eaf2; --chat-user:#5265e8; --chat-ai:#eaf7f1; --ink-muted:#777e95; --mint:#42b994; }
+        * { box-sizing:border-box; }
+        body { background:#f7f8fc; color:var(--text-dark); font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+        #auth-container,#onboarding-container { background:radial-gradient(ellipse at 15% 15%,#e4e9ff 0,transparent 45%),radial-gradient(ellipse at 90% 90%,#dff6ed 0,transparent 40%),#f7f8fc; padding:24px; }
+        .auth-box,.onboarding-box { border:1px solid rgba(255,255,255,.85); border-radius:24px; box-shadow:0 24px 80px rgba(40,50,100,.12); padding:42px; }
+        .logo { color:#3849c2; letter-spacing:-.04em; }
+        button { background:var(--primary-blue); border-radius:12px; box-shadow:0 8px 18px rgba(82,101,232,.18); }
+        button:hover { background:#4355d2; }
+        input[type="email"],input[type="password"],input[type="text"],input[type="number"],select { border:1px solid #e5e7ef; border-radius:12px; background:#fff; padding:13px 15px; outline:none; transition:border .2s,box-shadow .2s; }
+        input:focus { border-color:#8794f2; box-shadow:0 0 0 4px rgba(82,101,232,.1); }
+        #app-dashboard { grid-template-columns:248px minmax(0,1fr); background:#f7f8fc; }
+        #sidebar { background:#20243a; padding:25px 14px; box-shadow:none; }
+        #sidebar .logo { padding:0 14px!important; margin-bottom:42px!important; color:#fff; font-size:22px!important; }
+        .sidebar-item { color:#aeb4ca; border:0; border-radius:12px; margin:5px 0; padding:13px 15px; gap:2px; font-size:14px; font-weight:600; transition:.2s; }
+        .sidebar-item:hover { background:#2c314b; color:#fff; }
+        .sidebar-item.active { background:#343b5a; color:#fff; border:0; box-shadow:inset 3px 0 #93a0ff; }
+        .sidebar-item svg { margin-right:12px; }
+        #main-content { padding:40px clamp(22px,5vw,72px) 56px; max-width:1440px; width:100%; margin:auto; }
+        .welcome-bar { display:flex; align-items:center; justify-content:space-between; gap:20px; margin:0 0 34px; }
+        .eyebrow { color:#8b91a7; font-size:11px; font-weight:800; letter-spacing:.16em; margin:0 0 10px; }
+        .welcome-bar h1 { color:#20243a; font-size:clamp(28px,4vw,40px); line-height:1.1; letter-spacing:-.045em; margin:0; }
+        .welcome-dot { color:#5265e8; }
+        .welcome-subtitle,.section-intro { color:#858ba0; margin:10px 0 0; }
+        .class-chip { display:flex; align-items:center; gap:12px; border:1px solid #e9ebf3; border-radius:16px; background:#fff; padding:11px 15px; box-shadow:0 6px 20px rgba(35,45,90,.04); }
+        .class-chip-icon,.focus-icon { width:42px; height:42px; display:grid; place-items:center; border-radius:13px; background:#edf0ff; color:#5265e8; }
+        .class-chip small,.class-chip strong { display:block; }.class-chip small { color:#9298a9; letter-spacing:.09em; font-size:9px; font-weight:800; }.class-chip strong { font-size:18px; margin-top:1px; }.chip-divider { height:28px; width:1px; background:#e9ebf3; }.school-year { color:#727990; font-size:12px; font-weight:700; }
+        .tab-content { animation:riseIn .32s ease both; }.tab-content.active { display:block; }
+        @keyframes riseIn { from {opacity:0;transform:translateY(7px)} to {opacity:1;transform:translateY(0)} }
+        h2 { display:flex; align-items:center; gap:10px; border:0; color:#252a42; font-size:25px; letter-spacing:-.035em; padding:0; margin:0 0 22px; } h2 svg { color:#5265e8; }
+        h3 { color:#2b3046; letter-spacing:-.02em; }
+        #ai-chat-box { height:min(52vh,500px); min-height:280px; background:#fff; border:1px solid #eaecf3; border-radius:20px; padding:22px; box-shadow:0 8px 28px rgba(35,45,90,.04); gap:9px; }
+        .chat-message { padding:12px 16px; line-height:1.55; border-radius:17px; }
+        .chat-message.user { background:#5265e8; border-bottom-right-radius:5px; }.chat-message.ai { background:#f1f3fb; border-bottom-left-radius:5px; }
+        #ai-input-container { background:#fff; border:1px solid #e7e9f1; padding:8px; border-radius:16px; box-shadow:0 8px 24px rgba(35,45,90,.045); } #ai-input-container input { border:0; box-shadow:none; padding:12px; } #ai-input-container button { border-radius:12px; min-width:100px; }
+        .flashcard-creator,.flashcard-list-container { background:#fff; border:1px solid #e8eaf2; border-radius:18px; padding:22px; box-shadow:0 8px 28px rgba(35,45,90,.035); }
+        .flashcard-creator h3 { margin-top:0; }.flashcard-front { color:#4558d5; border-color:#dce1ff; }.flashcard-back { background:#5265e8; border-color:#5265e8; }
+        #settings-form,#profile-settings-form,#password-reset-form { background:#fff; border:1px solid #e8eaf2; border-radius:18px; padding:24px; box-shadow:0 8px 28px rgba(35,45,90,.035); }
+        .year-pill { display:inline-block; margin-left:8px; padding:5px 10px; border-radius:99px; background:#edf0ff; color:#5265e8; font-size:12px; font-weight:800; vertical-align:middle; }
+        /* Playful discovery and glass surfaces, grounded in a calm study workspace */
+        #main-content { position:relative; }
+        .welcome-bar,.class-chip,.focus-card,.learning-path,.support-card,.study-tip,.support-hero { backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.92);box-shadow:0 14px 40px rgba(57,66,130,.075),inset 0 1px rgba(255,255,255,.9); }
+        .welcome-bar { padding:24px 28px;border-radius:24px;background:linear-gradient(115deg,rgba(255,255,255,.88),rgba(237,240,255,.77));position:relative;overflow:hidden; }
+        .welcome-bar::after { content:"";position:absolute;width:210px;height:210px;border-radius:50%;right:23%;top:-160px;background:rgba(129,147,255,.17);filter:blur(5px);pointer-events:none; }
+        #sidebar { background:linear-gradient(165deg,#1e2340,#282c4a 65%,#292845); }
+        .learn-hero { min-height:310px;border-radius:28px;padding:clamp(25px,5vw,48px);display:grid;grid-template-columns:1.15fr .85fr;align-items:center;overflow:hidden;position:relative;background:linear-gradient(115deg,#3e4fc8 0%,#6b70e6 53%,#9d86ec 100%);box-shadow:0 22px 55px rgba(70,78,190,.22);color:#fff; }
+        .learn-hero::after { content:"";position:absolute;width:330px;height:330px;border-radius:50%;right:8%;top:-40%;background:rgba(255,255,255,.12);filter:blur(4px); }
+        .learn-hero-copy { position:relative;z-index:2;max-width:520px; }.learn-hero h2 { color:#fff;border:0;font-size:clamp(31px,4vw,46px);line-height:1.06;letter-spacing:-.05em;margin:18px 0 12px; }.learn-hero-copy>p { color:rgba(255,255,255,.79);font-size:15px;line-height:1.65;max-width:450px;margin:0 0 22px; }.learn-kicker { display:inline-flex;align-items:center;gap:8px;color:#e2e4ff;font-size:10px;letter-spacing:.16em;font-weight:850; }.learn-kicker svg { width:15px; }
+        .learn-hero-button { width:auto;background:rgba(255,255,255,.94);color:#4654c9;border-radius:13px;padding:12px 17px;box-shadow:0 8px 23px rgba(32,35,91,.15);display:inline-flex;gap:9px;align-items:center; }.learn-hero-button:hover { background:#fff;color:#3845b5; }
+        .learn-hero-art { position:relative;height:245px;display:grid;place-items:center;z-index:1; }.orbit { position:absolute;border:1px solid rgba(255,255,255,.27);border-radius:50%;width:220px;height:220px; }.orbit-two { width:165px;height:165px;border-style:dashed;transform:rotate(-25deg); }.orbit-center { width:100px;height:100px;border-radius:32px;display:grid;place-items:center;background:rgba(255,255,255,.19);border:1px solid rgba(255,255,255,.38);backdrop-filter:blur(12px);box-shadow:0 15px 36px rgba(33,37,120,.2);transform:rotate(-7deg); }.orbit-center svg { width:45px;height:45px;stroke-width:1.5; }.float-chip { position:absolute;display:flex;align-items:center;gap:7px;padding:11px 14px;border-radius:14px;color:#4b51ac;background:rgba(255,255,255,.9);font-size:12px;font-weight:750;box-shadow:0 9px 28px rgba(34,37,112,.18); }.float-chip svg { width:15px; }.float-chip-one { left:0;top:30px;transform:rotate(-6deg); }.float-chip-two { right:0;bottom:30px;transform:rotate(5deg); }
+        .learn-section-heading { display:flex;justify-content:space-between;align-items:end;gap:16px;margin:30px 2px 16px; }.learn-section-heading .eyebrow { margin-bottom:4px; }.learn-section-heading h3 { margin:0;font-size:22px;letter-spacing:-.04em; }.learn-class-tag { display:inline-flex;align-items:center;gap:7px;border:1px solid #e5e7f2;border-radius:99px;padding:8px 12px;background:rgba(255,255,255,.65);color:#777e9c;font-size:10px;font-weight:800;letter-spacing:.07em; }.learn-class-tag svg { width:14px;color:#6372df; }
+        .learning-path-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px; }.learning-path { border-radius:22px;padding:22px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s; }.learning-path:hover,.support-card:hover { transform:translateY(-3px);box-shadow:0 19px 40px rgba(57,66,130,.12); }.path-violet { background:linear-gradient(145deg,rgba(241,241,255,.94),rgba(255,255,255,.78)); }.path-mint { background:linear-gradient(145deg,rgba(231,250,243,.96),rgba(255,255,255,.8)); }.path-amber { background:linear-gradient(145deg,rgba(255,247,228,.96),rgba(255,255,255,.8)); }
+        .path-icon,.tip-spark { display:grid;place-items:center;width:44px;height:44px;border-radius:15px;background:rgba(110,124,233,.13);color:#5665d8;margin-bottom:20px; }.path-mint .path-icon { background:rgba(53,174,132,.13);color:#299875; }.path-amber .path-icon { background:rgba(234,169,66,.16);color:#ca8a27; }.path-tag { color:#9399ae;font-size:9px;letter-spacing:.15em;font-weight:850; }.learning-path h3 { font-size:21px;margin:8px 0 8px; }.learning-path p { min-height:66px;color:#83899e;font-size:13px;line-height:1.6;margin:0 0 16px; }.learning-path button,.support-card button { width:100%;display:flex;justify-content:space-between;align-items:center;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.78);color:#5662ce;box-shadow:none;font-size:12px; }.learning-path button:hover,.support-card button:hover { background:#fff; }.learning-path button svg,.support-card button svg { width:15px; }
+        .study-tip { display:flex;align-items:center;gap:16px;border-radius:20px;padding:18px 21px;margin-top:16px;background:rgba(255,255,255,.72); }.tip-spark { flex:none;margin:0;background:#fff4dd;color:#dc9e34; }.study-tip .path-tag { color:#bd8d35; }.study-tip p { color:#71778c;line-height:1.55;font-size:13px;margin:5px 0 0; }.tip-action { width:auto;flex:none;display:flex;align-items:center;gap:7px;background:#f1f2ff;color:#5965d6;box-shadow:none;padding:10px 12px;border-radius:11px;font-size:12px; }.tip-action svg { width:15px; }
+        .support-hero { text-align:center;border-radius:26px;padding:34px 22px 30px;background:radial-gradient(ellipse at 50% 0,rgba(206,215,255,.4),transparent 58%),rgba(255,255,255,.78); }.support-icon { margin:0 auto 13px;width:54px;height:54px;border-radius:18px;display:grid;place-items:center;color:#5969dc;background:#eef0ff; }.support-hero .eyebrow { margin-bottom:8px; }.support-hero h2 { display:block;margin:0 0 8px;font-size:30px; }.support-hero>p:not(.eyebrow) { max-width:500px;margin:0 auto 19px;color:#848ba0;line-height:1.6;font-size:14px; }.support-email { display:inline-flex;align-items:center;gap:9px;padding:12px 18px;border-radius:13px;background:#5365df;color:#fff;text-decoration:none;font-weight:750;font-size:13px;box-shadow:0 9px 24px rgba(82,101,232,.21); }.support-email:hover { background:#4354ca; }.support-email svg { width:16px; }.support-address { display:block;color:#969bad;font-size:11px;margin-top:9px; }.support-heading { margin-top:28px; }.support-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px; }.support-card { border-radius:19px;padding:20px;transition:.2s; }.support-card-icon { display:grid;place-items:center;width:38px;height:38px;border-radius:13px;background:#eef0ff;color:#5869dc; }.support-card-icon.green { background:#e4f7f0;color:#31a17c; }.support-card-icon.amber { background:#fff4df;color:#ce963b; }.support-card h3 { font-size:16px;margin:15px 0 7px; }.support-card p { min-height:84px;color:#858ba0;font-size:12px;line-height:1.6;margin:0 0 15px; }.support-card button { background:#f5f6fb;color:#5e68c9; }.support-note { display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:14px;background:rgba(236,248,244,.72);color:#668679;font-size:12px;line-height:1.5;margin-top:16px; }.support-note svg { flex:none;color:#36a67f; }
+        .focus-grid { display:grid; grid-template-columns:minmax(0,.92fr) minmax(300px,1.08fr); gap:18px; margin-top:22px; }
+        .focus-card { background:#fff; border:1px solid #e8eaf2; border-radius:22px; padding:25px; box-shadow:0 10px 34px rgba(35,45,90,.045); }
+        .focus-card-top { display:flex; align-items:center; gap:11px; }.focus-icon { width:38px;height:38px; }.task-icon { background:#e5f7f1;color:#2da47f; }.focus-label { color:#8990a5;font-size:10px;letter-spacing:.14em;font-weight:850; }
+        .timer-modes { display:flex; gap:8px; margin:25px 0 12px; }.timer-mode { width:auto; padding:9px 12px; box-shadow:none; background:#f1f2f8; color:#757b90; font-size:12px; }.timer-mode:hover,.timer-mode.active { background:#edf0ff;color:#4658d4; }
+        .focus-clock { color:#252a42; text-align:center; font-size:clamp(56px,8vw,78px); line-height:1.12; letter-spacing:-.07em; font-variant-numeric:tabular-nums; font-weight:750; margin-top:12px; }.focus-status { color:#9298a9;text-align:center;font-size:13px;margin:8px 0 20px; }
+        .timer-actions { display:flex;justify-content:center;gap:9px; }.timer-start { width:auto;display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 20px;border-radius:13px; }.timer-reset { width:46px;display:grid;place-items:center;background:#f0f1f7;color:#697087;box-shadow:none; }.timer-reset:hover { background:#e7e9f3;color:#444b65; }
+        .tasks-card h3 { margin:21px 0 5px;font-size:22px; }.task-hint { color:#9298a9;font-size:13px;margin:0 0 17px; }.task-form { display:flex;gap:8px; }.task-form input { margin:0; }.task-form button { width:48px;flex:none;display:grid;place-items:center; }
+        .focus-task-list { list-style:none;padding:0;margin:16px 0 0;display:grid;gap:8px; }.focus-task-list li { display:flex;align-items:center;gap:10px;border:1px solid #eef0f5;border-radius:12px;padding:10px 12px;color:#4c5269;font-size:14px; }.focus-task-list li input { accent-color:#5265e8;width:17px;height:17px; }.focus-task-list li.done span { color:#a0a5b4;text-decoration:line-through; }.task-empty { color:#a0a5b4;text-align:center;font-size:13px;margin:22px 0 5px; }.focus-footnote { display:flex;align-items:center;gap:8px;color:#8b91a5;font-size:12px;margin-top:19px; }.focus-footnote svg { width:15px;color:#e7a942; }
+        @media(max-width:850px) { #app-dashboard { grid-template-columns:1fr; } #sidebar { display:flex;align-items:center;gap:4px;overflow:auto;padding:12px;position:sticky;top:0;z-index:50; } #sidebar .logo { margin:0 10px 0 4px!important;white-space:nowrap;font-size:18px!important;padding:0!important; }.sidebar-item { white-space:nowrap;margin:0;padding:11px; }.sidebar-item svg { margin-right:7px; } #main-content { padding:28px 20px 42px; } }
+        @media(max-width:850px) { .learning-path-grid,.support-grid { grid-template-columns:1fr 1fr; }.learn-hero { grid-template-columns:1.2fr .8fr; }.learning-path p,.support-card p { min-height:0; } }
+        @media(max-width:640px) { .welcome-bar { align-items:flex-start;flex-direction:column; }.class-chip { padding:9px 12px; }.focus-grid,.learning-path-grid,.support-grid { grid-template-columns:1fr; }.learn-hero { grid-template-columns:1fr; }.learn-hero-art { height:160px; }.orbit { width:145px;height:145px; }.orbit-two { width:110px;height:110px; }.orbit-center { width:75px;height:75px;border-radius:24px; }.float-chip-one { left:10%;top:8px; }.float-chip-two { right:7%;bottom:9px; }.learn-section-heading { align-items:flex-start;flex-direction:column; }.study-tip { align-items:flex-start;flex-wrap:wrap; }.tip-action { margin-left:auto; }.timer-modes { justify-content:center; }.auth-box,.onboarding-box { padding:30px 23px; } }
+        @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important; } }
     </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+</head>
+<body>
+
+    <div id="auth-container">
+        <div class="auth-box">
+            <div class="logo">
+                <i data-lucide="book-open"></i> StudyHub
+            </div>
+            <h2 id="auth-title">Log In</h2>
+            <form id="auth-form">
+                <input type="email" id="auth-email" placeholder="Email" required>
+                <div class="password-input-group">
+                    <input type="password" id="auth-password" placeholder="Password" required>
+                    <i data-lucide="eye" class="toggle-password" id="toggle-auth-password"></i>
+                </div>
+                <button type="submit" id="auth-submit-btn">Log In</button>
+            </form>
+            <p class="toggle-auth">
+                Don't have an account? <span onclick="window.toggleAuthMode()">Sign Up</span>
+            </p>
+            <p id="auth-error" style="color: red; margin-top: 10px; display: none;"></p>
+        </div>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+
+    <div id="onboarding-container" style="display: none;">
+        <div class="onboarding-box">
+            <div class="logo">
+                <i data-lucide="book-open"></i> StudyHub
+            </div>
+            <h2>Welcome to StudyHub!</h2>
+            <p>Tell us a bit about yourself to get started.</p>
+            <form id="onboarding-form">
+                <input type="text" id="onboarding-name" placeholder="Full Name (e.g., Jane Doe)" required>
+                <input type="number" id="onboarding-age" placeholder="Age" min="10" max="100" required>
+                <input type="text" id="onboarding-yeargroup" placeholder="Year Group (e.g., 9B)" value="9B" required>
+                <input type="text" id="onboarding-institution" placeholder="Institution of Learning (e.g., Cambridge High School)" required>
+
+                <input type="text" id="onboarding-lesson-input" placeholder="Type a Lesson and Press Enter">
+                <ul id="lessons-list"></ul>
+                <p style="font-size: 12px; color: gray; margin-top: -10px; margin-bottom: 20px;">Type a lesson and press Enter to add it. Click to remove.</p>
+
+                <button type="submit">Complete Setup</button>
+                <p id="onboarding-error" style="color: red; margin-top: 10px; display: none;"></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-dashboard">
+        <aside id="sidebar">
+            <div class="logo" style="padding: 0 20px; margin-bottom: 30px; text-align: left; font-size: 24px;">
+                <i data-lucide="book-open" style="color: white; width: 30px; height: 30px;"></i> StudyHub
+            </div>
+            <div class="sidebar-item active" data-tab="ai-helper" onclick="window.changeTab(this, 'ai-helper')">
+                <i data-lucide="brain"></i> AI Study Helper
+            </div>
+            <div class="sidebar-item" data-tab="flashcards" onclick="window.changeTab(this, 'flashcards')">
+                <i data-lucide="layers"></i> Notes & Flashcards
+            </div>
+            <div class="sidebar-item" data-tab="learn" onclick="window.changeTab(this, 'learn')">
+                <i data-lucide="compass"></i> Learn
+            </div>
+            <div class="sidebar-item" data-tab="focus-room" onclick="window.changeTab(this, 'focus-room')">
+                <i data-lucide="timer"></i> Focus room
+            </div>
+            <div class="sidebar-item" data-tab="support" onclick="window.changeTab(this, 'support')">
+                <i data-lucide="life-buoy"></i> Student support
+            </div>
+            <div class="sidebar-item" data-tab="settings" onclick="window.changeTab(this, 'settings')">
+                <i data-lucide="settings"></i> Settings
+            </div>
+            <div class="sidebar-item" data-tab="credits" onclick="window.changeTab(this, 'credits')">
+                <i data-lucide="info"></i> Credits
+            </div>
+            <div id="admin-panel-link" class="sidebar-item" data-tab="admin-panel" style="display: none;" onclick="window.changeTab(this, 'admin-panel')">
+                <i data-lucide="shield"></i> Admin Panel
+            </div>
+            <div class="sidebar-item" onclick="window.logoutUser()">
+                <i data-lucide="log-out"></i> Log Out
+            </div>
+        </aside>
+
+        <main id="main-content">
+            <header class="welcome-bar">
+                <div><p class="eyebrow">YOUR STUDY SPACE · 2026–2027</p><h1>Make today count<span class="welcome-dot">.</span></h1><p class="welcome-subtitle">A calmer place to learn, focus and grow.</p></div>
+                <div class="class-chip"><span class="class-chip-icon"><i data-lucide="graduation-cap"></i></span><span><small>YOUR CLASS</small><strong>9B</strong></span><span class="chip-divider"></span><span class="school-year">2026–27</span></div>
+            </header>
+            <section id="ai-helper" class="tab-content active">
+                <h2><i data-lucide="brain"></i> AI Study Helper</h2>
+                <div id="ai-chat-box">
+                    <div class="chat-message ai">Hello! I'm your AI Study Helper. Ask me anything about your lessons, like "Explain the process of photosynthesis."</div>
+                </div>
+                <div id="ai-input-container">
+                    <input type="text" id="ai-input" placeholder="Ask your study question here...">
+                    <button onclick="window.sendAiMessage()">Send</button>
+                </div>
+            </section>
+
+            <section id="flashcards" class="tab-content">
+                <h2><i data-lucide="layers"></i> Notes & Flashcards</h2>
+                <p>Class <span id="chat-year-group-display">9B</span> <span class="year-pill">2026–2027</span></p>
+                
+                <div class="flashcard-creator">
+                    <h3><b>+</b> Create New Flashcard</h3>
+                    <input type="text" id="fc-front" placeholder="Front (Question/Term)" required>
+                    <input type="text" id="fc-back" placeholder="Back (Answer/Definition)" required>
+                    <button onclick="window.createFlashcard()">Add Flashcard</button>
+                    <p id="fc-error" style="color: red; margin-top: 10px; display: none;"></p>
+                </div>
+
+                <div class="flashcard-creator" style="margin-top: 20px;">
+                    <h3><b></b> Generate Flashcards with AI</h3>
+                    <input type="text" id="ai-fc-topic" placeholder="Topic (e.g., 'Key dates of The French Revolution')" required>
+
+                    <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
+                        <label style="font-weight: bold; margin-right: 5px;">Number of Cards:</label>
+                        
+                        <label><input type="radio" name="card-count" value="1" checked> 1 Card</label>
+                        <label><input type="radio" name="card-count" value="5"> 5 Cards</label>
+                        
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="card-count" value="custom" id="custom-radio"> Custom:
+                            <input type="number" id="ai-fc-count" min="1" max="50" value="10" style="width: 70px; margin: 0; padding: 5px;" disabled>
+                        </label>
+                    </div>
+                    
+                    <button onclick="window.generateFlashcardsWithAI(this)">Generate Flashcards</button>
+                    <p id="ai-fc-status" style="color: var(--primary-blue); margin-top: 10px; display: none; font-weight: bold;"></p> 
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+                    <h3><b></b> My Flashcards</h3>
+                    <button style="width: 150px; padding: 8px; background-color: #dc3545;" onclick="window.openMassDeleteModal()" id="mass-delete-open-btn" disabled>Mass Delete</button>
+                </div>
+                
+                <div class="flashcard-list-container">
+                    <div class="flashcard-list" id="user-flashcards">
+                        <p style="text-align: center; width: 100%;" id="no-flashcards-msg">No flashcards yet. Create one or use the AI generator!</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="learn" class="tab-content">
+                <div class="learn-hero">
+                    <div class="learn-hero-copy"><span class="learn-kicker"><i data-lucide="sparkles"></i> BUILT FOR CURIOUS MINDS</span><h2>Your next big<br>idea starts here.</h2><p>Explore a topic, practise what you know, and build confidence one step at a time.</p><button class="learn-hero-button" onclick="window.changeTab(document.querySelector('[data-tab="ai-helper"]'),'ai-helper')"><i data-lucide="message-circle"></i> Ask StudyHub AI</button></div>
+                    <div class="learn-hero-art" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="orbit-center"><i data-lucide="book-open-check"></i></span><span class="float-chip float-chip-one"><i data-lucide="lightbulb"></i> Big ideas</span><span class="float-chip float-chip-two"><i data-lucide="star"></i> Your pace</span></div>
+                </div>
+                <div class="learn-section-heading"><div><p class="eyebrow">YOUR TOOLKIT</p><h3>Pick your next move</h3></div><span class="learn-class-tag"><i data-lucide="graduation-cap"></i> CLASS 9B · 2026–27</span></div>
+                <div class="learning-path-grid">
+                    <article class="learning-path path-violet"><span class="path-icon"><i data-lucide="brain"></i></span><span class="path-tag">UNDERSTAND</span><h3>Get unstuck</h3><p>Ask questions, explore tricky ideas, and get explanations in plain language.</p><button onclick="window.changeTab(document.querySelector('[data-tab="ai-helper"]'),'ai-helper')">Chat with AI <i data-lucide="arrow-up-right"></i></button></article>
+                    <article class="learning-path path-mint"><span class="path-icon"><i data-lucide="layers-2"></i></span><span class="path-tag">REMEMBER</span><h3>Practice recall</h3><p>Turn key facts into flashcards and see what you can remember without notes.</p><button onclick="window.changeTab(document.querySelector('[data-tab="flashcards"]'),'flashcards')">Open flashcards <i data-lucide="arrow-up-right"></i></button></article>
+                    <article class="learning-path path-amber"><span class="path-icon"><i data-lucide="timer"></i></span><span class="path-tag">MAKE PROGRESS</span><h3>Focus in short bursts</h3><p>Choose one small goal, work for 25 minutes, then take a proper breather.</p><button onclick="window.changeTab(document.querySelector('[data-tab="focus-room"]'),'focus-room')">Start a focus session <i data-lucide="arrow-up-right"></i></button></article>
+                </div>
+                <div class="study-tip"><span class="tip-spark"><i data-lucide="quote"></i></span><div><span class="path-tag">A STUDY TIP TO TRY</span><p>After a lesson, close your notes and write down three things you remember. Checking what you can recall helps you spot what to review next.</p></div><button class="tip-action" onclick="window.changeTab(document.querySelector('[data-tab="flashcards"]'),'flashcards')">Try it <i data-lucide="arrow-right"></i></button></div>
+            </section>
+
+            <section id="support" class="tab-content">
+                <div class="support-hero"><span class="support-icon"><i data-lucide="life-buoy"></i></span><p class="eyebrow">YOU'RE NOT ON YOUR OWN</p><h2>Student support</h2><p>Questions, feedback, or something not working? Reach out and we’ll help you find your next step.</p><a class="support-email" href="mailto:nathanthebest01@gmail.com?subject=StudyHub%20support"><i data-lucide="mail"></i> Email Nathan <i data-lucide="arrow-up-right"></i></a><span class="support-address">nathanthebest01@gmail.com</span></div>
+                <div class="learn-section-heading support-heading"><div><p class="eyebrow">QUICK ANSWERS</p><h3>How can we help?</h3></div></div>
+                <div class="support-grid">
+                    <article class="support-card"><span class="support-card-icon"><i data-lucide="sparkles"></i></span><h3>Using the AI helper</h3><p>Ask one clear question at a time. Include the topic and what part feels confusing to get a more useful explanation.</p><button onclick="window.changeTab(document.querySelector('[data-tab="ai-helper"]'),'ai-helper')">Open AI helper <i data-lucide="arrow-right"></i></button></article>
+                    <article class="support-card"><span class="support-card-icon green"><i data-lucide="layers-2"></i></span><h3>Making flashcards</h3><p>Add a question on the front and a short answer on the back. Or try the AI generator to make a starter set.</p><button onclick="window.changeTab(document.querySelector('[data-tab="flashcards"]'),'flashcards')">Go to flashcards <i data-lucide="arrow-right"></i></button></article>
+                    <article class="support-card"><span class="support-card-icon amber"><i data-lucide="user-round-cog"></i></span><h3>Profile or account help</h3><p>Update your class, subjects, or profile details in Settings. For sign-in trouble, email support with a short description.</p><button onclick="window.changeTab(document.querySelector('[data-tab="settings"]'),'settings')">Open settings <i data-lucide="arrow-right"></i></button></article>
+                </div>
+                <div class="support-note"><i data-lucide="heart-handshake"></i><span>StudyHub is a learning companion. If schoolwork feels overwhelming, talk with a teacher or trusted adult too.</span></div>
+            </section>
+
+            <section id="focus-room" class="tab-content">
+                <h2><i data-lucide="timer"></i> Focus room</h2>
+                <p class="section-intro">Set a small goal, settle in, and give it your full attention.</p>
+                <div class="focus-grid">
+                    <article class="focus-card timer-card">
+                        <div class="focus-card-top"><span class="focus-icon"><i data-lucide="hourglass"></i></span><span class="focus-label">POMODORO TIMER</span></div>
+                        <div class="timer-modes"><button class="timer-mode active" onclick="window.setFocusDuration(25,this)">Focus · 25 min</button><button class="timer-mode" onclick="window.setFocusDuration(5,this)">Short break · 5 min</button></div>
+                        <div id="focus-clock" class="focus-clock" aria-live="polite">25:00</div>
+                        <p id="focus-status" class="focus-status">Ready when you are</p>
+                        <div class="timer-actions"><button class="timer-start" onclick="window.toggleFocusTimer()"><i data-lucide="play"></i><span id="focus-start-label">Start focus</span></button><button class="timer-reset" aria-label="Reset timer" onclick="window.resetFocusTimer()"><i data-lucide="rotate-ccw"></i></button></div>
+                    </article>
+                    <article class="focus-card tasks-card">
+                        <div class="focus-card-top"><span class="focus-icon task-icon"><i data-lucide="list-checks"></i></span><span class="focus-label">TODAY'S CHECKLIST</span></div>
+                        <h3>One thing at a time.</h3><p class="task-hint">Your list stays saved on this device.</p>
+                        <form id="focus-task-form" class="task-form"><input id="focus-task-input" type="text" maxlength="100" placeholder="Add a study task…" autocomplete="off"><button aria-label="Add task"><i data-lucide="plus"></i></button></form>
+                        <ul id="focus-task-list" class="focus-task-list"></ul><p id="focus-task-empty" class="task-empty">Your first small win starts here ✨</p>
+                    </article>
+                </div>
+                <p class="focus-footnote"><i data-lucide="sparkles"></i> Tip: take a short screen break between focus sessions.</p>
+            </section>
+
+            <section id="settings" class="tab-content">
+                <h2><i data-lucide="settings"></i> Account Settings</h2>
+                
+                <form id="profile-settings-form">
+                    <h3><b>👤</b> Profile Details</h3>
+                    <label for="setting-name">Name:</label>
+                    <input type="text" id="setting-name" required>
+
+                    <label for="setting-age">Age:</label>
+                    <input type="number" id="setting-age" min="10" required>
+
+                    <label for="setting-yeargroup">Year Group:</label>
+                    <input type="text" id="setting-yeargroup" placeholder="9B" required>
+                    
+                    <label for="setting-institution">Institution of Learning:</label>
+                    <input type="text" id="setting-institution" required>
+
+                    <label for="setting-lessons-input">Lessons (Type and press Enter to add/remove):</label>
+                    <input type="text" id="setting-lessons-input" placeholder="Type a Lesson and Press Enter">
+                    <ul id="setting-lessons-list"></ul>
+                    
+                    <p id="profile-save-status" style="color: var(--primary-blue); margin-top: 15px; display: none; font-weight: bold;">Changes saved successfully!</p>
+                    
+                    <button type="submit" style="margin-top: 20px;">Save Profile Details</button>
+                </form>
+
+                <form id="password-reset-form">
+                    <h3 style="margin-top: 30px;"><b>🔐</b> Password Reset</h3>
+                    <div class="password-input-group">
+                        <input type="password" id="setting-new-password" placeholder="New Password (min 8 characters)">
+                        <i data-lucide="eye" class="toggle-password" id="toggle-setting-password"></i>
+                    </div>
+                    
+                    <p id="password-reset-status" style="color: red; margin-top: 10px; display: none;"></p>
+                    <button type="submit" style="margin-top: 20px; background-color: #dc3545;">Reset Password</button>
+                </form>
+
+            </section>
+
+            <section id="credits" class="tab-content">
+                <h2><i data-lucide="info"></i> Credits</h2>
+                <p>This StudyHub platform was conceptualized and developed with key contributions from:</p>
+                <div style="background: var(--light-blue); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 5px solid var(--primary-blue);">
+                    <p style="font-size: 18px; font-weight: bold;">Development: <b>Nathan Koech</b> Year 8B</p>
+                </div>
+                <p style="margin-top: 20px;">Made for the Light International School Science Fair, Class of 2026–2027.</p>
+            </section>
+
+            <section id="admin-panel" class="tab-content"><h2><i data-lucide="shield"></i> Admin Panel</h2><p>Welcome, Admin! This panel is restricted to declanthebest01@gmail.com.</p></section>
+
+        </main>
+    </div>
+
+    <div id="flashcard-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="document.getElementById('flashcard-modal').style.display = 'none';">&times;</span>
+            <h3>Flashcard Details</h3>
+            <div class="modal-card-display">
+                <p><strong>Front (Question/Term):</strong> <span id="modal-front"></span></p>
+                <p><strong>Back (Answer/Definition):</strong> <span id="modal-back"></span></p>
+                <p><strong>Saved Date:</strong> <span id="modal-date"></span></p>
+                <p><strong>Source:</strong> <span id="modal-source"></span></p>
+            </div>
+            <button onclick="document.getElementById('flashcard-modal').style.display = 'none';">Close</button>
+        </div>
+    </div>
+
+    <div id="confirm-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="window.resolveConfirm(false);">&times;</span>
+            <h3 id="confirm-modal-title">Confirm Action</h3>
+            <div class="modal-card-display" style="background-color: #ffe9e9; border: 2px solid #dc3545;">
+                <p><strong>Confirmation Message:</strong></p>
+                <p id="confirm-modal-message">Are you absolutely sure you want to proceed?</p>
+            </div>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                <button style="width: 45%; background-color: #dc3545;" onclick="window.resolveConfirm(true)">Confirm</button>
+                <button style="width: 45%; background-color: #6c757d;" onclick="window.resolveConfirm(false)">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="mass-delete-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="document.getElementById('mass-delete-modal').style.display = 'none';">&times;</span>
+            <h3>Mass Delete Flashcards</h3>
+            
+            <div class="mass-delete-info-bar">
+                <button style="width: auto; padding: 5px 10px; background-color: #17a2b8;" onclick="window.toggleSelectAll(true)">Select All</button>
+                <p style="font-weight: bold;">Selected Cards: <span id="selected-card-count">0</span> / <span id="total-card-count">0</span></p>
+                <button style="width: auto; padding: 5px 10px; background-color: #6c757d;" onclick="window.toggleSelectAll(false)">Clear Selection</button>
+            </div>
+            
+            <div id="mass-delete-cards-list">
+                </div>
+            
+            <button style="margin-top: 20px; background-color: #dc3545;" onclick="window.performMassDelete()">Delete Selected (<span id="delete-count-btn">0</span>)</button>
+        </div>
+    </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        const firebaseConfig = {
+            apiKey: "AIzaSyCAJ5kM37MKyq2UGUw1dHF8EEskdKWU5f4",
+            authDomain: "studyhubon.firebaseapp.com",
+            projectId: "studyhubon",
+            storageBucket: "studyhubon.firebasestorage.app",
+            messagingSenderId: "137164743903",
+            appId: "1:137164743903:web:9ffa7d3f8e67d9b349f56a",
+            measurementId: "G-6SPKY9LQ0S"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+        // Made by Nathan
+        const GEMINI_API_KEY = "AIzaSyCEBSFL8fLH02VdggHMA1mB13xvg9wkdLo"; 
+        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;
+
+        let currentUserData = {};
+        // Made by Nathan: Tracks indexes of selected cards for mass delete
+        let selectedFlashcards = new Set(); 
+        
+        function setupPasswordToggle(inputId, toggleId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(toggleId);
+            if (toggleIcon) {
+                toggleIcon.addEventListener('click', () => {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    toggleIcon.setAttribute('data-lucide', type === 'password' ? 'eye' : 'eye-off');
+                    lucide.createIcons();
+                });
+            }
         }
-      });
+        
+        function setupLessonInput(inputId, listId, lessonsArray, isSetting = false) {
+            const inputElement = document.getElementById(inputId);
+            const listElement = document.getElementById(listId);
+
+            const renderLessons = () => {
+                listElement.innerHTML = '';
+                lessonsArray.forEach(lesson => {
+                    const tag = document.createElement('li');
+                    tag.className = 'lesson-tag';
+                    tag.textContent = lesson;
+                    
+                    if (isSetting) {
+                        const removeSpan = document.createElement('span');
+                        removeSpan.textContent = 'x';
+                        removeSpan.onclick = () => {
+                            const index = lessonsArray.indexOf(lesson);
+                            if (index > -1) {
+                                lessonsArray.splice(index, 1);
+                                renderLessons();
+                            }
+                        };
+                        tag.appendChild(removeSpan);
+                    }
+
+                    listElement.appendChild(tag);
+                });
+            };
+
+            inputElement.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && inputElement.value.trim() !== '') {
+                    e.preventDefault();
+                    const lesson = inputElement.value.trim();
+                    if (!lessonsArray.includes(lesson)) {
+                        lessonsArray.push(lesson);
+                        renderLessons();
+                        inputElement.value = '';
+                    }
+                }
+            });
+
+            renderLessons();
+            
+            return { lessonsArray, renderLessons };
+        }
+        
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                await checkOnboardingStatus(user.uid, user.email);
+            } else {
+                document.getElementById('app-dashboard').style.display = 'none';
+                document.getElementById('onboarding-container').style.display = 'none';
+                document.getElementById('auth-container').style.display = 'flex';
+            }
+        });
+        
+        async function checkOnboardingStatus(uid, email) {
+            const userDocRef = db.collection('users').doc(uid);
+            const userDoc = await userDocRef.get();
+            
+            if (userDoc.exists && userDoc.data().onboarded) {
+                currentUserData = userDoc.data();
+                
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('onboarding-container').style.display = 'none';
+                document.getElementById('app-dashboard').style.display = 'grid';
+                
+                loadUserSettings(currentUserData);
+                document.getElementById('chat-year-group-display').textContent = currentUserData.yearGroup || '9B';
+                renderFocusTasks();
+
+                const adminLink = document.getElementById('admin-panel-link');
+                if (email === "declanthebest01@gmail.com") {
+                    adminLink.style.display = 'flex';
+                } else {
+                    adminLink.style.display = 'none';
+                }
+                
+                // Made by Nathan: Setup Enter key listener for AI chat on successful load
+                document.getElementById('ai-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        window.sendAiMessage();
+                    }
+                });
+
+            } else {
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('onboarding-container').style.display = 'flex';
+            }
+        }
+        
+        let isLoginMode = true; 
+        
+        window.toggleAuthMode = function() {
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('auth-title');
+            const btn = document.getElementById('auth-submit-btn');
+            const toggleP = document.querySelector('.toggle-auth');
+            const error = document.getElementById('auth-error');
+            error.style.display = 'none';
+
+            if (isLoginMode) {
+                title.textContent = 'Log In';
+                btn.textContent = 'Log In';
+                toggleP.innerHTML = "Don't have an account? <span onclick=\"window.toggleAuthMode()\">Sign Up</span>";
+            } else {
+                title.textContent = 'Sign Up';
+                btn.textContent = 'Sign Up';
+                toggleP.innerHTML = "Already have an account? <span onclick=\"window.toggleAuthMode()\">Log In</span>";
+            }
+        }
+
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const error = document.getElementById('auth-error');
+            error.style.display = 'none';
+
+            try {
+                if (isLoginMode) {
+                    await auth.signInWithEmailAndPassword(email, password);
+                } else {
+                    await auth.createUserWithEmailAndPassword(email, password);
+                }
+            } catch (err) {
+                let errorMessage = 'An unknown error occurred. Please try again.';
+                switch (err.code) {
+                    case 'auth/wrong-password':
+                    case 'auth/user-not-found':
+                    case 'auth/invalid-credential':
+                        errorMessage = 'Invalid email or password.';
+                        break;
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'This email is already registered.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password must be at least 6 characters.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'The email address is not valid.';
+                        break;
+                }
+                error.textContent = errorMessage;
+                error.style.display = 'block';
+            }
+        });
+        
+        window.logoutUser = async () => {
+            try {
+                await auth.signOut();
+            } catch (error) {
+                alert('Error logging out: ' + error.message);
+            }
+        }
+        
+        setupPasswordToggle('auth-password', 'toggle-auth-password');
+        
+        let onboardingLessons = [];
+        const onboardingLessonSetup = setupLessonInput('onboarding-lesson-input', 'lessons-list', onboardingLessons, true);
+        onboardingLessons = onboardingLessonSetup.lessonsArray;
+
+        document.getElementById('onboarding-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            const error = document.getElementById('onboarding-error');
+            error.style.display = 'none';
+
+            if (!user) {
+                error.textContent = 'Authentication error. Please log in again.';
+                error.style.display = 'block';
+                return;
+            }
+
+            const name = document.getElementById('onboarding-name').value.trim();
+            const age = document.getElementById('onboarding-age').value;
+            const yearGroup = document.getElementById('onboarding-yeargroup').value.trim();
+            const institution = document.getElementById('onboarding-institution').value.trim();
+
+            if (onboardingLessons.length === 0) {
+                error.textContent = 'Please add at least one lesson.';
+                error.style.display = 'block';
+                return;
+            }
+
+            try {
+                const isAdminUser = user.email === "declanthebest01@gmail.com";
+                const userData = {
+                    email: user.email,
+                    name: name,
+                    age: parseInt(age),
+                    yearGroup: yearGroup,
+                    institution: institution,
+                    lessons: onboardingLessons,
+                    onboarded: true,
+                    score_overall: 0,
+                    score_year_group: 0,
+                    flashcards: [],
+                    isAdmin: isAdminUser,
+                };
+
+                await db.collection('users').doc(user.uid).set(userData, { merge: true });
+                await checkOnboardingStatus(user.uid, user.email);
+            } catch (err) {
+                error.textContent = 'Failed to save profile: ' + err.message;
+                error.style.display = 'block';
+            }
+        });
+
+        window.changeTab = (sidebarItem, tabId) => {
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            sidebarItem.classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'flashcards' && auth.currentUser) {
+                window.loadFlashcards(auth.currentUser.uid);
+            }
+        }
+
+        // Made by Nathan
+        window.sendAiMessage = async () => {
+            const input = document.getElementById('ai-input');
+            const chatBox = document.getElementById('ai-chat-box');
+            const userMessage = input.value.trim();
+            
+            if (!userMessage) return;
+
+            const userMsgElement = document.createElement('div');
+            userMsgElement.className = 'chat-message user';
+            userMsgElement.textContent = userMessage;
+            chatBox.appendChild(userMsgElement);
+            
+            const aiMsgElement = document.createElement('div');
+            aiMsgElement.className = 'chat-message ai';
+            aiMsgElement.innerHTML = 'Thinking...';
+            chatBox.appendChild(aiMsgElement);
+
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Defensive coding for systemInstruction arguments
+            const userLessons = currentUserData.lessons && currentUserData.lessons.length > 0 
+                ? currentUserData.lessons.join(', ') 
+                : 'General Knowledge';
+            const userYearGroup = currentUserData.yearGroup || 'High School';
+            
+            const systemInstructionText = `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`;
+            
+            const payload = {
+                // CORRECT CONTENTS: Only user and model roles allowed for this API.
+                contents: [{ role: "user", parts: [{ text: userMessage }] }],
+                
+                // FINAL CORRECT FIX: The value of 'system_instruction' must be a CONTENT object.
+                system_instruction: { 
+                    parts: [{ text: systemInstructionText }] 
+                },
+                
+                // generationConfig ONLY contains generation parameters (like temperature)
+                generationConfig: {
+                    temperature: 0.5
+                }
+            };
+            
+            try {
+                const response = await fetch(GEMINI_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload) // Directly use payload object
+                });
+
+                if (!response.ok) {
+                    // Log the full error response text for better debugging
+                    const errorText = await response.text(); 
+                    console.error("Gemini API Full Error Response:", errorText);
+                    throw new Error(`API call failed with status ${response.status}: ${errorText}`);
+                }
+
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+                
+                aiMsgElement.textContent = aiText;
+            } catch (error) {
+                console.error('Gemini API Error:', error);
+                
+                let displayError = 'I don\'t know. Error communicating with the study model.';
+                if (error.message.includes('status 503')) {
+                     displayError = 'The AI model is overloaded. Please try again in a moment.';
+                }
+
+                aiMsgElement.textContent = displayError;
+            }
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        window.loadFlashcards = async (uid) => {
+            const userFlashcardsList = document.getElementById('user-flashcards');
+            const noCardsMsg = document.getElementById('no-flashcards-msg');
+            const massDeleteBtn = document.getElementById('mass-delete-open-btn');
+            const userDocRef = db.collection('users').doc(uid);
+            
+            try {
+                const doc = await userDocRef.get();
+                const flashcards = doc.data().flashcards || [];
+                currentUserData.flashcards = flashcards;
+                userFlashcardsList.innerHTML = '';
+                
+                // Control visibility and state
+                if (flashcards.length === 0) {
+                    if (noCardsMsg) noCardsMsg.style.display = 'block';
+                    massDeleteBtn.disabled = true;
+                    return;
+                }
+                if (noCardsMsg) noCardsMsg.style.display = 'none';
+                massDeleteBtn.disabled = false;
+
+
+                flashcards.forEach((card, index) => {
+                    userFlashcardsList.appendChild(createFlashcardElement(card, index));
+                });
+            } catch (error) {
+                console.error("Error loading flashcards:", error);
+                // Ensure noCardsMsg is handled even on error to prevent TypeError if called after tab change
+                if(noCardsMsg) noCardsMsg.style.display = 'block';
+                massDeleteBtn.disabled = true;
+                userFlashcardsList.innerHTML = '<p style="color: red;">Failed to load flashcards.</p>';
+            }
+        }
+        
+        function createFlashcardElement(card, index) {
+            const cardElement = document.createElement('div');
+            cardElement.className = 'flashcard-card';
+            cardElement.setAttribute('data-index', index);
+            
+            cardElement.innerHTML = `
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        ${card.front}
+                        <i data-lucide="x-circle" style="position: absolute; top: 5px; right: 5px; width: 20px; height: 20px; color: red;" onclick="event.stopPropagation(); window.deleteFlashcard(${index});"></i>
+                    </div>
+                    <div class="flashcard-back">${card.back}</div>
+                </div>
+            `;
+            
+            cardElement.onclick = () => {
+                window.viewFlashcardDetails(index);
+            };
+            
+            setTimeout(() => lucide.createIcons(), 0);
+            return cardElement;
+        }
+
+        window.viewFlashcardDetails = (index) => {
+            const card = currentUserData.flashcards[index];
+            if (!card) return;
+
+            let dateString = "N/A";
+            if (card.timestamp && card.timestamp.toDate) {
+                dateString = card.timestamp.toDate().toLocaleDateString("en-US", {
+                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+            } else if (card.timestamp) {
+                 dateString = new Date(card.timestamp).toLocaleDateString("en-US");
+            }
+
+            document.getElementById('modal-front').textContent = card.front;
+            document.getElementById('modal-back').textContent = card.back;
+            document.getElementById('modal-date').textContent = dateString;
+            document.getElementById('modal-source').textContent = card.source;
+
+            document.getElementById('flashcard-modal').style.display = 'flex';
+        }
+
+        window.createFlashcard = async () => {
+            const front = document.getElementById('fc-front').value.trim();
+            const back = document.getElementById('fc-back').value.trim();
+            const error = document.getElementById('fc-error');
+            error.style.display = 'none';
+            
+            if (!front || !back) {
+                error.textContent = 'Both front and back fields must be filled.';
+                error.style.display = 'block';
+                return;
+            }
+            
+            const newCard = { 
+                front, 
+                back, 
+                source: 'student', 
+                timestamp: firebase.firestore.Timestamp.now()
+            };
+
+            try {
+                const userDocRef = db.collection('users').doc(auth.currentUser.uid);
+                await userDocRef.update({
+                    flashcards: firebase.firestore.FieldValue.arrayUnion(newCard)
+                });
+                
+                await loadFlashcards(auth.currentUser.uid); // Reloads flashcards after save
+
+                document.getElementById('fc-front').value = '';
+                document.getElementById('fc-back').value = '';
+                error.textContent = 'Flashcard added!';
+                error.style.color = 'var(--chat-ai)';
+                error.style.display = 'block';
+                setTimeout(() => error.style.display = 'none', 3000);
+
+            } catch (e) {
+                error.textContent = 'Failed to save flashcard: ' + e.message;
+                error.style.color = 'red';
+                error.style.display = 'block';
+            }
+        }
+        
+        // Made by Nathan: Custom confirmation modal logic
+        let confirmResolver = null;
+
+        window.showConfirmModal = function(title, message, confirmText = "Confirm", cancelText = "Cancel") {
+            return new Promise((resolve) => {
+                confirmResolver = resolve;
+                document.getElementById('confirm-modal-title').textContent = title;
+                document.getElementById('confirm-modal-message').textContent = message;
+                
+                // Update button texts (if needed, but using fixed structure for simplicity now)
+                document.getElementById('confirm-modal').style.display = 'flex';
+            });
+        };
+
+        window.resolveConfirm = function(result) {
+            if (confirmResolver) {
+                confirmResolver(result);
+                confirmResolver = null;
+                document.getElementById('confirm-modal').style.display = 'none';
+            }
+        };
+
+        window.deleteFlashcard = async (index) => {
+            const card = currentUserData.flashcards[index];
+            const message = `Are you absolutely sure you want to delete this flashcard: "${card.front}"? The card will be permanently removed.`;
+            const isConfirmed = await window.showConfirmModal("Confirm Single Deletion", message);
+
+            if (!isConfirmed) return;
+
+            const cardToDelete = currentUserData.flashcards[index];
+            if (!cardToDelete) return;
+
+            try {
+                const userDocRef = db.collection('users').doc(auth.currentUser.uid);
+                
+                // IMPORTANT: We must use a copy of the object, including its timestamp,
+                // for arrayRemove to correctly match the item in Firestore.
+                await userDocRef.update({
+                    flashcards: firebase.firestore.FieldValue.arrayRemove(cardToDelete)
+                });
+
+                await loadFlashcards(auth.currentUser.uid); 
+            } catch (e) {
+                alert('Failed to delete flashcard: ' + e.message);
+                console.error(e);
+            }
+        }
+        
+        // Made by Nathan: Mass Delete Implementation
+
+        window.openMassDeleteModal = () => {
+            const listContainer = document.getElementById('mass-delete-cards-list');
+            listContainer.innerHTML = '';
+            selectedFlashcards.clear();
+
+            const flashcards = currentUserData.flashcards || [];
+            
+            document.getElementById('total-card-count').textContent = flashcards.length;
+            document.getElementById('selected-card-count').textContent = 0;
+            document.getElementById('delete-count-btn').textContent = 0;
+
+            if (flashcards.length === 0) {
+                 listContainer.innerHTML = '<p style="text-align: center; width: 100%; margin: 20px;">No flashcards available for mass deletion.</p>';
+                 return;
+            }
+
+            flashcards.forEach((card, index) => {
+                const item = document.createElement('div');
+                item.className = 'mass-delete-card-item';
+                item.setAttribute('data-index', index);
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `md-card-${index}`;
+                
+                checkbox.onchange = (e) => {
+                    const isChecked = e.target.checked;
+                    if (isChecked) {
+                        selectedFlashcards.add(index);
+                        item.classList.add('selected');
+                    } else {
+                        selectedFlashcards.delete(index);
+                        item.classList.remove('selected');
+                    }
+                    window.updateMassDeleteCount();
+                };
+                
+                const label = document.createElement('label');
+                label.htmlFor = `md-card-${index}`;
+                label.innerHTML = `<strong>Front:</strong> ${card.front}`;
+                label.style.width = '100%';
+                label.style.cursor = 'pointer';
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                listContainer.appendChild(item);
+            });
+            
+            document.getElementById('mass-delete-modal').style.display = 'flex';
+        };
+        
+        window.updateMassDeleteCount = () => {
+            const count = selectedFlashcards.size;
+            document.getElementById('selected-card-count').textContent = count;
+            document.getElementById('delete-count-btn').textContent = count;
+        };
+        
+        window.toggleSelectAll = (select) => {
+            const checkboxes = document.querySelectorAll('#mass-delete-cards-list input[type="checkbox"]');
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.checked = select;
+                const item = checkbox.closest('.mass-delete-card-item');
+                if (select) {
+                    selectedFlashcards.add(index);
+                    item.classList.add('selected');
+                } else {
+                    selectedFlashcards.delete(index);
+                    item.classList.remove('selected');
+                }
+            });
+            window.updateMassDeleteCount();
+        };
+
+// Made by Nathan
+window.performMassDelete = async () => {
+    if (selectedFlashcards.size === 0) {
+        alert('Please select at least one flashcard to delete.');
+        return;
+    }
+
+    const deleteModal = document.getElementById('mass-delete-modal');
+    
+    // Hide the mass delete modal before showing the confirmation
+    deleteModal.style.display = 'none'; 
+
+    const message = `You are about to permanently delete ${selectedFlashcards.size} flashcards. This action cannot be undone. Do you wish to proceed?`;
+    const isConfirmed = await window.showConfirmModal("Confirm Mass Deletion", message);
+
+    if (!isConfirmed) {
+        // If canceled, re-show the mass delete modal
+        deleteModal.style.display = 'flex'; 
+        return;
+    }
+
+    const cardsToDelete = Array.from(selectedFlashcards)
+        .map(index => currentUserData.flashcards[index])
+        .filter(card => card);
+
+    if (cardsToDelete.length === 0) {
+         // Should not happen if selectedFlashcards.size > 0, but safe guard is fine.
+         alert('No valid flashcards found to delete.');
+         return;
+    }
+
+    // --- New Status Setup (using AI Status element temporarily) ---
+    const statusElement = document.getElementById('ai-fc-status');
+    statusElement.style.color = '#dc3545'; // Red color for deletion
+    statusElement.innerHTML = `<i data-lucide="loader" class="spinner-icon"></i> Deleting ${cardsToDelete.length} flashcards...`;
+    lucide.createIcons();
+    statusElement.style.display = 'block';
+    // --- End Status Setup ---
+
+    try {
+        const userDocRef = db.collection('users').doc(auth.currentUser.uid);
+        
+        // Loop through the selected cards and remove them one by one
+        for (const card of cardsToDelete) {
+            await userDocRef.update({
+                flashcards: firebase.firestore.FieldValue.arrayRemove(card)
+            });
+        }
+        
+        await loadFlashcards(auth.currentUser.uid); 
+        selectedFlashcards.clear();
+
+        // --- CHANGE: Replaced alert() with temporary status message ---
+        statusElement.innerHTML = `<i data-lucide="trash-2" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;"></i> Successfully deleted ${cardsToDelete.length} flashcards.`;
+        lucide.createIcons();
+        setTimeout(() => statusElement.style.display = 'none', 4000); 
+        // --- End of CHANGE ---
+
+    } catch (e) {
+        // Retaining this alert for CRITICAL feedback upon database failure.
+        alert('I don\'t know. Failed to perform mass delete: ' + e.message); 
+        console.error(e);
+        // Update error status message instead of success one
+        statusElement.innerHTML = `<i data-lucide="alert-triangle" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;"></i> Error deleting cards. See console.`;
+        lucide.createIcons();
+        statusElement.style.color = 'red';
+        deleteModal.style.display = 'flex'; // Re-show on failure so user can try again
+    }
+};
+
+
+        window.generateFlashcardsWithAI = async (button) => {
+            const topic = document.getElementById('ai-fc-topic').value.trim();
+            const statusElement = document.getElementById('ai-fc-status');
+            
+            if (!topic) {
+                alert('Please enter a topic to generate flashcards.');
+                return;
+            }
+            
+            // Made by Nathan: Determine the number of cards requested
+            let cardCount = 5; // Default to 5 if somehow nothing is selected
+            const selectedCount = document.querySelector('input[name="card-count"]:checked').value;
+            
+            if (selectedCount === 'custom') {
+                const customInput = document.getElementById('ai-fc-count');
+                cardCount = parseInt(customInput.value) || 1;
+                cardCount = Math.min(Math.max(cardCount, 1), 50); // Clamp between 1 and 50
+            } else {
+                cardCount = parseInt(selectedCount);
+            }
+            
+            if (cardCount < 1) {
+                alert('Please request at least 1 flashcard.');
+                return;
+            }
+
+
+            button.disabled = true;
+            
+            // Made by Nathan: Implementation of Lucide Loader Icon
+            statusElement.innerHTML = `
+                <i data-lucide="loader" class="spinner-icon"></i> 
+                Generating ${cardCount} flashcards on "${topic}"... This may take a moment.
+            `;
+            lucide.createIcons(); // Render the icon
+            statusElement.style.display = 'block';
+            
+            const prompt = `Generate ${cardCount} key flashcards (Question/Answer pairs) on the topic: "${topic}". Format your response STRICTLY as a JSON array of objects, where each object has a 'front' key (the question) and a 'back' key (the answer). Do not include any introductory or concluding text outside the JSON block.`;
+
+            try {
+                const response = await fetch(GEMINI_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: { 
+                            temperature: 0.7 
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("Gemini API Full Error Response:", errorText);
+                    throw new Error(`API call failed with status ${response.status}: ${errorText}`);
+                }
+                
+                const data = await response.json();
+                let aiText = data.candidates[0].content.parts[0].text.trim();
+                
+                if (aiText.startsWith('```json')) {
+                    aiText = aiText.substring(7, aiText.lastIndexOf('```')).trim();
+                } else if (aiText.startsWith('```')) {
+                    aiText = aiText.substring(3, aiText.lastIndexOf('```')).trim();
+                }
+                
+                const newCards = JSON.parse(aiText);
+                const cardsToSave = newCards.map(card => ({
+                    front: card.front,
+                    back: card.back,
+                    source: 'AI',
+                    timestamp: firebase.firestore.Timestamp.now()
+                }));
+                
+                if (cardsToSave.length > 0) {
+                    const userDocRef = db.collection('users').doc(auth.currentUser.uid);
+                    await userDocRef.update({
+                        flashcards: firebase.firestore.FieldValue.arrayUnion(...cardsToSave)
+                    });
+                    
+                    await loadFlashcards(auth.currentUser.uid);
+                    
+                    // Success message update
+                    statusElement.innerHTML = `<i data-lucide="check-circle" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px; stroke: var(--chat-ai);"></i> Successfully generated and added ${cardsToSave.length} flashcards!`;
+                    lucide.createIcons();
+                    statusElement.style.color = 'var(--chat-ai)';
+                } else {
+                    throw new Error("AI returned no valid flashcards.");
+                }
+
+            } catch (error) {
+                console.error('AI Flashcard Generation Error:', error);
+                // Error message update
+                statusElement.innerHTML = `<i data-lucide="alert-triangle" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px; stroke: red;"></i> I don't know. Failed to generate flashcards.`;
+                lucide.createIcons();
+                statusElement.style.color = 'red';
+            } finally {
+                button.disabled = false;
+                document.getElementById('ai-fc-topic').value = '';
+                setTimeout(() => statusElement.style.display = 'none', 5000);
+            }
+        }
+
+
+        let settingsLessons = [];
+        let settingLessonSetup;
+
+        function loadUserSettings(data) {
+            document.getElementById('setting-name').value = data.name || '';
+            document.getElementById('setting-age').value = data.age || '';
+            document.getElementById('setting-yeargroup').value = data.yearGroup || '';
+            document.getElementById('setting-institution').value = data.institution || '';
+            
+            settingsLessons = [...(data.lessons || [])];
+            if (!settingLessonSetup) {
+                 settingLessonSetup = setupLessonInput('setting-lessons-input', 'setting-lessons-list', settingsLessons, true);
+            } else {
+                settingLessonSetup.lessonsArray = settingsLessons;
+                settingLessonSetup.renderLessons();
+            }
+        }
+        
+        setupPasswordToggle('setting-new-password', 'toggle-setting-password');
+        
+        // Made by Nathan: Event listener for Profile Settings Form
+        document.getElementById('profile-settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            const status = document.getElementById('profile-save-status');
+            status.style.display = 'none';
+
+            const newName = document.getElementById('setting-name').value.trim();
+            const newAge = document.getElementById('setting-age').value;
+            const newYearGroup = document.getElementById('setting-yeargroup').value.trim();
+            const newInstitution = document.getElementById('setting-institution').value.trim();
+
+            try {
+                const updatedData = {
+                    name: newName,
+                    age: parseInt(newAge),
+                    yearGroup: newYearGroup,
+                    institution: newInstitution,
+                    lessons: settingsLessons,
+                };
+
+                await db.collection('users').doc(user.uid).update(updatedData);
+                
+                currentUserData = { ...currentUserData, ...updatedData };
+                loadUserSettings(currentUserData);
+                document.getElementById('chat-year-group-display').textContent = currentUserData.yearGroup;
+
+                status.textContent = 'Profile changes saved successfully!';
+                status.style.color = 'var(--primary-blue)';
+                status.style.display = 'block';
+                setTimeout(() => status.style.display = 'none', 3000);
+
+            } catch (error) {
+                status.textContent = 'Failed to save profile changes: ' + error.message;
+                status.style.color = 'red';
+                status.style.display = 'block';
+            }
+        });
+
+        // Made by Nathan: Event listener for Password Reset Form
+        document.getElementById('password-reset-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            const passwordStatus = document.getElementById('password-reset-status');
+            passwordStatus.style.display = 'none';
+
+            const newPassword = document.getElementById('setting-new-password').value;
+
+            if (!newPassword) {
+                passwordStatus.textContent = 'Please enter a new password.';
+                passwordStatus.style.color = 'red';
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                passwordStatus.textContent = 'Password must be at least 6 characters.';
+                passwordStatus.style.color = 'red';
+                passwordStatus.style.display = 'block';
+                return;
+            }
+            
+            try {
+                await user.updatePassword(newPassword);
+                document.getElementById('setting-new-password').value = '';
+                passwordStatus.textContent = 'Password reset successfully! You may need to log in again soon.';
+                passwordStatus.style.color = 'var(--chat-ai)';
+                passwordStatus.style.display = 'block';
+                setTimeout(() => passwordStatus.style.display = 'none', 5000);
+            } catch (error) {
+                // If updatePassword fails due to 'auth/requires-recent-login', show specific error.
+                passwordStatus.textContent = 'I don\'t know. Failed to reset password. Please log out and log in again to perform this action.';
+                passwordStatus.style.color = 'red';
+                passwordStatus.style.display = 'block';
+            }
+        });
+        
+        // Focus timer and checklist are saved locally on this device.
+        let focusSeconds = 25 * 60, focusDuration = 25, focusInterval = null;
+        const focusTaskKey = () => 'studyhub-focus-tasks-' + (auth.currentUser ? auth.currentUser.uid : 'guest');
+        const formatFocusTime = () => String(Math.floor(focusSeconds/60)).padStart(2,'0') + ':' + String(focusSeconds%60).padStart(2,'0');
+        const renderFocusClock = () => { document.getElementById('focus-clock').textContent = formatFocusTime(); };
+        window.setFocusDuration = (minutes,button) => { clearInterval(focusInterval); focusInterval=null; focusDuration=minutes; focusSeconds=minutes*60; document.querySelectorAll('.timer-mode').forEach(mode=>mode.classList.remove('active')); button.classList.add('active'); document.getElementById('focus-start-label').textContent='Start focus'; document.getElementById('focus-status').textContent='Ready when you are'; renderFocusClock(); };
+        window.resetFocusTimer = () => { clearInterval(focusInterval); focusInterval=null; focusSeconds=focusDuration*60; renderFocusClock(); document.getElementById('focus-start-label').textContent='Start focus'; document.getElementById('focus-status').textContent='Ready when you are'; };
+        window.toggleFocusTimer = () => { const status=document.getElementById('focus-status'); if(focusInterval){clearInterval(focusInterval);focusInterval=null;document.getElementById('focus-start-label').textContent='Resume';status.textContent='Paused — take your time';return;} document.getElementById('focus-start-label').textContent='Pause';status.textContent=focusDuration===25?'You’ve got this — one task at a time':'Breathe, stretch, and recharge'; focusInterval=setInterval(()=>{focusSeconds--;renderFocusClock();if(focusSeconds<=0){clearInterval(focusInterval);focusInterval=null;document.getElementById('focus-start-label').textContent='Start again';status.textContent='Session complete — lovely work!';}},1000); };
+        function renderFocusTasks(){const list=document.getElementById('focus-task-list'),empty=document.getElementById('focus-task-empty');const tasks=JSON.parse(localStorage.getItem(focusTaskKey())||'[]');list.replaceChildren();empty.style.display=tasks.length?'none':'block';tasks.forEach((task,index)=>{const row=document.createElement('li');if(task.done)row.classList.add('done');const check=document.createElement('input');check.type='checkbox';check.checked=task.done;check.setAttribute('aria-label','Mark '+task.text+' complete');check.onchange=()=>{const all=JSON.parse(localStorage.getItem(focusTaskKey())||'[]');all[index].done=check.checked;localStorage.setItem(focusTaskKey(),JSON.stringify(all));renderFocusTasks();};const label=document.createElement('span');label.textContent=task.text;row.append(check,label);list.appendChild(row);});}
+        document.getElementById('focus-task-form').addEventListener('submit',event=>{event.preventDefault();const input=document.getElementById('focus-task-input'),text=input.value.trim();if(!text)return;const tasks=JSON.parse(localStorage.getItem(focusTaskKey())||'[]');tasks.push({text,done:false});localStorage.setItem(focusTaskKey(),JSON.stringify(tasks));input.value='';renderFocusTasks();});
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            setupPasswordToggle('auth-password', 'toggle-auth-password');
+            setupPasswordToggle('setting-new-password', 'toggle-setting-password');
+
+            // Made by Nathan: Add listener for custom radio button
+            const customInput = document.getElementById('ai-fc-count');
+
+            document.querySelectorAll('input[name="card-count"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    customInput.disabled = radio.value !== 'custom';
+                });
+            });
+        });
+
     </script>
-  </body>
+</body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyHub · 2026–2027</title>
+    <title>StudyHub — Learn at your level · 2026–2027</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23007bff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/><path d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/></svg>" type="image/svg+xml">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -534,6 +534,13 @@
         @media(max-width:850px) { .learning-path-grid,.support-grid { grid-template-columns:1fr 1fr; }.learn-hero { grid-template-columns:1.2fr .8fr; }.learning-path p,.support-card p { min-height:0; } }
         @media(max-width:640px) { .welcome-bar { align-items:flex-start;flex-direction:column; }.class-chip { padding:9px 12px; }.focus-grid,.learning-path-grid,.support-grid { grid-template-columns:1fr; }.learn-hero { grid-template-columns:1fr; }.learn-hero-art { height:160px; }.orbit { width:145px;height:145px; }.orbit-two { width:110px;height:110px; }.orbit-center { width:75px;height:75px;border-radius:24px; }.float-chip-one { left:10%;top:8px; }.float-chip-two { right:7%;bottom:9px; }.learn-section-heading { align-items:flex-start;flex-direction:column; }.study-tip { align-items:flex-start;flex-wrap:wrap; }.tip-action { margin-left:auto; }.timer-modes { justify-content:center; }.auth-box,.onboarding-box { padding:30px 23px; } }
         @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important; } }
+
+        .student-announcement { align-items:flex-start;gap:13px;padding:15px 17px;margin:-17px 0 26px;border:1px solid rgba(213,219,255,.88);border-radius:17px;background:linear-gradient(100deg,rgba(239,241,255,.93),rgba(255,255,255,.81));box-shadow:0 9px 26px rgba(65,76,165,.065);backdrop-filter:blur(14px); }
+        .announcement-icon { display:grid;place-items:center;flex:none;width:35px;height:35px;border-radius:12px;background:#e2e7ff;color:#5665d8; }.announcement-copy { display:grid;gap:3px;flex:1;padding-top:1px; }.announcement-copy strong { color:#39416f;font-size:13px; }.announcement-copy span { color:#6e7591;font-size:12px;line-height:1.5; }.announcement-dismiss { width:30px;height:30px;flex:none;display:grid;place-items:center;background:transparent;color:#8288a1;box-shadow:none;padding:0; }.announcement-dismiss:hover { background:#e7eaff;color:#4956bd; }.announcement-dismiss svg { width:16px; }
+        .admin-heading { display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px; }.admin-heading h2 { margin:3px 0 5px; }.admin-heading>div>p:last-child { color:#858ba0;margin:0;font-size:13px; }.admin-access-badge { display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:99px;background:#eef0ff;color:#5967d0;font-size:10px;font-weight:800;white-space:nowrap; }.admin-access-badge svg { width:14px; }
+        .admin-grid { display:grid;grid-template-columns:1fr 1fr;gap:17px; }.admin-card { background:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.96);border-radius:21px;padding:23px;box-shadow:0 13px 35px rgba(57,66,130,.065),inset 0 1px rgba(255,255,255,.95);backdrop-filter:blur(16px); }.admin-card-heading { display:flex;align-items:center;gap:12px; }.admin-card-icon { width:42px;height:42px;display:grid;place-items:center;border-radius:14px;color:#5867d9;background:#eef0ff; }.tip-admin-icon { color:#c78d2f;background:#fff4de; }.admin-card-heading h3 { margin:4px 0 0;font-size:18px; }.admin-card-copy { color:#858ba0;font-size:12px;line-height:1.55;margin:15px 0 18px; }.admin-form { display:grid;gap:8px; }.admin-form label { margin-top:4px;color:#596078;font-size:11px;font-weight:750; }.admin-form input,.admin-form textarea { width:100%;margin:0;resize:vertical;font:inherit;font-size:13px; }.admin-form-actions { display:flex;align-items:center;gap:9px;margin-top:7px; }.admin-form-actions button { width:auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;font-size:12px; }.admin-form-actions button svg { width:15px;height:15px; }.admin-form-actions .admin-secondary { background:#f2f3f8;color:#697087;box-shadow:none; }.admin-form-actions .admin-secondary:hover { background:#e9ebf4; }.admin-status { min-height:17px;color:#548a75;font-size:11px;margin:10px 0 0; }.admin-status.error { color:#bf5d65; }.admin-safety-note { display:flex;align-items:center;gap:9px;padding:14px 16px;margin-top:16px;border-radius:14px;background:rgba(239,241,255,.72);color:#70799f;font-size:11px;line-height:1.5; }.admin-safety-note svg { width:17px;flex:none;color:#6e7be0; }
+        @media(max-width:760px) { .admin-grid { grid-template-columns:1fr; }.admin-heading { align-items:flex-start;flex-direction:column; } }
+
     </style>
 </head>
 <body>
@@ -568,8 +575,8 @@
             <p>Tell us a bit about yourself to get started.</p>
             <form id="onboarding-form">
                 <input type="text" id="onboarding-name" placeholder="Full Name (e.g., Jane Doe)" required>
-                <input type="number" id="onboarding-age" placeholder="Age" min="10" max="100" required>
-                <input type="text" id="onboarding-yeargroup" placeholder="Year Group (e.g., 9B)" value="9B" required>
+                <input type="number" id="onboarding-age" placeholder="Age" min="4" max="100" required>
+                <input type="text" id="onboarding-yeargroup" placeholder="School year or level (e.g., Year 1, GCSE, A-level)" required>
                 <input type="text" id="onboarding-institution" placeholder="Institution of Learning (e.g., Cambridge High School)" required>
 
                 <input type="text" id="onboarding-lesson-input" placeholder="Type a Lesson and Press Enter">
@@ -619,8 +626,9 @@
         <main id="main-content">
             <header class="welcome-bar">
                 <div><p class="eyebrow">YOUR STUDY SPACE · 2026–2027</p><h1>Make today count<span class="welcome-dot">.</span></h1><p class="welcome-subtitle">A calmer place to learn, focus and grow.</p></div>
-                <div class="class-chip"><span class="class-chip-icon"><i data-lucide="graduation-cap"></i></span><span><small>YOUR CLASS</small><strong>9B</strong></span><span class="chip-divider"></span><span class="school-year">2026–27</span></div>
+                <div class="class-chip"><span class="class-chip-icon"><i data-lucide="graduation-cap"></i></span><span><small>YOUR LEVEL</small><strong id="welcome-year-group">Your level</strong></span><span class="chip-divider"></span><span class="school-year">2026–27</span></div>
             </header>
+            <aside id="student-announcement" class="student-announcement" aria-live="polite" style="display:none"><span class="announcement-icon"><i data-lucide="megaphone"></i></span><div class="announcement-copy"><strong id="student-announcement-title"></strong><span id="student-announcement-message"></span></div><button class="announcement-dismiss" aria-label="Dismiss announcement" onclick="document.getElementById('student-announcement').style.display='none'"><i data-lucide="x"></i></button></aside>
             <section id="ai-helper" class="tab-content active">
                 <h2><i data-lucide="brain"></i> AI Study Helper</h2>
                 <div id="ai-chat-box">
@@ -634,7 +642,7 @@
 
             <section id="flashcards" class="tab-content">
                 <h2><i data-lucide="layers"></i> Notes & Flashcards</h2>
-                <p>Class <span id="chat-year-group-display">9B</span> <span class="year-pill">2026–2027</span></p>
+                <p>Your level: <span id="chat-year-group-display">Not set</span> <span class="year-pill">2026–2027</span></p>
                 
                 <div class="flashcard-creator">
                     <h3><b>+</b> Create New Flashcard</h3>
@@ -678,25 +686,25 @@
 
             <section id="learn" class="tab-content">
                 <div class="learn-hero">
-                    <div class="learn-hero-copy"><span class="learn-kicker"><i data-lucide="sparkles"></i> BUILT FOR CURIOUS MINDS</span><h2>Your next big<br>idea starts here.</h2><p>Explore a topic, practise what you know, and build confidence one step at a time.</p><button class="learn-hero-button" onclick="window.changeTab(document.querySelector('[data-tab="ai-helper"]'),'ai-helper')"><i data-lucide="message-circle"></i> Ask StudyHub AI</button></div>
+                    <div class="learn-hero-copy"><span class="learn-kicker"><i data-lucide="sparkles"></i> BUILT FOR CURIOUS MINDS</span><h2>Your next big<br>idea starts here.</h2><p>Explore a topic, practise what you know, and build confidence one step at a time.</p><button class="learn-hero-button" onclick="window.changeTab(document.querySelector('[data-tab=ai-helper]'),'ai-helper')"><i data-lucide="message-circle"></i> Ask StudyHub AI</button></div>
                     <div class="learn-hero-art" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="orbit-center"><i data-lucide="book-open-check"></i></span><span class="float-chip float-chip-one"><i data-lucide="lightbulb"></i> Big ideas</span><span class="float-chip float-chip-two"><i data-lucide="star"></i> Your pace</span></div>
                 </div>
-                <div class="learn-section-heading"><div><p class="eyebrow">YOUR TOOLKIT</p><h3>Pick your next move</h3></div><span class="learn-class-tag"><i data-lucide="graduation-cap"></i> CLASS 9B · 2026–27</span></div>
+                <div class="learn-section-heading"><div><p class="eyebrow">YOUR TOOLKIT</p><h3>Pick your next move</h3></div><span class="learn-class-tag"><i data-lucide="graduation-cap"></i> LEVEL <span id="learn-year-group">YOUR OWN</span> · 2026–27</span></div>
                 <div class="learning-path-grid">
-                    <article class="learning-path path-violet"><span class="path-icon"><i data-lucide="brain"></i></span><span class="path-tag">UNDERSTAND</span><h3>Get unstuck</h3><p>Ask questions, explore tricky ideas, and get explanations in plain language.</p><button onclick="window.changeTab(document.querySelector('[data-tab="ai-helper"]'),'ai-helper')">Chat with AI <i data-lucide="arrow-up-right"></i></button></article>
-                    <article class="learning-path path-mint"><span class="path-icon"><i data-lucide="layers-2"></i></span><span class="path-tag">REMEMBER</span><h3>Practice recall</h3><p>Turn key facts into flashcards and see what you can remember without notes.</p><button onclick="window.changeTab(document.querySelector('[data-tab="flashcards"]'),'flashcards')">Open flashcards <i data-lucide="arrow-up-right"></i></button></article>
-                    <article class="learning-path path-amber"><span class="path-icon"><i data-lucide="timer"></i></span><span class="path-tag">MAKE PROGRESS</span><h3>Focus in short bursts</h3><p>Choose one small goal, work for 25 minutes, then take a proper breather.</p><button onclick="window.changeTab(document.querySelector('[data-tab="focus-room"]'),'focus-room')">Start a focus session <i data-lucide="arrow-up-right"></i></button></article>
+                    <article class="learning-path path-violet"><span class="path-icon"><i data-lucide="brain"></i></span><span class="path-tag">UNDERSTAND</span><h3>Get unstuck</h3><p>Ask questions, explore tricky ideas, and get explanations in plain language.</p><button onclick="window.changeTab(document.querySelector('[data-tab=ai-helper]'),'ai-helper')">Chat with AI <i data-lucide="arrow-up-right"></i></button></article>
+                    <article class="learning-path path-mint"><span class="path-icon"><i data-lucide="layers-2"></i></span><span class="path-tag">REMEMBER</span><h3>Practice recall</h3><p>Turn key facts into flashcards and see what you can remember without notes.</p><button onclick="window.changeTab(document.querySelector('[data-tab=flashcards]'),'flashcards')">Open flashcards <i data-lucide="arrow-up-right"></i></button></article>
+                    <article class="learning-path path-amber"><span class="path-icon"><i data-lucide="timer"></i></span><span class="path-tag">MAKE PROGRESS</span><h3>Focus in short bursts</h3><p>Choose one small goal, work for 25 minutes, then take a proper breather.</p><button onclick="window.changeTab(document.querySelector('[data-tab=focus-room]'),'focus-room')">Start a focus session <i data-lucide="arrow-up-right"></i></button></article>
                 </div>
-                <div class="study-tip"><span class="tip-spark"><i data-lucide="quote"></i></span><div><span class="path-tag">A STUDY TIP TO TRY</span><p>After a lesson, close your notes and write down three things you remember. Checking what you can recall helps you spot what to review next.</p></div><button class="tip-action" onclick="window.changeTab(document.querySelector('[data-tab="flashcards"]'),'flashcards')">Try it <i data-lucide="arrow-right"></i></button></div>
+                <div class="study-tip"><span class="tip-spark"><i data-lucide="quote"></i></span><div><span class="path-tag">A STUDY TIP TO TRY</span><p id="study-tip-text">After a lesson, close your notes and write down three things you remember. Checking what you can recall helps you spot what to review next.</p></div><button class="tip-action" onclick="window.changeTab(document.querySelector('[data-tab=flashcards]'),'flashcards')">Try it <i data-lucide="arrow-right"></i></button></div>
             </section>
 
             <section id="support" class="tab-content">
                 <div class="support-hero"><span class="support-icon"><i data-lucide="life-buoy"></i></span><p class="eyebrow">YOU'RE NOT ON YOUR OWN</p><h2>Student support</h2><p>Questions, feedback, or something not working? Reach out and we’ll help you find your next step.</p><a class="support-email" href="mailto:nathanthebest01@gmail.com?subject=StudyHub%20support"><i data-lucide="mail"></i> Email Nathan <i data-lucide="arrow-up-right"></i></a><span class="support-address">nathanthebest01@gmail.com</span></div>
                 <div class="learn-section-heading support-heading"><div><p class="eyebrow">QUICK ANSWERS</p><h3>How can we help?</h3></div></div>
                 <div class="support-grid">
-                    <article class="support-card"><span class="support-card-icon"><i data-lucide="sparkles"></i></span><h3>Using the AI helper</h3><p>Ask one clear question at a time. Include the topic and what part feels confusing to get a more useful explanation.</p><button onclick="window.changeTab(document.querySelector('[data-tab="ai-helper"]'),'ai-helper')">Open AI helper <i data-lucide="arrow-right"></i></button></article>
-                    <article class="support-card"><span class="support-card-icon green"><i data-lucide="layers-2"></i></span><h3>Making flashcards</h3><p>Add a question on the front and a short answer on the back. Or try the AI generator to make a starter set.</p><button onclick="window.changeTab(document.querySelector('[data-tab="flashcards"]'),'flashcards')">Go to flashcards <i data-lucide="arrow-right"></i></button></article>
-                    <article class="support-card"><span class="support-card-icon amber"><i data-lucide="user-round-cog"></i></span><h3>Profile or account help</h3><p>Update your class, subjects, or profile details in Settings. For sign-in trouble, email support with a short description.</p><button onclick="window.changeTab(document.querySelector('[data-tab="settings"]'),'settings')">Open settings <i data-lucide="arrow-right"></i></button></article>
+                    <article class="support-card"><span class="support-card-icon"><i data-lucide="sparkles"></i></span><h3>Using the AI helper</h3><p>Ask one clear question at a time. Include the topic and what part feels confusing to get a more useful explanation.</p><button onclick="window.changeTab(document.querySelector('[data-tab=ai-helper]'),'ai-helper')">Open AI helper <i data-lucide="arrow-right"></i></button></article>
+                    <article class="support-card"><span class="support-card-icon green"><i data-lucide="layers-2"></i></span><h3>Making flashcards</h3><p>Add a question on the front and a short answer on the back. Or try the AI generator to make a starter set.</p><button onclick="window.changeTab(document.querySelector('[data-tab=flashcards]'),'flashcards')">Go to flashcards <i data-lucide="arrow-right"></i></button></article>
+                    <article class="support-card"><span class="support-card-icon amber"><i data-lucide="user-round-cog"></i></span><h3>Profile or account help</h3><p>Update your class, subjects, or profile details in Settings. For sign-in trouble, email support with a short description.</p><button onclick="window.changeTab(document.querySelector('[data-tab=settings]'),'settings')">Open settings <i data-lucide="arrow-right"></i></button></article>
                 </div>
                 <div class="support-note"><i data-lucide="heart-handshake"></i><span>StudyHub is a learning companion. If schoolwork feels overwhelming, talk with a teacher or trusted adult too.</span></div>
             </section>
@@ -731,10 +739,10 @@
                     <input type="text" id="setting-name" required>
 
                     <label for="setting-age">Age:</label>
-                    <input type="number" id="setting-age" min="10" required>
+                    <input type="number" id="setting-age" min="4" required>
 
-                    <label for="setting-yeargroup">Year Group:</label>
-                    <input type="text" id="setting-yeargroup" placeholder="9B" required>
+                    <label for="setting-yeargroup">School year / learning level:</label>
+                    <input type="text" id="setting-yeargroup" placeholder="e.g., Year 1, GCSE, A-level" required>
                     
                     <label for="setting-institution">Institution of Learning:</label>
                     <input type="text" id="setting-institution" required>
@@ -765,12 +773,19 @@
                 <h2><i data-lucide="info"></i> Credits</h2>
                 <p>This StudyHub platform was conceptualized and developed with key contributions from:</p>
                 <div style="background: var(--light-blue); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 5px solid var(--primary-blue);">
-                    <p style="font-size: 18px; font-weight: bold;">Development: <b>Nathan Koech</b> Year 8B</p>
+                    <p style="font-size: 18px; font-weight: bold;">Owner: <b>Nathan Koech</b> · Year 9B</p><p>StudyHub is for learners at every level, from Year 1 through GCSE and beyond.</p>
                 </div>
                 <p style="margin-top: 20px;">Made for the Light International School Science Fair, Class of 2026–2027.</p>
             </section>
 
-            <section id="admin-panel" class="tab-content"><h2><i data-lucide="shield"></i> Admin Panel</h2><p>Welcome, Admin! This panel is restricted to declanthebest01@gmail.com.</p></section>
+            <section id="admin-panel" class="tab-content">
+                <div class="admin-heading"><div><p class="eyebrow">STUDYHUB · ADMIN</p><h2><i data-lucide="shield-check"></i> Admin workspace</h2><p>Share a class update or set the learning tip students see in Learn.</p></div><span class="admin-access-badge"><i data-lucide="lock-keyhole"></i> Admin only</span></div>
+                <div class="admin-grid">
+                    <article class="admin-card"><div class="admin-card-heading"><span class="admin-card-icon"><i data-lucide="megaphone"></i></span><div><span class="path-tag">CLASS COMMUNICATION</span><h3>Student announcement</h3></div></div><p class="admin-card-copy">Publish a short update for signed-in students. Keep it clear and useful.</p><form id="announcement-form" class="admin-form"><label for="announcement-title">Headline</label><input id="announcement-title" type="text" maxlength="70" placeholder="e.g. Revision session this Friday"><label for="announcement-message">Message</label><textarea id="announcement-message" maxlength="240" rows="4" placeholder="What should students know?"></textarea><div class="admin-form-actions"><button type="submit"><i data-lucide="send"></i> Publish announcement</button><button type="button" class="admin-secondary" onclick="window.clearAdminAnnouncement()">Clear</button></div></form><p id="announcement-status" class="admin-status" aria-live="polite"></p></article>
+                    <article class="admin-card"><div class="admin-card-heading"><span class="admin-card-icon tip-admin-icon"><i data-lucide="lightbulb"></i></span><div><span class="path-tag">LEARNING CONTENT</span><h3>Study tip of the week</h3></div></div><p class="admin-card-copy">Refresh the practical study advice displayed on the Learn page.</p><form id="study-tip-form" class="admin-form"><label for="admin-study-tip">Tip for students</label><textarea id="admin-study-tip" maxlength="260" rows="5" placeholder="Share one practical idea students can try…"></textarea><div class="admin-form-actions"><button type="submit"><i data-lucide="save"></i> Save study tip</button></div></form><p id="tip-status" class="admin-status" aria-live="polite"></p></article>
+                </div>
+                <div class="admin-safety-note"><i data-lucide="users-round"></i><span>Keep announcements respectful and useful to the whole class. Students can contact support if they need individual help.</span></div>
+            </section>
 
         </main>
     </div>
@@ -836,6 +851,8 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const STUDYHUB_ADMIN_UID = 'IF6nIldJ9kZ4iu0ub2pow3SwojR2';
+        const STUDYHUB_ADMIN_EMAIL = 'declanthebest01@gmail.com';
 
         // Made by Nathan
         const GEMINI_API_KEY = "AIzaSyCEBSFL8fLH02VdggHMA1mB13xvg9wkdLo"; 
@@ -925,11 +942,14 @@
                 document.getElementById('app-dashboard').style.display = 'grid';
                 
                 loadUserSettings(currentUserData);
-                document.getElementById('chat-year-group-display').textContent = currentUserData.yearGroup || '9B';
+                document.getElementById('chat-year-group-display').textContent = isStudyHubAdmin() ? '9B' : (currentUserData.yearGroup || 'Not set');
+                document.getElementById('welcome-year-group').textContent = isStudyHubAdmin() ? '9B' : (currentUserData.yearGroup || 'Your level');
+                document.getElementById('learn-year-group').textContent = isStudyHubAdmin() ? '9B' : (currentUserData.yearGroup || 'YOUR OWN');
                 renderFocusTasks();
+                await loadStudentContent();
 
                 const adminLink = document.getElementById('admin-panel-link');
-                if (email === "declanthebest01@gmail.com") {
+                if (isStudyHubAdmin()) {
                     adminLink.style.display = 'flex';
                 } else {
                     adminLink.style.display = 'none';
@@ -1043,7 +1063,7 @@
             }
 
             try {
-                const isAdminUser = user.email === "declanthebest01@gmail.com";
+                const isAdminUser = user.email === STUDYHUB_ADMIN_EMAIL && user.uid === STUDYHUB_ADMIN_UID;
                 const userData = {
                     email: user.email,
                     name: name,
@@ -1067,6 +1087,10 @@
         });
 
         window.changeTab = (sidebarItem, tabId) => {
+            if (tabId === 'admin-panel' && !isStudyHubAdmin()) {
+                alert('Access denied. This panel is for the StudyHub administrator.');
+                return;
+            }
             document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
             sidebarItem.classList.add('active');
             
@@ -1076,6 +1100,7 @@
             if (tabId === 'flashcards' && auth.currentUser) {
                 window.loadFlashcards(auth.currentUser.uid);
             }
+            if (tabId === 'admin-panel') window.loadAdminContent();
         }
 
         // Made by Nathan
@@ -1103,9 +1128,9 @@
             const userLessons = currentUserData.lessons && currentUserData.lessons.length > 0 
                 ? currentUserData.lessons.join(', ') 
                 : 'General Knowledge';
-            const userYearGroup = currentUserData.yearGroup || 'High School';
+            const userYearGroup = isStudyHubAdmin() ? 'Year 9B' : (currentUserData.yearGroup || 'the learner’s chosen level');
             
-            const systemInstructionText = `You are a helpful and concise study assistant for students in year group ${userYearGroup} studying ${userLessons}. Keep your answers clear, accurate, and relevant to the user's study context.`;
+            const systemInstructionText = `You are a helpful, encouraging study assistant for learners of all ages and levels, including primary school, GCSE, and A-level. The learner's level is ${userYearGroup}; their subjects are ${userLessons}. Adapt vocabulary, examples, and explanation depth to that level. If they ask for a different level, follow their request. Keep answers clear, accurate, and supportive.`;
             
             const payload = {
                 // CORRECT CONTENTS: Only user and model roles allowed for this API.
@@ -1576,8 +1601,10 @@ window.performMassDelete = async () => {
 
         function loadUserSettings(data) {
             document.getElementById('setting-name').value = data.name || '';
+            document.getElementById('welcome-year-group').textContent = isStudyHubAdmin() ? '9B' : (data.yearGroup || 'Your level');
+            document.getElementById('learn-year-group').textContent = isStudyHubAdmin() ? '9B' : (data.yearGroup || 'YOUR OWN');
             document.getElementById('setting-age').value = data.age || '';
-            document.getElementById('setting-yeargroup').value = data.yearGroup || '';
+            document.getElementById('setting-yeargroup').value = isStudyHubAdmin() ? '9B' : (data.yearGroup || '');
             document.getElementById('setting-institution').value = data.institution || '';
             
             settingsLessons = [...(data.lessons || [])];
@@ -1616,7 +1643,9 @@ window.performMassDelete = async () => {
                 
                 currentUserData = { ...currentUserData, ...updatedData };
                 loadUserSettings(currentUserData);
-                document.getElementById('chat-year-group-display').textContent = currentUserData.yearGroup;
+                document.getElementById('chat-year-group-display').textContent = currentUserData.yearGroup || 'Not set';
+                document.getElementById('welcome-year-group').textContent = currentUserData.yearGroup || 'Your level';
+                document.getElementById('learn-year-group').textContent = currentUserData.yearGroup || 'YOUR OWN';
 
                 status.textContent = 'Profile changes saved successfully!';
                 status.style.color = 'var(--primary-blue)';
@@ -1667,6 +1696,45 @@ window.performMassDelete = async () => {
             }
         });
         
+        function isStudyHubAdmin() { return !!auth.currentUser && auth.currentUser.uid === STUDYHUB_ADMIN_UID && auth.currentUser.email === STUDYHUB_ADMIN_EMAIL; }
+        function showAdminStatus(id, message, isError=false) { const el=document.getElementById(id); el.textContent=message; el.classList.toggle('error',isError); }
+        window.loadStudentContent = async () => {
+            try {
+                const [announcementDoc, tipDoc] = await Promise.all([db.collection('appContent').doc('announcement').get(), db.collection('appContent').doc('studyTip').get()]);
+                if (announcementDoc.exists) { const data=announcementDoc.data(); document.getElementById('student-announcement-title').textContent=data.title||'Class update'; document.getElementById('student-announcement-message').textContent=data.message||''; document.getElementById('student-announcement').style.display='flex'; }
+                if (tipDoc.exists && tipDoc.data().text) document.getElementById('study-tip-text').textContent=tipDoc.data().text;
+            } catch (error) { console.warn('Shared learning content could not be loaded.',error); }
+        };
+        window.loadAdminContent = async () => {
+            if (!isStudyHubAdmin()) return;
+            try {
+                const [announcementDoc, tipDoc] = await Promise.all([db.collection('appContent').doc('announcement').get(), db.collection('appContent').doc('studyTip').get()]);
+                document.getElementById('announcement-title').value=announcementDoc.exists?(announcementDoc.data().title||''):'';
+                document.getElementById('announcement-message').value=announcementDoc.exists?(announcementDoc.data().message||''):'';
+                document.getElementById('admin-study-tip').value=tipDoc.exists?(tipDoc.data().text||''):'';
+                showAdminStatus('announcement-status',announcementDoc.exists?'Current announcement loaded.':'No announcement is published.');
+                showAdminStatus('tip-status',tipDoc.exists?'Current study tip loaded.':'No custom tip saved; the default tip is showing.');
+            } catch (error) { showAdminStatus('announcement-status','Could not load shared content. Check the Firestore rules and connection.',true); }
+        };
+        document.getElementById('announcement-form').addEventListener('submit',async event=>{
+            event.preventDefault(); if(!isStudyHubAdmin()) return;
+            const title=document.getElementById('announcement-title').value.trim(), message=document.getElementById('announcement-message').value.trim();
+            if(!title||!message){showAdminStatus('announcement-status','Add both a headline and a message before publishing.',true);return;}
+            try { await db.collection('appContent').doc('announcement').set({title,message,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); document.getElementById('student-announcement-title').textContent=title;document.getElementById('student-announcement-message').textContent=message;document.getElementById('student-announcement').style.display='flex';showAdminStatus('announcement-status','Announcement published for signed-in students.'); }
+            catch(error){showAdminStatus('announcement-status','Could not publish. Confirm the updated Firestore rules are deployed.',true);}
+        });
+        document.getElementById('study-tip-form').addEventListener('submit',async event=>{
+            event.preventDefault(); if(!isStudyHubAdmin()) return;
+            const tip=document.getElementById('admin-study-tip').value.trim(); if(!tip){showAdminStatus('tip-status','Write a tip before saving.',true);return;}
+            try { await db.collection('appContent').doc('studyTip').set({text:tip,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('study-tip-text').textContent=tip;showAdminStatus('tip-status','Study tip updated on the Learn page.'); }
+            catch(error){showAdminStatus('tip-status','Could not save. Confirm the updated Firestore rules are deployed.',true);}
+        });
+        window.clearAdminAnnouncement = async () => {
+            if(!isStudyHubAdmin()||!confirm('Remove the current class announcement for all students?')) return;
+            try { await db.collection('appContent').doc('announcement').delete();document.getElementById('announcement-title').value='';document.getElementById('announcement-message').value='';document.getElementById('student-announcement').style.display='none';showAdminStatus('announcement-status','Announcement cleared.'); }
+            catch(error){showAdminStatus('announcement-status','Could not clear the announcement. Check the Firestore rules.',true);}
+        };
+
         // Focus timer and checklist are saved locally on this device.
         let focusSeconds = 25 * 60, focusDuration = 25, focusInterval = null;
         const focusTaskKey = () => 'studyhub-focus-tasks-' + (auth.currentUser ? auth.currentUser.uid : 'guest');

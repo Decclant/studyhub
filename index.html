@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyHub - Learn at your level · 2026–2027</title>
+    <title>StudyHub — Learn at your level · 2026–2027</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23007bff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/><path d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/></svg>" type="image/svg+xml">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions-compat.js"></script>
     
     <style>
         :root {
@@ -554,6 +555,22 @@
         .support-inbox-layout { display:grid;grid-template-columns:minmax(180px,.7fr) minmax(0,1.3fr);gap:12px; }.admin-support-thread-list { display:grid;align-content:start;gap:7px;max-height:450px;overflow:auto; }.support-thread-item { display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;text-align:left;padding:11px;border:1px solid #eceef5;border-radius:12px;background:rgba(255,255,255,.72);color:#50566d;box-shadow:none; }.support-thread-item strong { font-size:12px; }.support-thread-item span,.support-thread-item small { color:#8c92a5;font-size:10px; }.support-thread-item.active,.support-thread-item:hover { background:#eef0ff;color:#4f5dcc;border-color:#dce1ff; }.admin-chat-column { min-width:0; }.admin-chat-heading { font-size:12px;font-weight:750;color:#525a78;padding:4px 2px; }.admin-chat-column .owner-chat-messages { margin-top:7px;min-height:190px; }.admin-chat-column .owner-chat-form { display:flex; }.admin-chat-column .owner-chat-form[style*="display:none"] { display:none!important; }
         @media(max-width:760px){.admin-student-roster{grid-template-columns:1fr;}.support-inbox-layout{grid-template-columns:1fr;}.admin-support-thread-list{max-height:180px;}.staff-role-form{grid-template-columns:1fr;}.roster-tools{flex-direction:column;}.student-stat-strip{gap:6px}.student-stat-strip>div{padding:10px}.owner-chat-card,.admin-roster-section{padding:16px}}
 
+
+.welcome-controls{display:flex;align-items:center;gap:10px}.theme-toggle,.clear-chat-button{width:auto;display:inline-flex;align-items:center;gap:8px;padding:10px 13px;border:1px solid #e8eaf2;background:rgba(255,255,255,.75);color:#6e7591;box-shadow:none;border-radius:12px;font-size:11px}.theme-toggle:hover,.clear-chat-button:hover{background:#fff;color:#4e5cc8}.theme-toggle svg,.clear-chat-button svg{width:15px;height:15px}
+.ai-helper-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:15px}.ai-helper-heading h2{margin-bottom:5px}.ai-helper-heading p{color:#858ba0;font-size:12px;margin:0}.ai-prompt-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 12px}.ai-prompt-row>span{color:#969bad;font-size:10px;font-weight:750;margin-right:3px}.ai-prompt-row button{width:auto;padding:7px 10px;border:1px solid #e8eaf2;border-radius:99px;background:rgba(255,255,255,.68);color:#64709c;box-shadow:none;font-size:10px}.ai-prompt-row button:hover{background:#eef0ff;color:#5362d1}
+.ticket-command-hint{color:#969bad;font-size:10px;margin:7px 2px 0}.ticket-command-hint code{color:#5764ca;background:#eef0ff;border-radius:5px;padding:2px 5px}
+.banned-screen{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 10% 15%,#e5e9ff,transparent 43%),#f7f8fc}.banned-card{width:min(100%,470px);padding:40px;border-radius:24px;text-align:center;background:rgba(255,255,255,.84);border:1px solid #fff;box-shadow:0 24px 70px rgba(40,50,100,.12)}.banned-icon{display:grid;place-items:center;width:55px;height:55px;margin:0 auto 16px;border-radius:18px;background:#fff0f0;color:#bd6268}.banned-card h1{color:#252a42;font-size:28px;letter-spacing:-.04em;margin:5px 0 10px}.banned-card>p:not(.eyebrow){color:#7e8499;font-size:13px;line-height:1.6;margin:0 auto 19px}.banned-card .support-email{color:#fff}.banned-retry{display:block;width:auto;margin:13px auto 0;background:transparent;color:#737a91;box-shadow:none;font-size:11px}.banned-retry:hover{background:#f1f2f8;color:#505872}
+.student-ban-row .ban-reason{color:#9096a8;font-size:10px;flex:1}.student-ban-row .unban-button{color:#a04e58;background:#fff0f0}.student-ban-row .ban-identity{display:grid;gap:3px;flex:1;min-width:0}.student-ban-row .ban-identity strong{overflow-wrap:anywhere}
+:root[data-theme="dark"]{color-scheme:dark;--white:#20263a;--text-dark:#e7e9f3;--light-blue:#292e48;--border-light:#343a53;--primary-blue:#8c9bff}
+:root[data-theme="dark"] body,:root[data-theme="dark"] #app-dashboard{background:#151a2a;color:#e7e9f3}:root[data-theme="dark"] #main-content{color:#e7e9f3}:root[data-theme="dark"] h2,:root[data-theme="dark"] h3,:root[data-theme="dark"] .welcome-bar h1,:root[data-theme="dark"] .banned-card h1{color:#eef0fb}
+:root[data-theme="dark"] .welcome-bar,:root[data-theme="dark"] .class-chip,:root[data-theme="dark"] .focus-card,:root[data-theme="dark"] .learning-path,:root[data-theme="dark"] .support-card,:root[data-theme="dark"] .study-tip,:root[data-theme="dark"] .support-hero,:root[data-theme="dark"] .owner-chat-card,:root[data-theme="dark"] .admin-roster-section,:root[data-theme="dark"] .admin-card,:root[data-theme="dark"] .banned-card{background:rgba(34,40,61,.88);border-color:rgba(83,92,125,.5);box-shadow:0 14px 40px rgba(0,0,0,.18)}
+:root[data-theme="dark"] .class-chip,:root[data-theme="dark"] .support-card button,:root[data-theme="dark"] .learning-path button,:root[data-theme="dark"] .theme-toggle,:root[data-theme="dark"] .clear-chat-button,:root[data-theme="dark"] .ai-prompt-row button,:root[data-theme="dark"] .admin-secondary,:root[data-theme="dark"] .refresh-roster{background:#292f47;border-color:#39415d;color:#c3c8e2}
+:root[data-theme="dark"] .welcome-subtitle,:root[data-theme="dark"] .section-intro,:root[data-theme="dark"] .learn-hero-copy>p,:root[data-theme="dark"] .admin-card-copy,:root[data-theme="dark"] .support-card p,:root[data-theme="dark"] .support-hero>p:not(.eyebrow),:root[data-theme="dark"] .task-hint,:root[data-theme="dark"] .study-tip p{color:#aab0c7}
+:root[data-theme="dark"] input,:root[data-theme="dark"] textarea,:root[data-theme="dark"] select{color:#edf0fb;background:#20263a;border-color:#3b425e}:root[data-theme="dark"] #ai-chat-box,:root[data-theme="dark"] .owner-chat-messages,:root[data-theme="dark"] .flashcard-creator,:root[data-theme="dark"] .flashcard-list-container,:root[data-theme="dark"] #profile-settings-form,:root[data-theme="dark"] #password-reset-form{background:#1c2235;border-color:#343a53;color:#e7e9f3}
+:root[data-theme="dark"] .chat-message.ai,:root[data-theme="dark"] .owner-message,:root[data-theme="dark"] .student-record-card,:root[data-theme="dark"] .support-thread-item{background:#292f47;border-color:#3a415e;color:#e1e4f3}:root[data-theme="dark"] .owner-message p,:root[data-theme="dark"] .student-record-top strong,:root[data-theme="dark"] .tasks-card h3{color:#e3e6f3}
+:root[data-theme="dark"] .student-announcement{background:linear-gradient(100deg,rgba(44,51,81,.96),rgba(34,40,61,.9));border-color:#414968}:root[data-theme="dark"] .student-stat-strip>div,:root[data-theme="dark"] .staff-role-row{background:#292f47;border-color:#3a415e}:root[data-theme="dark"] .student-record-card>p,:root[data-theme="dark"] .student-progress-line,:root[data-theme="dark"] .support-thread-item span,:root[data-theme="dark"] .support-thread-item small{color:#adb3c9}:root[data-theme="dark"] .banned-screen{background:radial-gradient(ellipse at 10% 15%,#303653,transparent 43%),#151a2a}
+@media(max-width:680px){.welcome-controls{align-items:flex-start;flex-wrap:wrap}.ai-helper-heading{align-items:flex-start}.clear-chat-button{padding:9px}.ai-prompt-row{gap:6px}.banned-card{padding:30px 22px}}
+
     </style>
 </head>
 <body>
@@ -579,6 +596,8 @@
         </div>
     </div>
 
+
+    <div id="banned-screen" class="banned-screen" style="display:none"><div class="banned-card"><span class="banned-icon"><i data-lucide="shield-ban"></i></span><p class="eyebrow">STUDYHUB ACCOUNT</p><h1>Account access is paused</h1><p id="banned-message">This account currently can’t use StudyHub. If you think this is a mistake, contact the owner.</p><a class="support-email" href="mailto:nathanthebest01@gmail.com?subject=StudyHub%20account%20access"><i data-lucide="mail"></i> Contact support</a><button class="banned-retry" type="button" onclick="window.retryBannedLogin()">Try another account</button></div></div>
     <div id="onboarding-container" style="display: none;">
         <div class="onboarding-box">
             <div class="logo">
@@ -639,13 +658,14 @@
         <main id="main-content">
             <header class="welcome-bar">
                 <div><p class="eyebrow">YOUR STUDY SPACE · 2026–2027</p><h1>Make today count<span class="welcome-dot">.</span></h1><p class="welcome-subtitle">A calmer place to learn, focus and grow.</p></div>
-                <div class="class-chip"><span class="class-chip-icon"><i data-lucide="graduation-cap"></i></span><span><small>YOUR LEVEL</small><strong id="welcome-year-group">Your level</strong></span><span class="chip-divider"></span><span class="school-year">2026–27</span></div>
+                <div class="welcome-controls"><button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch theme" onclick="window.toggleTheme()"><i data-lucide="moon"></i><span>Dark mode</span></button><div class="class-chip"><span class="class-chip-icon"><i data-lucide="graduation-cap"></i></span><span><small>YOUR LEVEL</small><strong id="welcome-year-group">Your level</strong></span><span class="chip-divider"></span><span class="school-year">2026–2027</span></div></div>
             </header>
             <aside id="student-announcement" class="student-announcement" aria-live="polite" style="display:none"><span class="announcement-icon"><i data-lucide="megaphone"></i></span><div class="announcement-copy"><strong id="student-announcement-title"></strong><span id="student-announcement-message"></span></div><button class="announcement-dismiss" aria-label="Dismiss announcement" onclick="document.getElementById('student-announcement').style.display='none'"><i data-lucide="x"></i></button></aside>
             <section id="ai-helper" class="tab-content active">
-                <h2><i data-lucide="brain"></i> AI Study Helper</h2>
+                <div class="ai-helper-heading"><div><h2><i data-lucide="brain"></i> AI Study Helper</h2><p>Patient, level-aware support for your next question.</p></div><button class="clear-chat-button" type="button" onclick="window.clearAiChat()"><i data-lucide="rotate-ccw"></i> New chat</button></div>
+                <div class="ai-prompt-row"><span>Try asking</span><button type="button" data-prompt="explain">Explain simply</button><button type="button" data-prompt="quiz">Quiz me</button><button type="button" data-prompt="plan">Make a study plan</button></div>
                 <div id="ai-chat-box">
-                    <div class="chat-message ai">Hello! I'm the StudyHub Helper. Ask me anything about your lessons!</div>
+                    <div class="chat-message ai">Hello! I'm your AI Study Helper. Ask me anything about your lessons, like "Explain the process of photosynthesis."</div>
                 </div>
                 <div id="ai-input-container">
                     <input type="text" id="ai-input" placeholder="Ask your study question here...">
@@ -702,7 +722,7 @@
                     <div class="learn-hero-copy"><span class="learn-kicker"><i data-lucide="sparkles"></i> BUILT FOR CURIOUS MINDS</span><h2>Your next big<br>idea starts here.</h2><p>Explore a topic, practise what you know, and build confidence one step at a time.</p><button class="learn-hero-button" onclick="window.changeTab(document.querySelector('[data-tab=ai-helper]'),'ai-helper')"><i data-lucide="message-circle"></i> Ask StudyHub AI</button></div>
                     <div class="learn-hero-art" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="orbit-center"><i data-lucide="book-open-check"></i></span><span class="float-chip float-chip-one"><i data-lucide="lightbulb"></i> Big ideas</span><span class="float-chip float-chip-two"><i data-lucide="star"></i> Your pace</span></div>
                 </div>
-                <div class="learn-section-heading"><div><p class="eyebrow">YOUR TOOLKIT</p><h3>Pick your next move</h3></div><span class="learn-class-tag"><i data-lucide="graduation-cap"></i> LEVEL <span id="learn-year-group">YOUR OWN</span> · 2026–27</span></div>
+                <div class="learn-section-heading"><div><p class="eyebrow">YOUR TOOLKIT</p><h3>Pick your next move</h3></div><span class="learn-class-tag"><i data-lucide="graduation-cap"></i> LEVEL <span id="learn-year-group">YOUR OWN</span> · 2026–2027</span></div>
                 <div class="learning-path-grid">
                     <article class="learning-path path-violet"><span class="path-icon"><i data-lucide="brain"></i></span><span class="path-tag">UNDERSTAND</span><h3>Get unstuck</h3><p>Ask questions, explore tricky ideas, and get explanations in plain language.</p><button onclick="window.changeTab(document.querySelector('[data-tab=ai-helper]'),'ai-helper')">Chat with AI <i data-lucide="arrow-up-right"></i></button></article>
                     <article class="learning-path path-mint"><span class="path-icon"><i data-lucide="layers-2"></i></span><span class="path-tag">REMEMBER</span><h3>Practice recall</h3><p>Turn key facts into flashcards and see what you can remember without notes.</p><button onclick="window.changeTab(document.querySelector('[data-tab=flashcards]'),'flashcards')">Open flashcards <i data-lucide="arrow-up-right"></i></button></article>
@@ -748,7 +768,7 @@
                 <h2><i data-lucide="settings"></i> Account Settings</h2>
                 
                 <form id="profile-settings-form">
-                    <h3><b></b> Profile Details</h3>
+                    <h3><i data-lucide="user-round"></i> Profile details</h3>
                     <label for="setting-name">Name:</label>
                     <input type="text" id="setting-name" required>
 
@@ -771,7 +791,7 @@
                 </form>
 
                 <form id="password-reset-form">
-                    <h3 style="margin-top: 30px;"><b></b> Password Reset</h3>
+                    <h3 style="margin-top: 30px;"><i data-lucide="key-round"></i> Password reset</h3>
                     <div class="password-input-group">
                         <input type="password" id="setting-new-password" placeholder="New Password (min 8 characters)">
                         <i data-lucide="eye" class="toggle-password" id="toggle-setting-password"></i>
@@ -799,9 +819,10 @@
                     <article class="admin-card"><div class="admin-card-heading"><span class="admin-card-icon tip-admin-icon"><i data-lucide="lightbulb"></i></span><div><span class="path-tag">LEARNING CONTENT</span><h3>Study tip of the week</h3></div></div><p class="admin-card-copy">Refresh the practical study advice displayed on the Learn page.</p><form id="study-tip-form" class="admin-form"><label for="admin-study-tip">Tip for students</label><textarea id="admin-study-tip" maxlength="260" rows="5" placeholder="Share one practical idea students can try…"></textarea><div class="admin-form-actions"><button type="submit"><i data-lucide="save"></i> Save study tip</button></div></form><p id="tip-status" class="admin-status" aria-live="polite"></p></article>
                 </div>
                 <div class="admin-safety-note"><i data-lucide="users-round"></i><span>Student profiles and progress are visible to authorised staff. Passwords are not visible to anyone, including the owner; use secure reset flows instead.</span></div>
-                <section class="admin-roster-section"><div class="admin-section-head"><div><p class="eyebrow">LEARNER OVERVIEW</p><h3>Student progress</h3></div><button class="admin-secondary refresh-roster" onclick="window.refreshStudentRoster()"><i data-lucide="refresh-cw"></i> Refresh</button></div><div class="student-stat-strip"><div><strong id="student-total-count">-</strong><span>Learners</span></div><div><strong id="student-subject-count">-</strong><span>Subjects</span></div><div><strong id="student-card-count">-</strong><span>Saved flashcards</span></div></div><div class="roster-tools"><input id="student-search" type="search" placeholder="Search learners, subjects or school…"><select id="student-level-filter"><option value="">All levels</option></select></div><div id="admin-student-roster" class="admin-student-roster"><p class="roster-empty">Loading student overview…</p></div></section>
+                <section class="admin-roster-section"><div class="admin-section-head"><div><p class="eyebrow">LEARNER OVERVIEW</p><h3>Student progress</h3></div><button class="admin-secondary refresh-roster" onclick="window.refreshStudentRoster()"><i data-lucide="refresh-cw"></i> Refresh</button></div><div class="student-stat-strip"><div><strong id="student-total-count">—</strong><span>Learners</span></div><div><strong id="student-subject-count">—</strong><span>Subjects</span></div><div><strong id="student-card-count">—</strong><span>Saved flashcards</span></div></div><div class="roster-tools"><input id="student-search" type="search" placeholder="Search learners, subjects or school…"><select id="student-level-filter"><option value="">All levels</option></select></div><div id="admin-student-roster" class="admin-student-roster"><p class="roster-empty">Loading student overview…</p></div></section>
                 <section id="role-management" class="admin-roster-section super-admin-only" style="display:none"><div class="admin-section-head"><div><p class="eyebrow">ACCESS CONTROL</p><h3>Appoint staff</h3></div><span class="admin-access-badge"><i data-lucide="crown"></i> Super Admin</span></div><p class="admin-card-copy">Only the Super Admin can appoint or remove Teachers and Admins. The Super Admin role is fixed to the owner account, so there can only be one.</p><form id="staff-role-form" class="staff-role-form"><input id="staff-email-input" type="email" placeholder="Staff member’s account email" required><select id="staff-role-select"><option value="teacher">Teacher</option><option value="admin">Admin</option></select><button type="submit"><i data-lucide="user-plus"></i> Appoint</button></form><p id="staff-role-status" class="admin-status" aria-live="polite"></p><div id="staff-role-list" class="staff-role-list"></div></section>
-                <section id="owner-inbox" class="admin-roster-section super-admin-only" style="display:none"><div class="admin-section-head"><div><p class="eyebrow">PRIVATE MESSAGES</p><h3>Owner inbox</h3></div></div><div class="support-inbox-layout"><div id="admin-support-thread-list" class="admin-support-thread-list"><p class="roster-empty">Loading inbox…</p></div><div class="admin-chat-column"><div id="admin-chat-heading" class="admin-chat-heading">Choose a conversation to reply.</div><div id="admin-chat-messages" class="owner-chat-messages"><p class="chat-empty">Your selected conversation will appear here.</p></div><form id="admin-chat-form" class="owner-chat-form" style="display:none"><input id="admin-chat-input" type="text" maxlength="2000" placeholder="Reply to the student…" autocomplete="off"><button aria-label="Send reply"><i data-lucide="send"></i></button></form></div></div></section>
+                <section id="student-ban-management" class="admin-roster-section super-admin-only" style="display:none"><div class="admin-section-head"><div><p class="eyebrow">ACCOUNT SAFETY</p><h3>Student access</h3></div></div><p class="admin-card-copy">Pause platform access for an account when needed. The student sees the support email and can appeal.</p><form id="student-ban-form" class="staff-role-form"><input id="student-ban-email" type="email" placeholder="Student account email" required><input id="student-ban-reason" type="text" maxlength="240" placeholder="Reason (private to Super Admin)" required><button type="submit"><i data-lucide="shield-ban"></i> Pause access</button></form><p id="student-ban-status" class="admin-status" aria-live="polite"></p><div id="student-ban-list" class="staff-role-list"></div></section>
+                <section id="owner-inbox" class="admin-roster-section super-admin-only" style="display:none"><div class="admin-section-head"><div><p class="eyebrow">PRIVATE MESSAGES</p><h3>Owner inbox</h3></div></div><div class="support-inbox-layout"><div id="admin-support-thread-list" class="admin-support-thread-list"><p class="roster-empty">Loading inbox…</p></div><div class="admin-chat-column"><div id="admin-chat-heading" class="admin-chat-heading">Choose a conversation to reply.</div><p class="ticket-command-hint">Use /close or /reopen to manage this ticket.</p><div id="admin-chat-messages" class="owner-chat-messages"><p class="chat-empty">Your selected conversation will appear here.</p></div><form id="admin-chat-form" class="owner-chat-form" style="display:none"><input id="admin-chat-input" type="text" maxlength="2000" placeholder="Reply, /close, or /reopen this ticket…" autocomplete="off"><button aria-label="Send reply"><i data-lucide="send"></i></button></form></div></div></section>
             </section>
 
         </main>
@@ -868,12 +889,11 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const geminiCallable = firebase.functions().httpsCallable('callGemini');
         const STUDYHUB_ADMIN_UID = 'IF6nIldJ9kZ4iu0ub2pow3SwojR2';
         const STUDYHUB_ADMIN_EMAIL = 'declanthebest01@gmail.com';
 
         // Made by Nathan
-        const GEMINI_API_KEY = "AIzaSyCEBSFL8fLH02VdggHMA1mB13xvg9wkdLo"; 
-        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;
 
         let currentUserData = {};
         // Made by Nathan: Tracks indexes of selected cards for mass delete
@@ -939,12 +959,17 @@
         
         auth.onAuthStateChanged(async (user) => {
             if (user) {
+                try { const statusDoc=await db.collection('accountStatus').doc(user.uid).get(); if(statusDoc.exists && statusDoc.data().status==='banned') { bannedSession=true; document.getElementById('banned-screen').style.display='grid'; document.getElementById('auth-container').style.display='none'; await auth.signOut(); return; } } catch(error) { console.warn('Could not check account status.',error); }
+                bannedSession=false; document.getElementById('banned-screen').style.display='none';
                 await checkOnboardingStatus(user.uid, user.email);
             } else {
                 currentRole='student';
+                if (!bannedSession) document.getElementById('banned-screen').style.display='none';
                 if(studentChatUnsubscribe) studentChatUnsubscribe();
                 if(supportInboxUnsubscribe) supportInboxUnsubscribe();
                 if(activeSupportUnsubscribe) activeSupportUnsubscribe();
+                if(studentThreadUnsubscribe) studentThreadUnsubscribe();
+                if(activeSupportDocUnsubscribe) activeSupportDocUnsubscribe();
                 document.getElementById('app-dashboard').style.display = 'none';
                 document.getElementById('onboarding-container').style.display = 'none';
                 document.getElementById('auth-container').style.display = 'flex';
@@ -1160,50 +1185,22 @@
             
             const systemInstructionText = `You are a helpful, encouraging study assistant for learners of all ages and levels, including primary school, GCSE, and A-level. The learner's level is ${userYearGroup}; their subjects are ${userLessons}. Adapt vocabulary, examples, and explanation depth to that level. If they ask for a different level, follow their request. Keep answers clear, accurate, and supportive.`;
             
-            const payload = {
-                // CORRECT CONTENTS: Only user and model roles allowed for this API.
-                contents: [{ role: "user", parts: [{ text: userMessage }] }],
-                
-                // FINAL CORRECT FIX: The value of 'system_instruction' must be a CONTENT object.
-                system_instruction: { 
-                    parts: [{ text: systemInstructionText }] 
-                },
-                
-                // generationConfig ONLY contains generation parameters (like temperature)
-                generationConfig: {
-                    temperature: 0.5
-                }
-            };
-            
             try {
-                const response = await fetch(GEMINI_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload) // Directly use payload object
-                });
-
-                if (!response.ok) {
-                    // Log the full error response text for better debugging
-                    const errorText = await response.text(); 
-                    console.error("Gemini API Full Error Response:", errorText);
-                    throw new Error(`API call failed with status ${response.status}: ${errorText}`);
-                }
-
-                const data = await response.json();
-                const aiText = data.candidates[0].content.parts[0].text;
-                
-                aiMsgElement.innerHTML = renderAiMarkdown(aiText);
+                const prompt = systemInstructionText + '\n\nStudent question: ' + userMessage;
+                const result = await geminiCallable({ prompt });
+                aiMsgElement.innerHTML = renderAiMarkdown(result.data.responseText);
             } catch (error) {
-                console.error('Gemini API Error:', error);
-                
-                let displayError = 'I don\'t know. Error communicating with the study model.';
-                if (error.message.includes('status 503')) {
-                     displayError = 'The AI model is overloaded. Please try again in a moment.';
-                }
-
-                aiMsgElement.textContent = displayError;
+                console.error('Study Helper request failed:', error.code || error.message);
+                const code = (error.code || '').replace(/^functions\//, '');
+                const messages = {
+                    unauthenticated: 'Please sign in again to use the Study Helper.',
+                    'permission-denied': 'This account cannot use StudyHub. Contact the owner if you think this is a mistake.',
+                    'failed-precondition': 'The Study Helper needs attention from the owner before it can respond.',
+                    'resource-exhausted': 'The Study Helper is at its usage limit. Try again later.',
+                    unavailable: 'The study model is temporarily unavailable. Check your connection and try again.',
+                };
+                aiMsgElement.textContent = messages[code] || 'The Study Helper could not answer just now. Please try again.';
             }
-            
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
@@ -1560,25 +1557,8 @@ window.performMassDelete = async () => {
             const prompt = `Generate ${cardCount} key flashcards (Question/Answer pairs) on the topic: "${topic}". Format your response STRICTLY as a JSON array of objects, where each object has a 'front' key (the question) and a 'back' key (the answer). Do not include any introductory or concluding text outside the JSON block.`;
 
             try {
-                const response = await fetch(GEMINI_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        generationConfig: { 
-                            temperature: 0.7 
-                        }
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error("Gemini API Full Error Response:", errorText);
-                    throw new Error(`API call failed with status ${response.status}: ${errorText}`);
-                }
-                
-                const data = await response.json();
-                let aiText = data.candidates[0].content.parts[0].text.trim();
+                const result = await geminiCallable({prompt: prompt + ' Return only the requested JSON array.'});
+                let aiText = result.data.responseText.trim();
                 
                 if (aiText.startsWith('```json')) {
                     aiText = aiText.substring(7, aiText.lastIndexOf('```')).trim();
@@ -1725,8 +1705,11 @@ window.performMassDelete = async () => {
         });
         
         let currentRole = 'student';
+        let bannedSession = false;
+        let activeSupportStatus = 'open';
+        let banStatusUnsubscribe = null;
         let adminStudentRecords = [];
-        let studentChatUnsubscribe = null, supportInboxUnsubscribe = null, activeSupportUnsubscribe = null, activeSupportThreadId = null;
+        let studentChatUnsubscribe = null, studentThreadUnsubscribe = null, supportInboxUnsubscribe = null, activeSupportUnsubscribe = null, activeSupportDocUnsubscribe = null, activeSupportThreadId = null;
         const isStudyHubSuperAdmin = () => !!auth.currentUser && auth.currentUser.uid === STUDYHUB_ADMIN_UID && auth.currentUser.email === STUDYHUB_ADMIN_EMAIL;
         const isStudyHubAdmin = () => isStudyHubSuperAdmin() || currentRole === 'admin';
         const isStudyHubStaff = () => isStudyHubAdmin() || currentRole === 'teacher';
@@ -1743,8 +1726,9 @@ window.performMassDelete = async () => {
             if (!isStudyHubStaff()) return;
             document.getElementById('role-management').style.display=isStudyHubSuperAdmin()?'block':'none';
             document.getElementById('owner-inbox').style.display=isStudyHubSuperAdmin()?'block':'none';
+            document.getElementById('student-ban-management').style.display=isStudyHubSuperAdmin()?'block':'none';
             await window.refreshStudentRoster();
-            if(isStudyHubSuperAdmin()) await loadStaffRoles();
+            if(isStudyHubSuperAdmin()) { await loadStaffRoles(); await loadBannedStudents(); }
             await loadSupportInbox();
             document.querySelector('#admin-panel .admin-grid').style.display=isStudyHubAdmin()?'grid':'none';
             if(!isStudyHubAdmin()) return;
@@ -1789,14 +1773,15 @@ window.performMassDelete = async () => {
             try{
                 const existing=await thread.get();
                 if(!existing.exists){await thread.set({participantUid:uid,studentName:currentUserData.name||auth.currentUser.email||'Student',yearGroup:currentUserData.yearGroup||'',status:'open',lastMessage:'New conversation',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});}
+                if(studentThreadUnsubscribe)studentThreadUnsubscribe();studentThreadUnsubscribe=thread.onSnapshot(doc=>{const closed=doc.exists&&doc.data().status==='closed',input=document.getElementById('owner-chat-input'),send=document.querySelector('#owner-chat-form button');input.disabled=closed;send.disabled=closed;input.placeholder=closed?'This ticket is closed. Contact support to reopen it.':'Message the StudyHub owner privately…';document.getElementById('owner-chat-status').textContent=closed?'This ticket is closed. You can still read messages.':'';},()=>{});
                 studentChatUnsubscribe=thread.collection('messages').orderBy('createdAt').limitToLast(100).onSnapshot(snapshot=>renderSupportMessages(snapshot,panel,uid),error=>{panel.innerHTML='<p class="chat-empty">Chat could not load. Please email support instead.</p>';});
             }catch(error){panel.innerHTML='<p class="chat-empty">Chat is not available yet. Please email nathanthebest01@gmail.com.</p>';}
         }
         document.getElementById('owner-chat-form').addEventListener('submit',async event=>{event.preventDefault();if(!auth.currentUser||isStudyHubStaff())return;const input=document.getElementById('owner-chat-input'),text=input.value.trim();if(!text)return;input.disabled=true;try{const uid=auth.currentUser.uid,thread=db.collection('supportThreads').doc(uid);await thread.collection('messages').add({text,senderUid:uid,senderName:currentUserData.name||auth.currentUser.email||'Student',senderRole:'student',createdAt:firebase.firestore.FieldValue.serverTimestamp()});await thread.update({lastMessage:text.slice(0,140),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});input.value='';showAdminStatus('owner-chat-status','Message sent privately to the owner.');}catch(error){showAdminStatus('owner-chat-status','Message could not be sent. Please use the support email.',true);}finally{input.disabled=false;input.focus();}});
         function renderSupportThreadList(snapshot){const list=document.getElementById('admin-support-thread-list');list.replaceChildren();if(snapshot.empty){const empty=document.createElement('p');empty.className='roster-empty';empty.textContent='No student conversations yet.';list.appendChild(empty);return;}snapshot.forEach(doc=>{const t=doc.data(),button=document.createElement('button');button.type='button';button.className='support-thread-item'+(doc.id===activeSupportThreadId?' active':'');const name=document.createElement('strong');name.textContent=t.studentName||'Student';const level=document.createElement('span');level.textContent=(t.yearGroup||'Level not set')+' · '+(t.status||'open');const preview=document.createElement('small');preview.textContent=t.lastMessage||'New conversation';button.append(name,level,preview);button.onclick=()=>window.openAdminSupportThread(doc.id,t);list.appendChild(button);});}
         async function loadSupportInbox(){if(!isStudyHubSuperAdmin())return;if(supportInboxUnsubscribe)supportInboxUnsubscribe();supportInboxUnsubscribe=db.collection('supportThreads').orderBy('updatedAt','desc').limit(50).onSnapshot(renderSupportThreadList,error=>{document.getElementById('admin-support-thread-list').textContent='Inbox unavailable. Check Firestore rules.';});}
-        window.openAdminSupportThread=(threadId,threadData)=>{if(!isStudyHubSuperAdmin())return;activeSupportThreadId=threadId;if(activeSupportUnsubscribe)activeSupportUnsubscribe();document.getElementById('admin-chat-heading').textContent=(threadData.studentName||'Student')+' · '+(threadData.yearGroup||'Level not set');document.getElementById('admin-chat-form').style.display='flex';activeSupportUnsubscribe=db.collection('supportThreads').doc(threadId).collection('messages').orderBy('createdAt').limitToLast(100).onSnapshot(snapshot=>renderSupportMessages(snapshot,document.getElementById('admin-chat-messages'),auth.currentUser.uid),error=>{document.getElementById('admin-chat-messages').textContent='Conversation unavailable.';});};
-        document.getElementById('admin-chat-form').addEventListener('submit',async event=>{event.preventDefault();if(!isStudyHubSuperAdmin()||!activeSupportThreadId)return;const input=document.getElementById('admin-chat-input'),text=input.value.trim();if(!text)return;input.disabled=true;try{const role=isStudyHubSuperAdmin()?'super_admin':currentRole;const thread=db.collection('supportThreads').doc(activeSupportThreadId);await thread.collection('messages').add({text,senderUid:auth.currentUser.uid,senderName:isStudyHubSuperAdmin()?'Nathan':(auth.currentUser.displayName||auth.currentUser.email||'StudyHub staff'),senderRole:role,createdAt:firebase.firestore.FieldValue.serverTimestamp()});await thread.update({lastMessage:text.slice(0,140),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});input.value='';}catch(error){alert('Reply could not be sent. Check that the latest Firestore rules are published.');}finally{input.disabled=false;input.focus();}});
+        window.openAdminSupportThread=(threadId,threadData)=>{if(!isStudyHubSuperAdmin())return;activeSupportThreadId=threadId;if(activeSupportUnsubscribe)activeSupportUnsubscribe();if(activeSupportDocUnsubscribe)activeSupportDocUnsubscribe();const thread=db.collection('supportThreads').doc(threadId);document.getElementById('admin-chat-heading').textContent=(threadData.studentName||'Student')+' · '+(threadData.yearGroup||'Level not set')+' · '+(threadData.status||'open').toUpperCase();document.getElementById('admin-chat-form').style.display='flex';activeSupportUnsubscribe=thread.collection('messages').orderBy('createdAt').limitToLast(100).onSnapshot(snapshot=>renderSupportMessages(snapshot,document.getElementById('admin-chat-messages'),auth.currentUser.uid),error=>{document.getElementById('admin-chat-messages').textContent='Conversation unavailable.';});activeSupportDocUnsubscribe=thread.onSnapshot(doc=>{activeSupportStatus=doc.exists?(doc.data().status||'open'):'closed';document.getElementById('admin-chat-heading').textContent=(threadData.studentName||'Student')+' · '+(threadData.yearGroup||'Level not set')+' · '+activeSupportStatus.toUpperCase();});};
+        document.getElementById('admin-chat-form').addEventListener('submit',async event=>{event.preventDefault();if(!isStudyHubSuperAdmin()||!activeSupportThreadId)return;const input=document.getElementById('admin-chat-input'),text=input.value.trim();if(!text)return;input.disabled=true;try{const thread=db.collection('supportThreads').doc(activeSupportThreadId);if(text.toLowerCase()==='/close'||text.toLowerCase()==='/reopen'){const status=text.toLowerCase()==='/close'?'closed':'open';await thread.update({status,lastMessage:'Ticket '+status,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});input.value='';return;}if(activeSupportStatus==='closed'){alert('This ticket is closed. Use /reopen before replying.');return;}await thread.collection('messages').add({text,senderUid:auth.currentUser.uid,senderName:'Nathan',senderRole:'super_admin',createdAt:firebase.firestore.FieldValue.serverTimestamp()});await thread.update({lastMessage:text.slice(0,140),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});input.value='';}catch(error){alert('Reply could not be sent. Check that the latest Firestore rules are published.');}finally{input.disabled=false;input.focus();}});
 
         function renderStudentRoster(){const list=document.getElementById('admin-student-roster'),query=(document.getElementById('student-search').value||'').trim().toLowerCase(),level=document.getElementById('student-level-filter').value;list.replaceChildren();const rows=adminStudentRecords.filter(s=>(!level||s.yearGroup===level)&&(!query||[s.name,s.email,s.institution,s.yearGroup,...s.lessons].join(' ').toLowerCase().includes(query)));if(!rows.length){const empty=document.createElement('p');empty.className='roster-empty';empty.textContent='No learners match this search.';list.appendChild(empty);return;}rows.forEach(s=>{const card=document.createElement('article');card.className='student-record-card';const top=document.createElement('div');top.className='student-record-top';const identity=document.createElement('div');const name=document.createElement('strong');name.textContent=s.name||'Learner';const email=document.createElement('span');email.textContent=s.email||'No email on profile';identity.append(name,email);const levelTag=document.createElement('span');levelTag.className='learn-class-tag';levelTag.textContent=s.yearGroup||'Level not set';top.append(identity,levelTag);const details=document.createElement('p');details.textContent=[s.age!=null?'Age '+s.age:null,s.institution||null].filter(Boolean).join(' · ')||'Profile details not provided';const subjects=document.createElement('p');subjects.className='student-subjects';subjects.textContent='Subjects: '+(s.lessons.length?s.lessons.join(', '):'none listed');const progress=document.createElement('div');progress.className='student-progress-line';const score=document.createElement('span');score.textContent='Recorded score: '+(s.score_overall==null?'not tracked':s.score_overall);const cards=document.createElement('span');cards.textContent=s.flashcards.length+' flashcards';progress.append(score,cards);card.append(top,details,subjects,progress);list.appendChild(card);});}
         window.refreshStudentRoster=async()=>{if(!isStudyHubStaff())return;const list=document.getElementById('admin-student-roster');list.textContent='Loading learner profiles…';try{const snapshot=await db.collection('users').get();adminStudentRecords=snapshot.docs.map(doc=>{const d=doc.data();return{uid:doc.id,name:d.name||'',email:d.email||'',age:d.age,yearGroup:d.yearGroup||'',institution:d.institution||'',lessons:Array.isArray(d.lessons)?d.lessons:[],score_overall:d.score_overall,flashcards:Array.isArray(d.flashcards)?d.flashcards:[]};}).filter(d=>d.uid!==STUDYHUB_ADMIN_UID);document.getElementById('student-total-count').textContent=adminStudentRecords.length;document.getElementById('student-subject-count').textContent=new Set(adminStudentRecords.flatMap(x=>x.lessons)).size;document.getElementById('student-card-count').textContent=adminStudentRecords.reduce((sum,x)=>sum+x.flashcards.length,0);const select=document.getElementById('student-level-filter'),selected=select.value;select.replaceChildren(new Option('All levels',''));[...new Set(adminStudentRecords.map(x=>x.yearGroup).filter(Boolean))].sort().forEach(level=>select.add(new Option(level,level)));select.value=selected;renderStudentRoster();}catch(error){list.textContent='Learner overview unavailable. Check the Firestore rules.';}};
@@ -1805,6 +1790,11 @@ window.performMassDelete = async () => {
         document.getElementById('staff-role-form').addEventListener('submit',async event=>{event.preventDefault();if(!isStudyHubSuperAdmin())return;const email=document.getElementById('staff-email-input').value.trim().toLowerCase(),role=document.getElementById('staff-role-select').value;try{const result=await db.collection('users').where('email','==',email).limit(1).get();if(result.empty){showAdminStatus('staff-role-status','No onboarded learner account found for that email.',true);return;}const target=result.docs[0];if(target.id===STUDYHUB_ADMIN_UID){showAdminStatus('staff-role-status','The owner already holds the single Super Admin role.',true);return;}await db.collection('staffRoles').doc(target.id).set({role,assignedAt:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('staff-email-input').value='';showAdminStatus('staff-role-status',(role==='admin'?'Admin':'Teacher')+' appointed. They will see staff tools after signing in again.');await loadStaffRoles();}catch(error){showAdminStatus('staff-role-status','Could not appoint staff. Check Firestore rules and the account email.',true);}});
         window.removeStaffRole=async(uid,label)=>{if(!isStudyHubSuperAdmin()||!confirm('Remove staff access for '+label+'?'))return;try{await db.collection('staffRoles').doc(uid).delete();showAdminStatus('staff-role-status','Staff access removed.');await loadStaffRoles();}catch(error){showAdminStatus('staff-role-status','Could not remove staff access.',true);}};
 
+        async function loadBannedStudents(){if(!isStudyHubSuperAdmin())return;const list=document.getElementById('student-ban-list');list.replaceChildren();try{const snapshot=await db.collection('bannedUsers').get();snapshot.forEach(doc=>{const d=doc.data(),row=document.createElement('div');row.className='staff-role-row student-ban-row';const identity=document.createElement('span');identity.className='ban-identity';const email=document.createElement('strong');email.textContent=d.email||doc.id;const reason=document.createElement('small');reason.className='ban-reason';reason.textContent=d.reason||'No reason recorded';identity.append(email,reason);const unban=document.createElement('button');unban.type='button';unban.className='admin-secondary unban-button';unban.textContent='Restore access';unban.onclick=()=>window.unbanStudent(doc.id,d.email||doc.id);row.append(identity,unban);list.appendChild(row);});if(snapshot.empty)list.innerHTML='<p class="roster-empty">No student accounts are paused.</p>';}catch(error){list.textContent='Account safety list unavailable. Check Firestore rules.';}}
+        document.getElementById('student-ban-form').addEventListener('submit',async event=>{event.preventDefault();if(!isStudyHubSuperAdmin())return;const email=document.getElementById('student-ban-email').value.trim().toLowerCase(),reason=document.getElementById('student-ban-reason').value.trim();if(!reason)return;try{const matches=await db.collection('users').where('email','==',email).limit(1).get();if(matches.empty){showAdminStatus('student-ban-status','No learner profile found for that email.',true);return;}const target=matches.docs[0];if(target.id===STUDYHUB_ADMIN_UID){showAdminStatus('student-ban-status','The Super Admin account cannot be paused here.',true);return;}const role=await db.collection('staffRoles').doc(target.id).get();if(role.exists){showAdminStatus('student-ban-status','Remove this person’s staff role before pausing their access.',true);return;}await db.collection('bannedUsers').doc(target.id).set({email,reason,bannedAt:firebase.firestore.FieldValue.serverTimestamp(),bannedBy:auth.currentUser.uid});await db.collection('accountStatus').doc(target.id).set({status:'banned',updatedAt:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('student-ban-form').reset();showAdminStatus('student-ban-status','Student access paused.');await loadBannedStudents();}catch(error){showAdminStatus('student-ban-status','Could not pause access. Publish the updated Firestore rules first.',true);}});
+        window.unbanStudent=async(uid,email)=>{if(!isStudyHubSuperAdmin()||!confirm('Restore StudyHub access for '+email+'?'))return;try{await db.collection('bannedUsers').doc(uid).delete();await db.collection('accountStatus').doc(uid).set({status:'active',updatedAt:firebase.firestore.FieldValue.serverTimestamp()});showAdminStatus('student-ban-status','Account access restored.');await loadBannedStudents();}catch(error){showAdminStatus('student-ban-status','Could not restore access.',true);}};
+        window.retryBannedLogin=async()=>{bannedSession=false;document.getElementById('banned-screen').style.display='none';await auth.signOut();document.getElementById('auth-container').style.display='flex';};
+
         // Focus timer and checklist are saved locally on this device.
         let focusSeconds = 25 * 60, focusDuration = 25, focusInterval = null;
         const focusTaskKey = () => 'studyhub-focus-tasks-' + (auth.currentUser ? auth.currentUser.uid : 'guest');
@@ -1812,9 +1802,23 @@ window.performMassDelete = async () => {
         const renderFocusClock = () => { document.getElementById('focus-clock').textContent = formatFocusTime(); };
         window.setFocusDuration = (minutes,button) => { clearInterval(focusInterval); focusInterval=null; focusDuration=minutes; focusSeconds=minutes*60; document.querySelectorAll('.timer-mode').forEach(mode=>mode.classList.remove('active')); button.classList.add('active'); document.getElementById('focus-start-label').textContent='Start focus'; document.getElementById('focus-status').textContent='Ready when you are'; renderFocusClock(); };
         window.resetFocusTimer = () => { clearInterval(focusInterval); focusInterval=null; focusSeconds=focusDuration*60; renderFocusClock(); document.getElementById('focus-start-label').textContent='Start focus'; document.getElementById('focus-status').textContent='Ready when you are'; };
-        window.toggleFocusTimer = () => { const status=document.getElementById('focus-status'); if(focusInterval){clearInterval(focusInterval);focusInterval=null;document.getElementById('focus-start-label').textContent='Resume';status.textContent='Paused - take your time';return;} document.getElementById('focus-start-label').textContent='Pause';status.textContent=focusDuration===25?'You’ve got this - one task at a time':'Breathe, stretch, and recharge'; focusInterval=setInterval(()=>{focusSeconds--;renderFocusClock();if(focusSeconds<=0){clearInterval(focusInterval);focusInterval=null;document.getElementById('focus-start-label').textContent='Start again';status.textContent='Session complete - lovely work!';}},1000); };
+        window.toggleFocusTimer = () => { const status=document.getElementById('focus-status'); if(focusInterval){clearInterval(focusInterval);focusInterval=null;document.getElementById('focus-start-label').textContent='Resume';status.textContent='Paused — take your time';return;} document.getElementById('focus-start-label').textContent='Pause';status.textContent=focusDuration===25?'You’ve got this — one task at a time':'Breathe, stretch, and recharge'; focusInterval=setInterval(()=>{focusSeconds--;renderFocusClock();if(focusSeconds<=0){clearInterval(focusInterval);focusInterval=null;document.getElementById('focus-start-label').textContent='Start again';status.textContent='Session complete — lovely work!';}},1000); };
         function renderFocusTasks(){const list=document.getElementById('focus-task-list'),empty=document.getElementById('focus-task-empty');const tasks=JSON.parse(localStorage.getItem(focusTaskKey())||'[]');list.replaceChildren();empty.style.display=tasks.length?'none':'block';tasks.forEach((task,index)=>{const row=document.createElement('li');if(task.done)row.classList.add('done');const check=document.createElement('input');check.type='checkbox';check.checked=task.done;check.setAttribute('aria-label','Mark '+task.text+' complete');check.onchange=()=>{const all=JSON.parse(localStorage.getItem(focusTaskKey())||'[]');all[index].done=check.checked;localStorage.setItem(focusTaskKey(),JSON.stringify(all));renderFocusTasks();};const label=document.createElement('span');label.textContent=task.text;row.append(check,label);list.appendChild(row);});}
         document.getElementById('focus-task-form').addEventListener('submit',event=>{event.preventDefault();const input=document.getElementById('focus-task-input'),text=input.value.trim();if(!text)return;const tasks=JSON.parse(localStorage.getItem(focusTaskKey())||'[]');tasks.push({text,done:false});localStorage.setItem(focusTaskKey(),JSON.stringify(tasks));input.value='';renderFocusTasks();});
+
+        const savedTheme = localStorage.getItem('studyhub-theme') || 'light';
+        function applyStudyHubTheme(theme) {
+            const dark = theme === 'dark';
+            document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+            localStorage.setItem('studyhub-theme', dark ? 'dark' : 'light');
+            const button = document.getElementById('theme-toggle');
+            if (button) { button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode'); button.innerHTML = '<i data-lucide="' + (dark ? 'sun' : 'moon') + '"></i><span>' + (dark ? 'Light mode' : 'Dark mode') + '</span>'; if(window.lucide) lucide.createIcons(); }
+        }
+        window.toggleTheme = () => applyStudyHubTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        applyStudyHubTheme(savedTheme);
+        window.clearAiChat = () => { const box=document.getElementById('ai-chat-box'); box.replaceChildren(); const welcome=document.createElement('div'); welcome.className='chat-message ai'; welcome.textContent='Hello! Ask me about a topic, request a quiz, or get help planning your revision.'; box.appendChild(welcome); };
+        window.useAiPrompt = (kind) => { const prompts={explain:'Explain this topic in simple steps: ',quiz:'Quiz me on: ',plan:'Help me make a short study plan for: '}; const input=document.getElementById('ai-input'); input.value=prompts[kind]||''; input.focus(); };
+        document.querySelector('.ai-prompt-row')?.addEventListener('click',event=>{const kind=event.target.closest('[data-prompt]')?.dataset.prompt;if(kind)window.useAiPrompt(kind);});
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();

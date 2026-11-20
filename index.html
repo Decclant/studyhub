@@ -541,6 +541,19 @@
         .admin-grid { display:grid;grid-template-columns:1fr 1fr;gap:17px; }.admin-card { background:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.96);border-radius:21px;padding:23px;box-shadow:0 13px 35px rgba(57,66,130,.065),inset 0 1px rgba(255,255,255,.95);backdrop-filter:blur(16px); }.admin-card-heading { display:flex;align-items:center;gap:12px; }.admin-card-icon { width:42px;height:42px;display:grid;place-items:center;border-radius:14px;color:#5867d9;background:#eef0ff; }.tip-admin-icon { color:#c78d2f;background:#fff4de; }.admin-card-heading h3 { margin:4px 0 0;font-size:18px; }.admin-card-copy { color:#858ba0;font-size:12px;line-height:1.55;margin:15px 0 18px; }.admin-form { display:grid;gap:8px; }.admin-form label { margin-top:4px;color:#596078;font-size:11px;font-weight:750; }.admin-form input,.admin-form textarea { width:100%;margin:0;resize:vertical;font:inherit;font-size:13px; }.admin-form-actions { display:flex;align-items:center;gap:9px;margin-top:7px; }.admin-form-actions button { width:auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;font-size:12px; }.admin-form-actions button svg { width:15px;height:15px; }.admin-form-actions .admin-secondary { background:#f2f3f8;color:#697087;box-shadow:none; }.admin-form-actions .admin-secondary:hover { background:#e9ebf4; }.admin-status { min-height:17px;color:#548a75;font-size:11px;margin:10px 0 0; }.admin-status.error { color:#bf5d65; }.admin-safety-note { display:flex;align-items:center;gap:9px;padding:14px 16px;margin-top:16px;border-radius:14px;background:rgba(239,241,255,.72);color:#70799f;font-size:11px;line-height:1.5; }.admin-safety-note svg { width:17px;flex:none;color:#6e7be0; }
         @media(max-width:760px) { .admin-grid { grid-template-columns:1fr; }.admin-heading { align-items:flex-start;flex-direction:column; } }
 
+
+        .owner-chat-card,.admin-roster-section { margin-top:20px;padding:22px;border-radius:21px;background:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.95);box-shadow:0 13px 35px rgba(57,66,130,.06);backdrop-filter:blur(16px); }
+        .owner-chat-title { display:flex;gap:12px;align-items:flex-start; }.owner-chat-title h3 { margin:2px 0 5px; }.owner-chat-title p { color:#858ba0;font-size:12px;line-height:1.55;margin:0; }
+        .owner-chat-messages { display:flex;flex-direction:column;gap:9px;min-height:100px;max-height:360px;overflow-y:auto;padding:14px;margin-top:16px;border:1px solid #edf0f5;border-radius:15px;background:rgba(248,249,253,.76); }
+        .owner-message { max-width:min(88%,560px);padding:10px 12px;border-radius:14px;background:#fff;align-self:flex-start;border:1px solid #eef0f6; }.owner-message.mine { align-self:flex-end;background:#eef0ff;border-color:#e3e7ff; }.owner-message-meta { display:flex;justify-content:space-between;gap:18px;color:#858ba0;font-size:10px; }.owner-message-meta strong { color:#5965c8; }.owner-message p { margin:5px 0 0;color:#3e445c;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere; }.owner-message time { color:#a1a6b5; }.chat-empty,.roster-empty { color:#999fb1;font-size:12px;margin:auto;text-align:center;padding:14px; }
+        .owner-chat-form { display:flex;gap:8px;margin-top:10px; }.owner-chat-form input { margin:0;flex:1; }.owner-chat-form button { flex:none;width:46px;display:grid;place-items:center; }.owner-chat-form svg { width:17px; }
+        .admin-section-head { display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:15px; }.admin-section-head .eyebrow { margin:0 0 4px; }.admin-section-head h3 { margin:0;font-size:21px; }.refresh-roster { width:auto;display:flex;align-items:center;gap:7px;background:#f1f2f8;color:#677087;padding:10px 13px;box-shadow:none;font-size:11px; }.refresh-roster svg { width:14px; }
+        .student-stat-strip { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px; }.student-stat-strip>div { display:flex;flex-direction:column;gap:3px;padding:13px;border-radius:14px;background:linear-gradient(135deg,#f2f3ff,#fff); }.student-stat-strip strong { color:#414eae;font-size:22px; }.student-stat-strip span { color:#8c92a5;font-size:10px;font-weight:700; }.roster-tools { display:flex;gap:9px;margin-bottom:12px; }.roster-tools input { flex:1;margin:0; }.roster-tools select { min-width:150px;margin:0; }
+        .admin-student-roster { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-height:520px;overflow:auto; }.student-record-card { padding:14px;border:1px solid #eceef5;border-radius:15px;background:rgba(255,255,255,.77); }.student-record-top { display:flex;justify-content:space-between;align-items:flex-start;gap:8px; }.student-record-top>div { display:grid;gap:3px;min-width:0; }.student-record-top strong { color:#353a52;font-size:13px; }.student-record-top>div span { color:#9399aa;font-size:10px;overflow-wrap:anywhere; }.student-record-top .learn-class-tag { flex:none;font-size:9px;padding:6px 8px; }.student-record-card>p { color:#7d8398;font-size:11px;line-height:1.5;margin:9px 0 0; }.student-record-card .student-subjects { color:#5c6688; }.student-progress-line { display:flex;justify-content:space-between;gap:8px;border-top:1px solid #eef0f5;margin-top:10px;padding-top:9px;color:#757c94;font-size:10px; }
+        .staff-role-form { display:grid;grid-template-columns:minmax(0,1fr) 145px auto;gap:8px; }.staff-role-form input,.staff-role-form select { margin:0; }.staff-role-form button { width:auto;display:flex;align-items:center;gap:7px;padding:11px 14px;font-size:11px; }.staff-role-form button svg { width:15px; }.staff-role-list { display:grid;gap:7px;margin-top:12px; }.staff-role-row { display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #edf0f5;border-radius:12px;color:#6d748a;font-size:11px; }.staff-role-row>span { flex:1;overflow-wrap:anywhere; }.staff-role-row strong { color:#5864cb; }.staff-role-row button { width:auto;background:#f3f4f8;color:#70768a;padding:7px 10px;box-shadow:none;font-size:10px; }
+        .support-inbox-layout { display:grid;grid-template-columns:minmax(180px,.7fr) minmax(0,1.3fr);gap:12px; }.admin-support-thread-list { display:grid;align-content:start;gap:7px;max-height:450px;overflow:auto; }.support-thread-item { display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;text-align:left;padding:11px;border:1px solid #eceef5;border-radius:12px;background:rgba(255,255,255,.72);color:#50566d;box-shadow:none; }.support-thread-item strong { font-size:12px; }.support-thread-item span,.support-thread-item small { color:#8c92a5;font-size:10px; }.support-thread-item.active,.support-thread-item:hover { background:#eef0ff;color:#4f5dcc;border-color:#dce1ff; }.admin-chat-column { min-width:0; }.admin-chat-heading { font-size:12px;font-weight:750;color:#525a78;padding:4px 2px; }.admin-chat-column .owner-chat-messages { margin-top:7px;min-height:190px; }.admin-chat-column .owner-chat-form { display:flex; }.admin-chat-column .owner-chat-form[style*="display:none"] { display:none!important; }
+        @media(max-width:760px){.admin-student-roster{grid-template-columns:1fr;}.support-inbox-layout{grid-template-columns:1fr;}.admin-support-thread-list{max-height:180px;}.staff-role-form{grid-template-columns:1fr;}.roster-tools{flex-direction:column;}.student-stat-strip{gap:6px}.student-stat-strip>div{padding:10px}.owner-chat-card,.admin-roster-section{padding:16px}}
+
     </style>
 </head>
 <body>
@@ -700,6 +713,7 @@
 
             <section id="support" class="tab-content">
                 <div class="support-hero"><span class="support-icon"><i data-lucide="life-buoy"></i></span><p class="eyebrow">YOU'RE NOT ON YOUR OWN</p><h2>Student support</h2><p>Questions, feedback, or something not working? Reach out and we’ll help you find your next step.</p><a class="support-email" href="mailto:nathanthebest01@gmail.com?subject=StudyHub%20support"><i data-lucide="mail"></i> Email Nathan <i data-lucide="arrow-up-right"></i></a><span class="support-address">nathanthebest01@gmail.com</span></div>
+                <article class="owner-chat-card"><div class="owner-chat-title"><span class="support-card-icon"><i data-lucide="messages-square"></i></span><div><h3>Chat privately with Nathan</h3><p>Send the owner a question or feedback. Only you and authorised staff can see this conversation.</p></div></div><div id="owner-chat-messages" class="owner-chat-messages"><p class="chat-empty">Loading your conversation…</p></div><form id="owner-chat-form" class="owner-chat-form"><input id="owner-chat-input" type="text" maxlength="2000" placeholder="Write a message to Nathan…" autocomplete="off"><button aria-label="Send message"><i data-lucide="send"></i></button></form><p id="owner-chat-status" class="admin-status" aria-live="polite"></p></article>
                 <div class="learn-section-heading support-heading"><div><p class="eyebrow">QUICK ANSWERS</p><h3>How can we help?</h3></div></div>
                 <div class="support-grid">
                     <article class="support-card"><span class="support-card-icon"><i data-lucide="sparkles"></i></span><h3>Using the AI helper</h3><p>Ask one clear question at a time. Include the topic and what part feels confusing to get a more useful explanation.</p><button onclick="window.changeTab(document.querySelector('[data-tab=ai-helper]'),'ai-helper')">Open AI helper <i data-lucide="arrow-right"></i></button></article>
@@ -784,7 +798,10 @@
                     <article class="admin-card"><div class="admin-card-heading"><span class="admin-card-icon"><i data-lucide="megaphone"></i></span><div><span class="path-tag">CLASS COMMUNICATION</span><h3>Student announcement</h3></div></div><p class="admin-card-copy">Publish a short update for signed-in students. Keep it clear and useful.</p><form id="announcement-form" class="admin-form"><label for="announcement-title">Headline</label><input id="announcement-title" type="text" maxlength="70" placeholder="e.g. Revision session this Friday"><label for="announcement-message">Message</label><textarea id="announcement-message" maxlength="240" rows="4" placeholder="What should students know?"></textarea><div class="admin-form-actions"><button type="submit"><i data-lucide="send"></i> Publish announcement</button><button type="button" class="admin-secondary" onclick="window.clearAdminAnnouncement()">Clear</button></div></form><p id="announcement-status" class="admin-status" aria-live="polite"></p></article>
                     <article class="admin-card"><div class="admin-card-heading"><span class="admin-card-icon tip-admin-icon"><i data-lucide="lightbulb"></i></span><div><span class="path-tag">LEARNING CONTENT</span><h3>Study tip of the week</h3></div></div><p class="admin-card-copy">Refresh the practical study advice displayed on the Learn page.</p><form id="study-tip-form" class="admin-form"><label for="admin-study-tip">Tip for students</label><textarea id="admin-study-tip" maxlength="260" rows="5" placeholder="Share one practical idea students can try…"></textarea><div class="admin-form-actions"><button type="submit"><i data-lucide="save"></i> Save study tip</button></div></form><p id="tip-status" class="admin-status" aria-live="polite"></p></article>
                 </div>
-                <div class="admin-safety-note"><i data-lucide="users-round"></i><span>Keep announcements respectful and useful to the whole class. Students can contact support if they need individual help.</span></div>
+                <div class="admin-safety-note"><i data-lucide="users-round"></i><span>Student profiles and progress are visible to authorised staff. Passwords are not visible to anyone, including the owner; use secure reset flows instead.</span></div>
+                <section class="admin-roster-section"><div class="admin-section-head"><div><p class="eyebrow">LEARNER OVERVIEW</p><h3>Student progress</h3></div><button class="admin-secondary refresh-roster" onclick="window.refreshStudentRoster()"><i data-lucide="refresh-cw"></i> Refresh</button></div><div class="student-stat-strip"><div><strong id="student-total-count">—</strong><span>Learners</span></div><div><strong id="student-subject-count">—</strong><span>Subjects</span></div><div><strong id="student-card-count">—</strong><span>Saved flashcards</span></div></div><div class="roster-tools"><input id="student-search" type="search" placeholder="Search learners, subjects or school…"><select id="student-level-filter"><option value="">All levels</option></select></div><div id="admin-student-roster" class="admin-student-roster"><p class="roster-empty">Loading student overview…</p></div></section>
+                <section id="role-management" class="admin-roster-section super-admin-only" style="display:none"><div class="admin-section-head"><div><p class="eyebrow">ACCESS CONTROL</p><h3>Appoint staff</h3></div><span class="admin-access-badge"><i data-lucide="crown"></i> Super Admin</span></div><p class="admin-card-copy">Only the Super Admin can appoint or remove Teachers and Admins. The Super Admin role is fixed to the owner account, so there can only be one.</p><form id="staff-role-form" class="staff-role-form"><input id="staff-email-input" type="email" placeholder="Staff member’s account email" required><select id="staff-role-select"><option value="teacher">Teacher</option><option value="admin">Admin</option></select><button type="submit"><i data-lucide="user-plus"></i> Appoint</button></form><p id="staff-role-status" class="admin-status" aria-live="polite"></p><div id="staff-role-list" class="staff-role-list"></div></section>
+                <section id="owner-inbox" class="admin-roster-section super-admin-only" style="display:none"><div class="admin-section-head"><div><p class="eyebrow">PRIVATE MESSAGES</p><h3>Owner inbox</h3></div></div><div class="support-inbox-layout"><div id="admin-support-thread-list" class="admin-support-thread-list"><p class="roster-empty">Loading inbox…</p></div><div class="admin-chat-column"><div id="admin-chat-heading" class="admin-chat-heading">Choose a conversation to reply.</div><div id="admin-chat-messages" class="owner-chat-messages"><p class="chat-empty">Your selected conversation will appear here.</p></div><form id="admin-chat-form" class="owner-chat-form" style="display:none"><input id="admin-chat-input" type="text" maxlength="2000" placeholder="Reply to the student…" autocomplete="off"><button aria-label="Send reply"><i data-lucide="send"></i></button></form></div></div></section>
             </section>
 
         </main>
@@ -924,6 +941,10 @@
             if (user) {
                 await checkOnboardingStatus(user.uid, user.email);
             } else {
+                currentRole='student';
+                if(studentChatUnsubscribe) studentChatUnsubscribe();
+                if(supportInboxUnsubscribe) supportInboxUnsubscribe();
+                if(activeSupportUnsubscribe) activeSupportUnsubscribe();
                 document.getElementById('app-dashboard').style.display = 'none';
                 document.getElementById('onboarding-container').style.display = 'none';
                 document.getElementById('auth-container').style.display = 'flex';
@@ -931,6 +952,7 @@
         });
         
         async function checkOnboardingStatus(uid, email) {
+            await loadCurrentRole(uid);
             const userDocRef = db.collection('users').doc(uid);
             const userDoc = await userDocRef.get();
             
@@ -942,14 +964,15 @@
                 document.getElementById('app-dashboard').style.display = 'grid';
                 
                 loadUserSettings(currentUserData);
-                document.getElementById('chat-year-group-display').textContent = isStudyHubAdmin() ? '9B' : (currentUserData.yearGroup || 'Not set');
-                document.getElementById('welcome-year-group').textContent = isStudyHubAdmin() ? '9B' : (currentUserData.yearGroup || 'Your level');
-                document.getElementById('learn-year-group').textContent = isStudyHubAdmin() ? '9B' : (currentUserData.yearGroup || 'YOUR OWN');
+                document.getElementById('chat-year-group-display').textContent = isStudyHubSuperAdmin() ? '9B' : (currentUserData.yearGroup || 'Not set');
+                document.getElementById('welcome-year-group').textContent = isStudyHubSuperAdmin() ? '9B' : (currentUserData.yearGroup || 'Your level');
+                document.getElementById('learn-year-group').textContent = isStudyHubSuperAdmin() ? '9B' : (currentUserData.yearGroup || 'YOUR OWN');
                 renderFocusTasks();
                 await loadStudentContent();
+                await startStudentChat(uid);
 
                 const adminLink = document.getElementById('admin-panel-link');
-                if (isStudyHubAdmin()) {
+                if (isStudyHubStaff()) {
                     adminLink.style.display = 'flex';
                 } else {
                     adminLink.style.display = 'none';
@@ -1087,7 +1110,7 @@
         });
 
         window.changeTab = (sidebarItem, tabId) => {
-            if (tabId === 'admin-panel' && !isStudyHubAdmin()) {
+            if (tabId === 'admin-panel' && !isStudyHubStaff()) {
                 alert('Access denied. This panel is for the StudyHub administrator.');
                 return;
             }
@@ -1103,6 +1126,11 @@
             if (tabId === 'admin-panel') window.loadAdminContent();
         }
 
+        function renderAiMarkdown(text) {
+            let safe=String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+            safe=safe.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g,'<em>$1</em>');
+            return safe.replace(/\n/g,'<br>');
+        }
         // Made by Nathan
         window.sendAiMessage = async () => {
             const input = document.getElementById('ai-input');
@@ -1128,7 +1156,7 @@
             const userLessons = currentUserData.lessons && currentUserData.lessons.length > 0 
                 ? currentUserData.lessons.join(', ') 
                 : 'General Knowledge';
-            const userYearGroup = isStudyHubAdmin() ? 'Year 9B' : (currentUserData.yearGroup || 'the learner’s chosen level');
+            const userYearGroup = isStudyHubSuperAdmin() ? 'Year 9B' : (currentUserData.yearGroup || 'the learner’s chosen level');
             
             const systemInstructionText = `You are a helpful, encouraging study assistant for learners of all ages and levels, including primary school, GCSE, and A-level. The learner's level is ${userYearGroup}; their subjects are ${userLessons}. Adapt vocabulary, examples, and explanation depth to that level. If they ask for a different level, follow their request. Keep answers clear, accurate, and supportive.`;
             
@@ -1164,7 +1192,7 @@
                 const data = await response.json();
                 const aiText = data.candidates[0].content.parts[0].text;
                 
-                aiMsgElement.textContent = aiText;
+                aiMsgElement.innerHTML = renderAiMarkdown(aiText);
             } catch (error) {
                 console.error('Gemini API Error:', error);
                 
@@ -1601,10 +1629,10 @@ window.performMassDelete = async () => {
 
         function loadUserSettings(data) {
             document.getElementById('setting-name').value = data.name || '';
-            document.getElementById('welcome-year-group').textContent = isStudyHubAdmin() ? '9B' : (data.yearGroup || 'Your level');
-            document.getElementById('learn-year-group').textContent = isStudyHubAdmin() ? '9B' : (data.yearGroup || 'YOUR OWN');
+            document.getElementById('welcome-year-group').textContent = isStudyHubSuperAdmin() ? '9B' : (data.yearGroup || 'Your level');
+            document.getElementById('learn-year-group').textContent = isStudyHubSuperAdmin() ? '9B' : (data.yearGroup || 'YOUR OWN');
             document.getElementById('setting-age').value = data.age || '';
-            document.getElementById('setting-yeargroup').value = isStudyHubAdmin() ? '9B' : (data.yearGroup || '');
+            document.getElementById('setting-yeargroup').value = isStudyHubSuperAdmin() ? '9B' : (data.yearGroup || '');
             document.getElementById('setting-institution').value = data.institution || '';
             
             settingsLessons = [...(data.lessons || [])];
@@ -1696,7 +1724,13 @@ window.performMassDelete = async () => {
             }
         });
         
-        function isStudyHubAdmin() { return !!auth.currentUser && auth.currentUser.uid === STUDYHUB_ADMIN_UID && auth.currentUser.email === STUDYHUB_ADMIN_EMAIL; }
+        let currentRole = 'student';
+        let adminStudentRecords = [];
+        let studentChatUnsubscribe = null, supportInboxUnsubscribe = null, activeSupportUnsubscribe = null, activeSupportThreadId = null;
+        const isStudyHubSuperAdmin = () => !!auth.currentUser && auth.currentUser.uid === STUDYHUB_ADMIN_UID && auth.currentUser.email === STUDYHUB_ADMIN_EMAIL;
+        const isStudyHubAdmin = () => isStudyHubSuperAdmin() || currentRole === 'admin';
+        const isStudyHubStaff = () => isStudyHubAdmin() || currentRole === 'teacher';
+        async function loadCurrentRole(uid) { if(uid===STUDYHUB_ADMIN_UID){currentRole='super_admin';return currentRole;} try{const roleDoc=await db.collection('staffRoles').doc(uid).get();currentRole=roleDoc.exists&&['admin','teacher'].includes(roleDoc.data().role)?roleDoc.data().role:'student';}catch(error){currentRole='student';console.warn('Staff role lookup failed.',error);}return currentRole; }
         function showAdminStatus(id, message, isError=false) { const el=document.getElementById(id); el.textContent=message; el.classList.toggle('error',isError); }
         window.loadStudentContent = async () => {
             try {
@@ -1706,7 +1740,14 @@ window.performMassDelete = async () => {
             } catch (error) { console.warn('Shared learning content could not be loaded.',error); }
         };
         window.loadAdminContent = async () => {
-            if (!isStudyHubAdmin()) return;
+            if (!isStudyHubStaff()) return;
+            document.getElementById('role-management').style.display=isStudyHubSuperAdmin()?'block':'none';
+            document.getElementById('owner-inbox').style.display=isStudyHubSuperAdmin()?'block':'none';
+            await window.refreshStudentRoster();
+            if(isStudyHubSuperAdmin()) await loadStaffRoles();
+            await loadSupportInbox();
+            document.querySelector('#admin-panel .admin-grid').style.display=isStudyHubAdmin()?'grid':'none';
+            if(!isStudyHubAdmin()) return;
             try {
                 const [announcementDoc, tipDoc] = await Promise.all([db.collection('appContent').doc('announcement').get(), db.collection('appContent').doc('studyTip').get()]);
                 document.getElementById('announcement-title').value=announcementDoc.exists?(announcementDoc.data().title||''):'';
@@ -1734,6 +1775,35 @@ window.performMassDelete = async () => {
             try { await db.collection('appContent').doc('announcement').delete();document.getElementById('announcement-title').value='';document.getElementById('announcement-message').value='';document.getElementById('student-announcement').style.display='none';showAdminStatus('announcement-status','Announcement cleared.'); }
             catch(error){showAdminStatus('announcement-status','Could not clear the announcement. Check the Firestore rules.',true);}
         };
+
+        function renderSupportMessages(snapshot, container, viewerUid) {
+            container.replaceChildren();
+            if(snapshot.empty){const empty=document.createElement('p');empty.className='chat-empty';empty.textContent='No messages yet. Say hello to start the conversation.';container.appendChild(empty);return;}
+            snapshot.forEach(doc=>{const m=doc.data();const bubble=document.createElement('article');bubble.className='owner-message '+(m.senderUid===viewerUid?'mine':'theirs');const meta=document.createElement('div');meta.className='owner-message-meta';const author=document.createElement('strong');author.textContent=m.senderUid===viewerUid?'You':(m.senderRole==='super_admin'?'Nathan · Owner':m.senderRole==='admin'?'StudyHub admin':m.senderRole==='teacher'?'Teacher':(m.senderName||'Student'));const when=document.createElement('time');when.textContent=m.createdAt&&m.createdAt.toDate?m.createdAt.toDate().toLocaleString():'';meta.append(author,when);const body=document.createElement('p');body.textContent=m.text||'';bubble.append(meta,body);container.appendChild(bubble);});container.scrollTop=container.scrollHeight;
+        }
+        async function startStudentChat(uid) {
+            const panel=document.getElementById('owner-chat-messages');
+            if(isStudyHubStaff()){panel.innerHTML='<p class="chat-empty">This private chat is available to students for contacting the StudyHub owner.</p>';return;}
+            if(studentChatUnsubscribe)studentChatUnsubscribe();
+            const thread=db.collection('supportThreads').doc(uid);
+            try{
+                const existing=await thread.get();
+                if(!existing.exists){await thread.set({participantUid:uid,studentName:currentUserData.name||auth.currentUser.email||'Student',yearGroup:currentUserData.yearGroup||'',status:'open',lastMessage:'New conversation',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});}
+                studentChatUnsubscribe=thread.collection('messages').orderBy('createdAt').limitToLast(100).onSnapshot(snapshot=>renderSupportMessages(snapshot,panel,uid),error=>{panel.innerHTML='<p class="chat-empty">Chat could not load. Please email support instead.</p>';});
+            }catch(error){panel.innerHTML='<p class="chat-empty">Chat is not available yet. Please email nathanthebest01@gmail.com.</p>';}
+        }
+        document.getElementById('owner-chat-form').addEventListener('submit',async event=>{event.preventDefault();if(!auth.currentUser||isStudyHubStaff())return;const input=document.getElementById('owner-chat-input'),text=input.value.trim();if(!text)return;input.disabled=true;try{const uid=auth.currentUser.uid,thread=db.collection('supportThreads').doc(uid);await thread.collection('messages').add({text,senderUid:uid,senderName:currentUserData.name||auth.currentUser.email||'Student',senderRole:'student',createdAt:firebase.firestore.FieldValue.serverTimestamp()});await thread.update({lastMessage:text.slice(0,140),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});input.value='';showAdminStatus('owner-chat-status','Message sent privately to the owner.');}catch(error){showAdminStatus('owner-chat-status','Message could not be sent. Please use the support email.',true);}finally{input.disabled=false;input.focus();}});
+        function renderSupportThreadList(snapshot){const list=document.getElementById('admin-support-thread-list');list.replaceChildren();if(snapshot.empty){const empty=document.createElement('p');empty.className='roster-empty';empty.textContent='No student conversations yet.';list.appendChild(empty);return;}snapshot.forEach(doc=>{const t=doc.data(),button=document.createElement('button');button.type='button';button.className='support-thread-item'+(doc.id===activeSupportThreadId?' active':'');const name=document.createElement('strong');name.textContent=t.studentName||'Student';const level=document.createElement('span');level.textContent=(t.yearGroup||'Level not set')+' · '+(t.status||'open');const preview=document.createElement('small');preview.textContent=t.lastMessage||'New conversation';button.append(name,level,preview);button.onclick=()=>window.openAdminSupportThread(doc.id,t);list.appendChild(button);});}
+        async function loadSupportInbox(){if(!isStudyHubSuperAdmin())return;if(supportInboxUnsubscribe)supportInboxUnsubscribe();supportInboxUnsubscribe=db.collection('supportThreads').orderBy('updatedAt','desc').limit(50).onSnapshot(renderSupportThreadList,error=>{document.getElementById('admin-support-thread-list').textContent='Inbox unavailable. Check Firestore rules.';});}
+        window.openAdminSupportThread=(threadId,threadData)=>{if(!isStudyHubSuperAdmin())return;activeSupportThreadId=threadId;if(activeSupportUnsubscribe)activeSupportUnsubscribe();document.getElementById('admin-chat-heading').textContent=(threadData.studentName||'Student')+' · '+(threadData.yearGroup||'Level not set');document.getElementById('admin-chat-form').style.display='flex';activeSupportUnsubscribe=db.collection('supportThreads').doc(threadId).collection('messages').orderBy('createdAt').limitToLast(100).onSnapshot(snapshot=>renderSupportMessages(snapshot,document.getElementById('admin-chat-messages'),auth.currentUser.uid),error=>{document.getElementById('admin-chat-messages').textContent='Conversation unavailable.';});};
+        document.getElementById('admin-chat-form').addEventListener('submit',async event=>{event.preventDefault();if(!isStudyHubSuperAdmin()||!activeSupportThreadId)return;const input=document.getElementById('admin-chat-input'),text=input.value.trim();if(!text)return;input.disabled=true;try{const role=isStudyHubSuperAdmin()?'super_admin':currentRole;const thread=db.collection('supportThreads').doc(activeSupportThreadId);await thread.collection('messages').add({text,senderUid:auth.currentUser.uid,senderName:isStudyHubSuperAdmin()?'Nathan':(auth.currentUser.displayName||auth.currentUser.email||'StudyHub staff'),senderRole:role,createdAt:firebase.firestore.FieldValue.serverTimestamp()});await thread.update({lastMessage:text.slice(0,140),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});input.value='';}catch(error){alert('Reply could not be sent. Check that the latest Firestore rules are published.');}finally{input.disabled=false;input.focus();}});
+
+        function renderStudentRoster(){const list=document.getElementById('admin-student-roster'),query=(document.getElementById('student-search').value||'').trim().toLowerCase(),level=document.getElementById('student-level-filter').value;list.replaceChildren();const rows=adminStudentRecords.filter(s=>(!level||s.yearGroup===level)&&(!query||[s.name,s.email,s.institution,s.yearGroup,...s.lessons].join(' ').toLowerCase().includes(query)));if(!rows.length){const empty=document.createElement('p');empty.className='roster-empty';empty.textContent='No learners match this search.';list.appendChild(empty);return;}rows.forEach(s=>{const card=document.createElement('article');card.className='student-record-card';const top=document.createElement('div');top.className='student-record-top';const identity=document.createElement('div');const name=document.createElement('strong');name.textContent=s.name||'Learner';const email=document.createElement('span');email.textContent=s.email||'No email on profile';identity.append(name,email);const levelTag=document.createElement('span');levelTag.className='learn-class-tag';levelTag.textContent=s.yearGroup||'Level not set';top.append(identity,levelTag);const details=document.createElement('p');details.textContent=[s.age!=null?'Age '+s.age:null,s.institution||null].filter(Boolean).join(' · ')||'Profile details not provided';const subjects=document.createElement('p');subjects.className='student-subjects';subjects.textContent='Subjects: '+(s.lessons.length?s.lessons.join(', '):'none listed');const progress=document.createElement('div');progress.className='student-progress-line';const score=document.createElement('span');score.textContent='Recorded score: '+(s.score_overall==null?'not tracked':s.score_overall);const cards=document.createElement('span');cards.textContent=s.flashcards.length+' flashcards';progress.append(score,cards);card.append(top,details,subjects,progress);list.appendChild(card);});}
+        window.refreshStudentRoster=async()=>{if(!isStudyHubStaff())return;const list=document.getElementById('admin-student-roster');list.textContent='Loading learner profiles…';try{const snapshot=await db.collection('users').get();adminStudentRecords=snapshot.docs.map(doc=>{const d=doc.data();return{uid:doc.id,name:d.name||'',email:d.email||'',age:d.age,yearGroup:d.yearGroup||'',institution:d.institution||'',lessons:Array.isArray(d.lessons)?d.lessons:[],score_overall:d.score_overall,flashcards:Array.isArray(d.flashcards)?d.flashcards:[]};}).filter(d=>d.uid!==STUDYHUB_ADMIN_UID);document.getElementById('student-total-count').textContent=adminStudentRecords.length;document.getElementById('student-subject-count').textContent=new Set(adminStudentRecords.flatMap(x=>x.lessons)).size;document.getElementById('student-card-count').textContent=adminStudentRecords.reduce((sum,x)=>sum+x.flashcards.length,0);const select=document.getElementById('student-level-filter'),selected=select.value;select.replaceChildren(new Option('All levels',''));[...new Set(adminStudentRecords.map(x=>x.yearGroup).filter(Boolean))].sort().forEach(level=>select.add(new Option(level,level)));select.value=selected;renderStudentRoster();}catch(error){list.textContent='Learner overview unavailable. Check the Firestore rules.';}};
+        document.getElementById('student-search').addEventListener('input',renderStudentRoster);document.getElementById('student-level-filter').addEventListener('change',renderStudentRoster);
+        async function loadStaffRoles(){if(!isStudyHubSuperAdmin())return;const list=document.getElementById('staff-role-list');list.replaceChildren();try{const snapshot=await db.collection('staffRoles').get();snapshot.forEach(doc=>{const row=document.createElement('div');row.className='staff-role-row';const person=adminStudentRecords.find(x=>x.uid===doc.id);const identity=document.createElement('span');identity.textContent=(person&&person.name?person.name+' · ':'')+(person&&person.email?person.email:'Staff account');const role=document.createElement('strong');role.textContent=doc.data().role==='admin'?'Admin':'Teacher';const remove=document.createElement('button');remove.type='button';remove.className='admin-secondary';remove.textContent='Remove';remove.onclick=()=>window.removeStaffRole(doc.id,identity.textContent);row.append(identity,role,remove);list.appendChild(row);});if(snapshot.empty)list.innerHTML='<p class="roster-empty">No additional staff appointed.</p>'; }catch(error){list.textContent='Staff list unavailable.';}}
+        document.getElementById('staff-role-form').addEventListener('submit',async event=>{event.preventDefault();if(!isStudyHubSuperAdmin())return;const email=document.getElementById('staff-email-input').value.trim().toLowerCase(),role=document.getElementById('staff-role-select').value;try{const result=await db.collection('users').where('email','==',email).limit(1).get();if(result.empty){showAdminStatus('staff-role-status','No onboarded learner account found for that email.',true);return;}const target=result.docs[0];if(target.id===STUDYHUB_ADMIN_UID){showAdminStatus('staff-role-status','The owner already holds the single Super Admin role.',true);return;}await db.collection('staffRoles').doc(target.id).set({role,assignedAt:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('staff-email-input').value='';showAdminStatus('staff-role-status',(role==='admin'?'Admin':'Teacher')+' appointed. They will see staff tools after signing in again.');await loadStaffRoles();}catch(error){showAdminStatus('staff-role-status','Could not appoint staff. Check Firestore rules and the account email.',true);}});
+        window.removeStaffRole=async(uid,label)=>{if(!isStudyHubSuperAdmin()||!confirm('Remove staff access for '+label+'?'))return;try{await db.collection('staffRoles').doc(uid).delete();showAdminStatus('staff-role-status','Staff access removed.');await loadStaffRoles();}catch(error){showAdminStatus('staff-role-status','Could not remove staff access.',true);}};
 
         // Focus timer and checklist are saved locally on this device.
         let focusSeconds = 25 * 60, focusDuration = 25, focusInterval = null;

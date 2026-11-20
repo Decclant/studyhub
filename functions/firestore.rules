@@ -1,26 +1,53 @@
 rules_version = '2';
 service cloud.firestore {
-  function isAdmin() {
-    return request.auth != null && request.auth.uid == 'IF6nIldJ9kZ4iu0ub2pow3SwojR2';
-  }
   match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null; }
+    function isSuperAdmin() { return isSignedIn() && request.auth.uid == 'IF6nIldJ9kZ4iu0ub2pow3SwojR2'; }
+    function staffRolePath(uid) { return /databases/$(database)/documents/staffRoles/$(uid); }
+    function hasRole(role) { return isSignedIn() && exists(staffRolePath(request.auth.uid)) && get(staffRolePath(request.auth.uid)).data.role == role; }
+    function isAdmin() { return isSuperAdmin() || hasRole('admin'); }
+    function isStaff() { return isAdmin() || hasRole('teacher'); }
     match /users/{userId} {
-      allow read, update: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read: if isSignedIn() && (request.auth.uid == userId || isStaff());
+      allow create, update: if isSignedIn() && request.auth.uid == userId;
+      allow delete: if false;
     }
     match /users/{userId}/flashcards/{cardId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
     }
-    match /artifacts/{appId}/public/data/flashcards/{cardId} {
-      allow read: if request.auth != null;
-      allow update: if request.auth != null && request.auth.uid == resource.data.authorId && request.resource.data.authorId == resource.data.authorId;
-      allow create, delete: if request.auth != null && request.auth.uid == request.resource.data.authorId;
+    match /staffRoles/{staffUid} {
+      allow get: if isSignedIn() && (request.auth.uid == staffUid || isSuperAdmin());
+      allow list: if isSuperAdmin();
+      allow create, update: if isSuperAdmin() && staffUid != 'IF6nIldJ9kZ4iu0ub2pow3SwojR2' && request.resource.data.keys().hasOnly(['role','assignedAt']) && request.resource.data.role in ['admin','teacher'];
+      allow delete: if isSuperAdmin() && staffUid != 'IF6nIldJ9kZ4iu0ub2pow3SwojR2';
     }
     match /appContent/{contentId} {
-      allow read: if request.auth != null;
-      allow create, update, delete: if isAdmin();
+      allow read: if isSignedIn();
+      allow create, update: if isAdmin();
+      allow delete: if isAdmin();
     }
-    match /adminLogs/{logId} { allow read, write: if isAdmin(); }
+    match /supportThreads/{threadId} {
+      allow create: if isSignedIn() && request.auth.uid == threadId && request.resource.data.participantUid == threadId && request.resource.data.keys().hasOnly(['participantUid','studentName','yearGroup','status','lastMessage','createdAt','updatedAt']);
+      allow read: if isSignedIn() && (request.auth.uid == threadId || isSuperAdmin());
+      allow update: if isSignedIn() && (request.auth.uid == threadId || isSuperAdmin()) && request.resource.data.participantUid == resource.data.participantUid;
+      allow delete: if isSuperAdmin();
+      match /messages/{messageId} {
+        allow read: if isSignedIn() && (request.auth.uid == threadId || isSuperAdmin());
+        allow create: if isSignedIn() &&
+          request.resource.data.keys().hasOnly(['text','senderUid','senderName','senderRole','createdAt']) &&
+          request.resource.data.senderUid == request.auth.uid &&
+          request.resource.data.text is string && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 2000 &&
+          ((request.auth.uid == threadId && request.resource.data.senderRole == 'student') ||
+           (isSuperAdmin() && request.resource.data.senderRole == 'super_admin'));
+        allow update, delete: if false;
+      }
+    }
+    match /artifacts/{appId}/public/data/flashcards/{cardId} {
+      allow read: if isSignedIn();
+      allow update: if isSignedIn() && request.auth.uid == resource.data.authorId && request.resource.data.authorId == resource.data.authorId;
+      allow create, delete: if isSignedIn() && request.auth.uid == request.resource.data.authorId;
+    }
+    match /adminLogs/{logId} { allow read, write: if isSuperAdmin(); }
     match /{document=**} { allow read, write: if false; }
   }
 }

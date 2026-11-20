@@ -1,37 +1,26 @@
 rules_version = '2';
 service cloud.firestore {
-
   function isAdmin() {
-    return request.auth.uid == 'IF6nIldJ9kZ4iu0ub2pow3SwojR2';
+    return request.auth != null && request.auth.uid == 'IF6nIldJ9kZ4iu0ub2pow3SwojR2';
   }
-
   match /databases/{database}/documents {
-
     match /users/{userId} {
       allow read, update: if request.auth != null && request.auth.uid == userId;
       allow create: if request.auth != null && request.auth.uid == userId;
     }
-
     match /users/{userId}/flashcards/{cardId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-
     match /artifacts/{appId}/public/data/flashcards/{cardId} {
       allow read: if request.auth != null;
-
-      allow update: if request.auth != null && request.auth.uid == resource.data.authorId &&
-                    request.resource.data.authorId == resource.data.authorId;
-
+      allow update: if request.auth != null && request.auth.uid == resource.data.authorId && request.resource.data.authorId == resource.data.authorId;
       allow create, delete: if request.auth != null && request.auth.uid == request.resource.data.authorId;
     }
-
-    match /adminLogs/{logId} {
-      allow read, write: if request.auth != null && isAdmin();
+    match /appContent/{contentId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
-
-    match /{document=**} {
-      allow read, write: if false;
-    }
-
+    match /adminLogs/{logId} { allow read, write: if isAdmin(); }
+    match /{document=**} { allow read, write: if false; }
   }
 }
